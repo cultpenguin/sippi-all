@@ -282,7 +282,8 @@ c-----------------------------------------------------------------------
       
       ! Declare local variables
       REAL, DIMENSION(10) :: var
-      INTEGER, DIMENSION(2) :: seed
+      INTEGER, PARAMETER :: SEEDDIM = 12
+      INTEGER, DIMENSION(SEEDDIM) :: seed
       CHARACTER (LEN=30) :: datafl, outfl, dbgfl
       CHARACTER (LEN=30) :: vertpropfl
 c Ch60 change trainfl->trainfl(nmult)
@@ -401,9 +402,12 @@ c Ch 81 old end
       WRITE(*,*) ' random number seed = ',ixv
       
       ! Initialize the random seed of the simulation:
-      seed(1)=ixv
-      seed(2)=ixv+1
-      CALL random_seed(PUT=seed(1:2))
+      DO i=1,SEEDDIM
+      	seed(i)=ixv+(i-1)
+      END DO 	
+      CALL random_seed(PUT=seed(1:SEEDDIM))
+c      	seed(1)=ixv
+c      	seed(2)=ixv+1
       
       READ(lin,*,err=98) prevnodmax
       WRITE(*,*) ' maximum conditioning data = ',prevnodmax
