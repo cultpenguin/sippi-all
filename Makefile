@@ -1,18 +1,18 @@
 OBJS = sortem.o chknam.o
 CC = gfortran
-CPPFLAGS = -g -O3 
-LDFLAGS = -g
-LDLIBS = -lstdc++ -lpthread 
+CFLAGS = -O3 
+#CFLAGS = -g -O3 
+LDLIBS = 
 PROG = snesim
 
 snesim: $(OBJS)
-	$(CC) $(LDFLAGS) $(OBJS) $(PROG).f -o $(PROG) $(LDLIBS)
+	$(CC) $(CFLAGS) $(OBJS) $(PROG).f -o $(PROG) $(LDLIBS)
 
 sortem.o:
-	$(CC) $(CPPFLAGS) -c sortem.f -o sortem.o
+	$(CC) $(CFLAGS) -c sortem.f -o sortem.o
 
 chknam.o:
-	$(CC) $(CPPFLAGS) -c chknam.f -o chknam.o
+	$(CC) $(CFLAGS) -c chknam.f -o chknam.o
 
 
 
