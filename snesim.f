@@ -406,8 +406,6 @@ c Ch 81 old end
       	seed(i)=ixv+(i-1)
       END DO 	
       CALL random_seed(PUT=seed(1:SEEDDIM))
-c      	seed(1)=ixv
-c      	seed(2)=ixv+1
       
       READ(lin,*,err=98) prevnodmax
       WRITE(*,*) ' maximum conditioning data = ',prevnodmax
