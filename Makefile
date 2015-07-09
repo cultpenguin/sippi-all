@@ -1,25 +1,26 @@
-#-----------------------------------------------------------------------
-#
-#                     Generic GSLIB Makefile
-#                     **********************
-#
-progname=snesim
-#
-#
-#-----------------------------------------------------------------------
+OBJS = sortem.o chknam.o
+CC = gfortran
+CPPFLAGS = -g -O3 
+LDFLAGS = -g
+LDLIBS = -lstdc++ -lpthread 
+PROG = snesim
+
+snesim: $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS) $(PROG).f -o $(PROG) $(LDLIBS)
+
+sortem.o:
+	$(CC) $(CPPFLAGS) -c sortem.f -o sortem.o
+
+chknam.o:
+	$(CC) $(CPPFLAGS) -c chknam.f -o chknam.o
 
 
-PROG   = $(progname)
-FFLAGS = -O4
-SRCS   =  $(progname).f
-OBJS   =  $(progname).o
-INCS   =  
-LIBS   = libgs.a
-all:$(PROG) 
-$(PROG):$(OBJS)
-	f90 -o $@ $(OBJS) $(LIBS)
-.f.o:
-	f90 -c $(FFLAGS) $<
-$(OBJS):$(INCS)
+
 clean:
-	/bin/rm -rf $(OBJS) $(PROG)
+	rm -f *.o snesim
+
+all: snesim
+
+
+
+
