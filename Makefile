@@ -8,13 +8,13 @@ PROG = snesim
 snesim: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(PROG) $(LDLIBS)
 
-snesim.o:
+snesim.o: snesim.f
 	$(CC) $(CFLAGS) -c snesim.f -o snesim.o
 
-sortem.o:
+sortem.o: sortem.f
 	$(CC) $(CFLAGS) -c sortem.f -o sortem.o
 
-chknam.o:
+chknam.o: chknam.f
 	$(CC) $(CFLAGS) -c chknam.f -o chknam.o
 
 
