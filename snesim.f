@@ -30,6 +30,13 @@ c                Tau1 and Tau2 could be chosen automatically.
 c                In addition, P(A|C) is used for all multiple grids, 
 c                not only for several coarse grids 
 c                                                      /11-29-02/Tuanfeng
+c Ch89- /  Fixed problem with call to random seed when 
+c 	   compiled using gfortran
+c           						/07-09-15/Mejer Hansen 
+c
+c Ch90    / Fixed a bug using multiple grid, when nmul>2
+c           						/07-09-15/Mejer Hansen 
+c              				 
 c@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
@@ -282,6 +289,7 @@ c-----------------------------------------------------------------------
       
       ! Declare local variables
       REAL, DIMENSION(10) :: var
+c Ch89 handling random seed with gfortran
       INTEGER, PARAMETER :: SEEDDIM = 12
       INTEGER, DIMENSION(SEEDDIM) :: seed
       CHARACTER (LEN=30) :: datafl, outfl, dbgfl
@@ -402,6 +410,7 @@ c Ch 81 old end
       WRITE(*,*) ' random number seed = ',ixv
       
       ! Initialize the random seed of the simulation:
+c Ch89 handling random seed with gfortran
       DO i=1,SEEDDIM
       	seed(i)=ixv+(i-1)
       END DO 	
@@ -530,9 +539,12 @@ c Ch61 new begin: add do loop and change trainfl->trainfl(nmult)
          WRITE(*,*) 'Multiple grid ', imult
          kmult=imult   
          READ(lin,'(a30)',IOSTAT=ioerror) trainfl(imult)
+	 write(*,*) 'F,IOERROR=',trainfl(imult),ioerror
          IF(ioerror<0.AND.imult==nmult) THEN
             STOP 'no training image exists!'
-         ELSE IF(ioerror<0) THEN            
+c Ch90 next line: Allows using more than 2 multiple grids with gfortran
+         ELSE IF(imult.LT.nmult) THEN            
+            WRITE(*,*) 'IMULT (NO IO ERRRO) = ',imult
             trainfl(imult)=trainfl(kmult+1)
             WRITE(*,*) ' training image file = ',trainfl(imult)
             nxtr(imult)=nxtr(kmult+1)
@@ -556,6 +568,7 @@ c Ch61 new begin: add do loop and change trainfl->trainfl(nmult)
    
          ELSE 
             CALL chknam(trainfl(imult),30)
+            WRITE(*,*) 'IMULT = (FIRST TIME)',imult
             WRITE(*,*) ' training image file = ',trainfl(imult)
             READ(lin,*,err=98) nxtr(imult),nytr(imult),nztr(imult)
             WRITE(*,*) ' training grid dimensions = ',

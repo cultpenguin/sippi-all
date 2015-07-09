@@ -1,4 +1,4 @@
-OBJS = sortem.o chknam.o
+OBJS = sortem.o chknam.o snesim.o
 CC = gfortran
 CFLAGS = -O3 
 #CFLAGS = -g -O3 
@@ -6,7 +6,10 @@ LDLIBS =
 PROG = snesim
 
 snesim: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(PROG).f -o $(PROG) $(LDLIBS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(PROG) $(LDLIBS)
+
+snesim.o:
+	$(CC) $(CFLAGS) -c snesim.f -o snesim.o
 
 sortem.o:
 	$(CC) $(CFLAGS) -c sortem.f -o sortem.o
