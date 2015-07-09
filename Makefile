@@ -1,6 +1,6 @@
 OBJS = sortem.o chknam.o snesim.o
 CC = gfortran
-CFLAGS = -O3 
+CFLAGS = -O3 -static
 #CFLAGS = -g -O3 
 LDLIBS = 
 PROG = snesim
