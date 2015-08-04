@@ -1,37 +1,37 @@
                   Parameters for snesim
                   ********************
                                       
-START OF PARAMETERS:                  
-data.dat             - file with original data
-1 2 3 4           - columns for x, y, z, variable
-2                    - number of categories
-0 1                  - category codes
-0.73 0.27            - (target) target pdf
-0                    - use (target) vertical proportions (0=no, 1=yes)
-vertprop.dat         - file with target vertical proportions
-0                    - servosystem parameter (0=no correction)
--1                  - debug level
-snesim.dbg                               - debugging file
-snesim.out                               - file for simulation output
-1                    - number of realizations to generate
-250     0.5     1     - nx,xmn,xsiz
-250    0.5     1     - ny,ymn,ysiz
-1      0.5     1     - nz,zmn,zsiz
-69069                   - Random seed
-26                                       - max conditioning data
-10                                        - min number of replicates
-0 0                                      - condtion to LP (0=no, 1=yes), flag for iauto
-1 1                                      - two weighting factors to combine P(A|B) and P(A|C)
-localprop.dat                  - file for local properties
-0                              - condition to rotation and affinity (0=no, 1=yes)
-rot_aff.dat                   - file for rotation and affinity
-3                              - number of affinity categories
-1   1   1                      - affinity factors (X,Y,Z)
-1   0.5 1                      - affinity factors (X,Y,Z)
-1   2   1                      - affinity factors (X,Y,Z)
-3                             - number of multiple grids
-train.dat                      - file for training image
-250  250  1          - training image dimensions: nxtr, nytr, nztr
-1                    - Column for training variable
-10 10 5                    - maximum search radii (hmax,hmin,vert)
-0 0 0                    - angles for search ellipsoid (amax,amina,vert)
+START OF PARAMETERS                   
+data.dat        - file with original data
+1 2 3 4         - fcolumns for x, y, z, variable
+2               - number of categories
+0 1             - category codes
+0.73 0.27       - (target) global pdf
+0               -  use (target) vertical proportions (0=no, 1=yes)
+vertprop.dat    - file with target vertical proportions
+0               - servosystem parameter (0=no correction)
+-1              - debugging level: 0,1,2,3
+snesim.dbg      - debugging file
+snesim.out      - file for simulation output
+2               - number of realizations to generate
+250 0.5 1       - nx,xmn,xsiz
+250 0.5 1       - ny,ymn,ysiz
+1 0.5 1         - nz,zmn,zsiz
+69069           - random number seed
+26              - max number of conditioning primary data
+10              - min. replicates number
+0 0             - condition to LP (0=no, 1=yes), flag for iauto
+1 1             - two weighting factors to combine P(A|B) and P(A|C)
+localprop.dat   - file for local properties
+0               - condition to rotation and affinity (0=no, 1=yes)
+rot_aff.dat     - file for rotation and affinity
+3               - number of affinity categories
+1 1 1           - affinity factors (X,Y,Z) icat=1
+1 0.5 1         - affinity factors (X,Y,Z) icat=2
+1 2 1           - affinity factors (X,Y,Z) icat=3
+5               - number of multiple grids
+train.dat       - file with training image
+250 250 1       - training image dimensions: nxtr, nytr, nztr
+1               - column for training variable
+10 10 5         - maximum search radii (hmax,hmin,hvert)
+0 0 0           - angles for search ellipsoid (amax,amin,avert)
