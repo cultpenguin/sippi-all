@@ -1,7 +1,12 @@
 OBJS = sortem.o chknam.o snesim.o
 CC = gfortran
+
+# WINDOWS/LINUX GCC
 CFLAGS = -O3 -static
-#CFLAGS = -g -O3 
+# OSX (no static)
+CFLAGS = -O3 
+
+
 LDLIBS = 
 PROG = snesim
 
