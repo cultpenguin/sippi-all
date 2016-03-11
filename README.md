@@ -1,5 +1,3 @@
-
-
 # MPS: a C++ class for Multiple-Point based sequential Simulation
 MPS provides a set of algorithms for simulation of models based on a multiple point
 statistical model inferred from a training image.
@@ -13,6 +11,11 @@ MPS (version 1.0) has been developed by
 I-GIS, [http://www.i-gis.dk/]
 and
 Solid Earth Geophysics Group, Niels Bohr Institute, [http://imgp.nbi.ku.dk/]
+
+Development has been funded by the Danish National Hightech Foundation (now: the Innovation fund) thorugh the ERGO (Effective high-resolution Geological Modeling) project, a collaboration between
+[IGIS](http://i-gis.dk/),
+[GEUS](http://geus.dk/), and 
+[Niels Bohr Institute](http://imgp.nbi.ku.dk/).
 
 # Documentation
 MPS is documented through Doxygen.
