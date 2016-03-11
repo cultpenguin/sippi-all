@@ -8,14 +8,14 @@ The code should be easy to compile and extend, and should be allowed for both
 commercial and non-commercial use.
 
 MPS (version 1.0) has been developed by
-I-GIS, [http://www.i-gis.dk/]
+[I-GIS](http://www.i-gis.dk/)
 and
-Solid Earth Geophysics Group, Niels Bohr Institute, [http://imgp.nbi.ku.dk/]
+[Solid Earth Physics, Niels Bohr Institute](http://imgp.nbi.ku.dk/).
 
 Development has been funded by the Danish National Hightech Foundation (now: the Innovation fund) thorugh the ERGO (Effective high-resolution Geological Modeling) project, a collaboration between
 [IGIS](http://i-gis.dk/),
 [GEUS](http://geus.dk/), and 
-[Niels Bohr Institute](http://imgp.nbi.ku.dk/).
+[Niels Bohr Institute](http://nbi.ku.dk/).
 
 # Documentation
 MPS is documented through Doxygen.
