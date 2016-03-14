@@ -10,7 +10,7 @@
 %   O.method='mps_snesim_tree'; % MPS algorithm to run (def='mps_snesim_tree') 
 %   %O.method='mps_snesim_list'; % MPS algorithm to run (def='mps_snesim_tree') 
 %   %O.method='mps_enesim_general'; % MPS algorithm to run (def='mps_snesim_tree') 
-%   O.nreal=1;             %  optional number of realization
+%   O.n_real=1;             %  optional number of realization
 %   [reals,O]=mps_cpp(TI,SIM,O);
 %
 % See also: mps_snesim_read_par, mps_snesim_write_par, mps_enesim_read_par,
@@ -25,7 +25,7 @@ if nargin==0;
    O.method='mps_snesim_tree'; % MPS algorithm to run (def='mps_snesim_tree') 
   %O.method='mps_snesim_list'; % MPS algorithm to run (def='mps_snesim_tree') 
    %O.method='mps_enesim_general'; % MPS algorithm to run (def='mps_snesim_tree') 
-   O.nreal=1;             %  optional number of realization
+   O.n_real=1;             %  optional number of realization
    [reals,O]=mps_cpp(TI,SIM,O);
    imagesc(reals);drawnow;
 end
@@ -133,7 +133,7 @@ O.time=toc;
 %% READ DATA
 [p,f,e]=fileparts(O.ti_filename);
 clear D;
-for i=1:O.nreal
+for i=1:O.n_real
   fname=sprintf('%s%s%s%s_sg_%d.gslib',O.output_folder,filesep,f,e,i-1);
   try
       D=read_eas(fname);
@@ -156,7 +156,7 @@ end
 
 %%
 if (O.debug>1)
-for i=1:O.nreal
+for i=1:O.n_real
     fname_path=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,i-1);
     
     try

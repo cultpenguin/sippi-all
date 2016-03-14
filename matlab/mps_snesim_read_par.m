@@ -11,7 +11,7 @@ fid=fopen(O.filename_parameter,'r');
 
 % number of realizations
 l=line_strip_char(fgetl(fid),'#');
-O.nreal=str2num(l);
+O.n_real=str2num(l);
 
 % random seed
 l=line_strip_char(fgetl(fid),'#');

@@ -13,7 +13,7 @@ if ~exist('SIM','var');
     SIM=zeros(80,80).*NaN; %  simulation grid
 end
 
-O.nreal=1;  % Number of realizations
+O.n_real=1;  % Number of realizations
 O.rseed=1;  % Random Seed
 
 if ~isfield(O,'method')

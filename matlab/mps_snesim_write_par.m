@@ -21,7 +21,7 @@ end
 O.parameter_filename=parameter_filename;
 
 %% SOME DEFAULTS
-if ~isfield(O,'nreal'); O.nreal=1; end
+if ~isfield(O,'n_real'); O.n_real=1; end
 if ~isfield(O,'rseed'); O.rseed=0; end
 if ~isfield(O,'n_multiple_grids'); O.n_multiple_grids=3; end
 if ~isfield(O,'n_min_node_count');O.n_min_node_count=0; end
@@ -48,7 +48,7 @@ if ~isfield(O,'debug');O.debug=-1;end
 %% WRITE STRUCTURE TO PARAMETER FILE
 fid=fopen(O.parameter_filename,'w');
 
-fprintf(fid,'Number of realizations # %d\n',O.nreal);
+fprintf(fid,'Number of realizations # %d\n',O.n_real);
 fprintf(fid,'Random Seed (0 `random` seed) # %d\n',O.rseed);
 fprintf(fid,'Number of mulitple grids (start from 0) # %d\n',O.n_multiple_grids);
 

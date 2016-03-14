@@ -9,7 +9,7 @@
 %   O.method='mps_snesim_tree'; % MPS algorithm to run (def='mps_snesim_tree') 
 %   %O.method='mps_snesim_list'; % MPS algorithm to run (def='mps_snesim_tree') 
 %   %O.method='mps_enesim_general'; % MPS algorithm to run (def='mps_snesim_tree') 
-%   O.nreal=8;             %  optional number of realization
+%   O.n_real=8;             %  optional number of realization
 %   [reals,O]=mps_cpp_thread(TI,SIM,O);
 %
 % See also: mps_cpp, mps_snesim_read_par, mps_snesim_write_par, 
@@ -19,8 +19,8 @@
 function [reals,Othread]=mps_cpp_thread(TI,SIM,O,verbose);
 reals=[];
 
-if ~isfield(O,'nreal');
-    O.nreal=1;
+if ~isfield(O,'n_real');
+    O.n_real=1;
 end
 
 %% try to hety 
@@ -32,8 +32,8 @@ catch
     n_threads=1;
 end
 
-n_reals_per_thread=ceil(O.nreal/n_threads);
-actual_threads=ceil(O.nreal/n_reals_per_thread);
+n_reals_per_thread=ceil(O.n_real/n_threads);
+actual_threads=ceil(O.n_real/n_reals_per_thread);
 
 
 if actual_threads==1;
@@ -54,10 +54,10 @@ for i=1:actual_threads;
     Othread{i}=O;
     %Othread{i}.output_folder=[outdir{i},filesep,'.'];
     if i==actual_threads
-        reals_left=O.nreal-(i-1)*n_reals_per_thread;
-        Othread{i}.nreal=reals_left;
+        reals_left=O.n_real-(i-1)*n_reals_per_thread;
+        Othread{i}.n_real=reals_left;
     else
-        Othread{i}.nreal=n_reals_per_thread;
+        Othread{i}.n_real=n_reals_per_thread;
     end
     Othread{i}.rseed=O.rseed+i;
 end

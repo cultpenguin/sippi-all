@@ -17,7 +17,7 @@ end
 O.parameter_filename=parameter_filename;
 
 %% SOME DEFAULTS
-if ~isfield(O,'nreal'); O.nreal=1; end
+if ~isfield(O,'n_real'); O.n_real=1; end
 if ~isfield(O,'rseed'); O.rseed=0; end
 if ~isfield(O,'n_cond'); O.n_cond=25; end
 if ~isfield(O,'n_max_ite'); O.n_max_ite=10000; end
@@ -47,7 +47,7 @@ if ~isfield(O,'debug');O.debug=-1;end
 %% WRITE STRUCTURE TO PARAMETER FILE
 fid=fopen(O.parameter_filename,'w');
 
-fprintf(fid,'Number of realizations # %d\n',O.nreal);
+fprintf(fid,'Number of realizations # %d\n',O.n_real);
 fprintf(fid,'Random Seed (0 `random` seed) # %d\n',O.rseed);
 fprintf(fid,'Maximum number of counts for conditional pdf # %d\n',O.n_max_cpdf_count);
 % LIMIT NEIGHBORHOOD
