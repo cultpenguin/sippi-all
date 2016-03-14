@@ -117,7 +117,7 @@ void igisSIM::SNESIM::_readConfigurations(const std::string& fileName) {
 	_readLineConfiguration(file, ss, data, s, str);
 	_hdSearchRadius = stof(data[1]);
 	// Softdata categories
-	std::cout << s << std::endl;
+	//std::cout << s << std::endl;
 	if(_readLineConfiguration(file, ss, data, s, str)) {
 		ss.clear();
 		ss << data[1];

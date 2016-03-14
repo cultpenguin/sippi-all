@@ -670,21 +670,23 @@ void igisSIM::MPSAlgorithm::startSimulation(void) {
 			_showSG();
 		}
 
-		//if (_debugMode > -1) {
+		if (_debugMode > -1) {
 			endRealization = clock();
 			elapsedRealizationSecs = double(endRealization - beginRealization) / CLOCKS_PER_SEC;
 			totalSecs += elapsedRealizationSecs;
 			std::cout << "Elapsed time (sec): " << elapsedRealizationSecs << "\t" << " total: " << totalSecs << std::endl;
-		//}
+		}
 
 		if (_debugMode > -2) {
-			//Write result to file
-			std::cout << "Write simulation grid to hard drive..." << std::endl;
-			igisSIM::io::writeToGSLIBFile(outputFilename + "_sg_" + std::to_string(n) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
-			igisSIM::io::writeToGRD3File(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".grd3", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, 3);
-			//igisSIM::io::writeToGS3DCSVFile(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".csv", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
-			//igisSIM::io::writeToASCIIFile(outputFilename + "_sg_ascii" + std::to_string(n) + ".txt", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
-			//igisSIM::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+		  //Write result to file
+		  if (_debugMode > -1) {
+		    std::cout << "Write simulation grid to hard drive..." << std::endl;
+		  }
+		  igisSIM::io::writeToGSLIBFile(outputFilename + "_sg_" + std::to_string(n) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+		  igisSIM::io::writeToGRD3File(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".grd3", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, 3);
+		  //igisSIM::io::writeToGS3DCSVFile(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".csv", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+		  //igisSIM::io::writeToASCIIFile(outputFilename + "_sg_ascii" + std::to_string(n) + ".txt", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+		  //igisSIM::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 		}
 
 		if (_debugMode > 1) {

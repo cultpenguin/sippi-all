@@ -62,8 +62,10 @@ void igisSIM::SNESIMTree::initialize(const std::string& configurationFile) {
 	for (int level=_totalGridsLevel; level>=0; level--) {
 		//For each space level from coarse to fine 
 		offset = int(std::pow(2, level));		
-		std::cout << "level: " << level << " offset: " << offset << std::endl;
-
+		if (_debugMode > -1) {
+		  std::cout << "level: " << level << " offset: " << offset << std::endl;
+		}
+		
 		int tiX, tiY, tiZ;
 		int deltaX, deltaY, deltaZ;
 		int nodeCnt = 0;
@@ -132,7 +134,9 @@ void igisSIM::SNESIMTree::initialize(const std::string& configurationFile) {
 				}
 			}	
 		}
-		std::cout << "Finish building search tree" << std::endl;
+		if (_debugMode > -1) {
+		  std::cout << "Finish building search tree" << std::endl;
+		}
 		//std::cout << "Total nodes: " << nodeCnt << std::endl;
 		//Check out dictionary
 		//std::cout << "Dictionary info: " << std::endl;

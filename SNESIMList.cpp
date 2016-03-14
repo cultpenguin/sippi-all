@@ -34,6 +34,7 @@ igisSIM::SNESIMList::~SNESIMList(void) {
 * @param configurationFile configuration file name
 */
 void igisSIM::SNESIMList::initialize(const std::string& configurationFile) {
+
 	//Reading configuration file
 	_readConfigurations(configurationFile);
 
@@ -55,8 +56,9 @@ void igisSIM::SNESIMList::initialize(const std::string& configurationFile) {
 	for (int level=_totalGridsLevel; level>=0; level--) {
 		//For each space level from coarse to fine 
 		offset = int(std::pow(2, level));		
-		std::cout << "level: " << level << " offset: " << offset << std::endl;
-
+		if (_debugMode > -1) {
+		  std::cout << "level: " << level << " offset: " << offset << std::endl;
+		}
 		int tiX, tiY, tiZ;
 		int deltaX, deltaY, deltaZ;
 		bool isValidKey = false;
@@ -104,11 +106,13 @@ void igisSIM::SNESIMList::initialize(const std::string& configurationFile) {
 				}
 			}	
 		}
-		std::cout << "Total pixel: " << pixelsCnt << std::endl;
-		//Check out dictionary
-		std::cout << "Dictionary info: " << std::endl;
-		std::cout << "Level: " << level << std::endl;
-		std::cout << "Total elements: " << _patternsDictionary[level].size() << std::endl;
+		if (_debugMode > -1) {
+		  std::cout << "Total pixel: " << pixelsCnt << std::endl;
+		  //Check out dictionary
+		  std::cout << "Dictionary info: " << std::endl;
+		  std::cout << "Level: " << level << std::endl;
+		  std::cout << "Total elements: " << _patternsDictionary[level].size() << std::endl;
+		}
 		////Showing the dictionary to debug ...
 		//for(auto iter = _patternsDictionary[level].begin(); iter != _patternsDictionary[level].end(); ++iter) {
 		//	std::vector<float> key = iter->first;

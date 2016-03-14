@@ -133,8 +133,8 @@ namespace igisSIM {
 			std::ifstream file;
 			file.open(fileName, std::ios::in);
 			if (!file.is_open()) {
-				std::cerr << "Can't open " << fileName << " !\n";
-				return false;
+			  //std::cerr << "Can't open " << fileName << " !\n";
+			  return false;
 			}
 
 			int tiSizeX, tiSizeY, tiSizeZ;
@@ -422,7 +422,7 @@ namespace igisSIM {
 				std::ifstream file;
 				file.open(fileName, std::ios::in);
 				if (!file.is_open()) {
-					std::cerr << "Can't open " << fileName << " !\n";
+				        // std::cerr << "Can't open " << fileName << " !\n";
 					return false;
 				}
 
