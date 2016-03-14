@@ -18,7 +18,7 @@ mps_cpp_demo;
 %% SNESIM, Multiple Grids and size of conditional template
 clear all;
 O.method='mps_snesim_tree'; 
-    
+
 par_1='template_size';    arr_1=[2,3,4,5,6,7].^2;
 par_2='n_multiple_grids'; arr_2=[0,1,2,3];
 

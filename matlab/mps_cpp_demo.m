@@ -56,6 +56,13 @@ for j=1:n_2
     else
         subplot(n_2,n_1,(j-1)*n_1+i)
     end
+    
+    d=reals(:);
+    prob_real=sum(d==0)./length(d);
+    d_ti=TI(:);
+    prob_ti=sum(d_ti==0)./length(d_ti);
+    disp(sprintf('P(TI==0)=%4.2f, P(real==0)==%4.2f',prob_ti,prob_real))
+    
     imagesc(reals);axis image
     set(gca,'XTick',[]);
     set(gca,'YTick',[]);
