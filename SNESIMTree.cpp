@@ -60,12 +60,12 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 	}
 
 	for (int level=_totalGridsLevel; level>=0; level--) {
-		//For each space level from coarse to fine 
-		offset = int(std::pow(2, level));		
+		//For each space level from coarse to fine
+		offset = int(std::pow(2, level));
 		if (_debugMode > -1) {
 		  std::cout << "level: " << level << " offset: " << offset << std::endl;
 		}
-		
+
 		int tiX, tiY, tiZ;
 		int deltaX, deltaY, deltaZ;
 		int nodeCnt = 0;
@@ -74,7 +74,7 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 		int totalNodes = _tiDimX * _tiDimY * _tiDimZ;
 		int lastProgress = 0;
 		//Put the current node as the root node
-		std::vector<TreeNode>* currentTreeNode = &_searchTree[level]; 
+		std::vector<TreeNode>* currentTreeNode = &_searchTree[level];
 
 		for (int z=0; z<_tiDimZ; z+=1) {
 			for (int y=0; y<_tiDimY; y+=1) {
@@ -91,8 +91,8 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 						}
 					}
 					//Reset current node to root node
-					currentTreeNode = &_searchTree[level]; 
-					for (unsigned int i=0; i<_templateFaces.size(); i++) { 
+					currentTreeNode = &_searchTree[level];
+					for (unsigned int i=0; i<_templateFaces.size(); i++) {
 						//Go deeper in the pattern template or to a higher level node
 						deltaX = offset * _templateFaces[i].getX();
 						deltaY = offset * _templateFaces[i].getY();
@@ -109,8 +109,8 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 						} else {
 							//Searching the TI cell value inside the current node
 							for (unsigned int j=0; j<currentTreeNode->size(); j++) {
-								if(_TI[tiZ][tiY][tiX] == currentTreeNode->operator[](j).value) { 
-									//Existing value so increase the counter 
+								if(_TI[tiZ][tiY][tiX] == currentTreeNode->operator[](j).value) {
+									//Existing value so increase the counter
 									foundExistingValue = true;
 									currentTreeNode->operator[](j).counter = currentTreeNode->operator[](j).counter + 1;
 									foundIdx = j;
@@ -129,10 +129,10 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 							}
 							//Switching the current node to the children
 							currentTreeNode = &(currentTreeNode->operator[](foundIdx).children);
-						} 
+						}
 					}
 				}
-			}	
+			}
 		}
 		if (_debugMode > -1) {
 		  std::cout << "Finish building search tree" << std::endl;
@@ -150,13 +150,13 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 		//	nodesToCheck.pop_back();
 		//	//Showing the current node value and counter
 		//	for (int i=0; i<currentTreeNode->size(); i++) {
-		//		std::cout << currentTreeNode->operator[](i).level << " " << currentTreeNode->operator[](i).value << " " << currentTreeNode->operator[](i).counter << std::endl; 
+		//		std::cout << currentTreeNode->operator[](i).level << " " << currentTreeNode->operator[](i).value << " " << currentTreeNode->operator[](i).counter << std::endl;
 		//		//Adding the children node to the list node to be checked
 		//		nodesToCheck.push_front(&(currentTreeNode->operator[](i).children));
 		//	}
 		//	//std::cout << "list size: " << nodesToCheck.size() << std::endl;
 		//}
-	}	
+	}
 }
 
 /**
@@ -181,7 +181,7 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 	float foundValue = _sg[sgIdxZ][sgIdxY][sgIdxX];
 	//If have NaN value then doing the simulation ...
 	if (MPS::utility::is_nan(_sg[sgIdxZ][sgIdxY][sgIdxX])) {
-		int offset = int(std::pow(2, level));			
+		int offset = int(std::pow(2, level));
 		int sgX, sgY, sgZ;
 		int deltaX, deltaY, deltaZ;
 		foundValue = std::numeric_limits<float>::quiet_NaN();
@@ -189,7 +189,7 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		//Initialize a value
 		std::vector<float> aPartialTemplate;
 		//Building a template based on the neighbor points
-		for (unsigned int i=1; i<_templateFaces.size(); i++) { //For all the set of templates available except the first one at the template center 	
+		for (unsigned int i=1; i<_templateFaces.size(); i++) { //For all the set of templates available except the first one at the template center
 			//For each template faces
 			deltaX = offset * _templateFaces[i].getX();
 			deltaY = offset * _templateFaces[i].getY();
@@ -197,7 +197,7 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 			sgX = sgIdxX + deltaX;
 			sgY = sgIdxY + deltaY;
 			sgZ = sgIdxZ + deltaZ;
-			if (!(sgX < 0 || sgX >= _sgDimX) && !(sgY < 0 || sgY >= _sgDimY) && !(sgZ < 0 || sgZ >= _sgDimZ)) { 
+			if (!(sgX < 0 || sgX >= _sgDimX) && !(sgY < 0 || sgY >= _sgDimY) && !(sgZ < 0 || sgZ >= _sgDimZ)) {
 				//not overflow
 				if (!MPS::utility::is_nan(_sg[sgZ][sgY][sgX])) {
 					aPartialTemplate.push_back(_sg[sgZ][sgY][sgX]);
@@ -238,7 +238,7 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 					} else if (currentTreeNode->operator[](i).value == aPartialTemplate[currentTreeNode->operator[](i).level - 1]) {
 						currentLevel = currentTreeNode->operator[](i).level;
 						//Template found so go to higher level node
-						if (currentLevel > maxLevel) { 	
+						if (currentLevel > maxLevel) {
 							maxLevel = currentLevel;
 							//Restart counter at only maximum level
 							sumCounters = currentTreeNode->operator[](i).counter;
@@ -246,9 +246,9 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 						} else if (currentLevel == maxLevel) {
 							//Adding the counter to the sum counters
 							sumCounters += currentTreeNode->operator[](i).counter;
-						}						
+						}
 
-						//Only continue to the children node if the current node counter is big enough or if the number of conditional points used is smaller than a given limit 
+						//Only continue to the children node if the current node counter is big enough or if the number of conditional points used is smaller than a given limit
 						if(currentTreeNode->operator[](i).counter > _minNodeCount && (conditionPointsUsedCnt < _maxCondData || _maxCondData == -1)) {
 							//Adding the children node to the list node to be checked
 							nodesToCheck.push_front(&(currentTreeNode->operator[](i).children));

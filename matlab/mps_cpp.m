@@ -73,6 +73,14 @@ end
 
 %% 
 % WRITE HARD DATA IF NECESSARY
+if isfield(O,'d_cond');
+    if ~isfield(O,'d_cond');
+        O.hard_data_filename='d_cond.eas';
+    end    
+    write_eas(O.hard_data_filename,O.d_cond);
+end
+
+
 % WRITE SOFT DATA IF NECESSARY
 
 %% 

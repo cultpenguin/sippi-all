@@ -25,7 +25,8 @@ end
 
 %% try to hety 
 try
-    poolobj = gcp('nocreate');
+    %poolobj = gcp('nocreate');
+    poolobj = gcp;
     n_threads=poolobj.NumWorkers;
 catch
     disp(sprintf('%s: No parallel toolbox - using 1 thread/worker',mfilename))
