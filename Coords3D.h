@@ -8,7 +8,7 @@
 
 #pragma once
 
-namespace igisSIM {
+namespace MPS {
 	class Coords3D;
 }
 
@@ -16,7 +16,7 @@ namespace igisSIM {
 /**
 * @brief A 3D coordinates used for indexing in a 3D grid
 */
-class igisSIM::Coords3D
+class MPS::Coords3D
 {
 private:
 	/**
@@ -91,7 +91,7 @@ public:
 	inline void setZ(const int& z) {_z = z;}
 };
 
-namespace igisSIM {
+namespace MPS {
 	/**
 	* @brief Compare two coordinates
 	*
@@ -100,6 +100,6 @@ namespace igisSIM {
 	*
 	* @return true if (x, y, z) are equals
 	*/
-	bool operator==(const igisSIM::Coords3D& lhs, const igisSIM::Coords3D& rhs);
+	bool operator==(const MPS::Coords3D& lhs, const MPS::Coords3D& rhs);
 }
 

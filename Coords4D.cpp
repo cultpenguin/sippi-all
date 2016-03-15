@@ -13,7 +13,7 @@
 *
 * Default value is (0, 0, 0, NaN)
 */
-igisSIM::Coords4D::Coords4D(void) : Coords3D() {
+MPS::Coords4D::Coords4D(void) : Coords3D() {
 	_v = std::numeric_limits<float>::quiet_NaN();
 	//Emtpy constructor
 }
@@ -25,7 +25,7 @@ igisSIM::Coords4D::Coords4D(void) : Coords3D() {
 * @param z z value
 * @param v v value default is NaN
 */
-igisSIM::Coords4D::Coords4D(const int& x, const int& y, const int& z, const float& v) : Coords3D(x, y, z){
+MPS::Coords4D::Coords4D(const int& x, const int& y, const int& z, const float& v) : Coords3D(x, y, z){
 	_v = v;
 }
 
@@ -34,17 +34,17 @@ igisSIM::Coords4D::Coords4D(const int& x, const int& y, const int& z, const floa
 * @param coord3D a coord3D
 * @param v v value default is NaN
 */
-igisSIM::Coords4D::Coords4D(const igisSIM::Coords3D coord3D, const float& v) : Coords3D(coord3D.getX(), coord3D.getY(), coord3D.getZ()){
+MPS::Coords4D::Coords4D(const MPS::Coords3D coord3D, const float& v) : Coords3D(coord3D.getX(), coord3D.getY(), coord3D.getZ()){
 	_v = v;
 }
 
 /**
 * @brief Destructors
 */
-igisSIM::Coords4D::~Coords4D(void) {
+MPS::Coords4D::~Coords4D(void) {
 }
 
-namespace igisSIM {
+namespace MPS {
 	/**
 	* @brief Compare two coordinates
 	*
@@ -53,7 +53,7 @@ namespace igisSIM {
 	*
 	* @return true if (x, y, z, v) are equals
 	*/
-	bool operator==(const igisSIM::Coords4D& lhs, const igisSIM::Coords4D& rhs){
+	bool operator==(const MPS::Coords4D& lhs, const MPS::Coords4D& rhs){
 		return (lhs.getX() == rhs.getX() && lhs.getY() == rhs.getY() && lhs.getZ() == rhs.getZ() && lhs.getValue() == rhs.getValue());
 	}
 
@@ -65,7 +65,7 @@ namespace igisSIM {
 	*
 	* @return true if (x, y, z, v) are inferior
 	*/
-	bool operator<(const igisSIM::Coords4D& lhs, const igisSIM::Coords4D& rhs){
+	bool operator<(const MPS::Coords4D& lhs, const MPS::Coords4D& rhs){
 		std::cout << "when this is call ?" << std::endl;
 		return (lhs.getX() < rhs.getX() && lhs.getY() < rhs.getY() && lhs.getZ() < rhs.getZ() && lhs.getValue() < rhs.getValue());
 	}

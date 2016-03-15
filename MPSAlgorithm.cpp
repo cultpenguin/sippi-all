@@ -20,14 +20,14 @@
 /**
 * @brief Constructors
 */
-igisSIM::MPSAlgorithm::MPSAlgorithm(void) {
+MPS::MPSAlgorithm::MPSAlgorithm(void) {
 
 }
 
 /**
 * @brief Destructors
 */
-igisSIM::MPSAlgorithm::~MPSAlgorithm(void) {
+MPS::MPSAlgorithm::~MPSAlgorithm(void) {
 
 }
 
@@ -39,7 +39,7 @@ igisSIM::MPSAlgorithm::~MPSAlgorithm(void) {
 * @param sgDimZ dimension Z of the grid
 * @param value value of each grid node default is NAN
 */
-void igisSIM::MPSAlgorithm::_initializeHDG(std::vector<std::vector<std::vector<float>>>& hdg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const float& value) {
+void MPS::MPSAlgorithm::_initializeHDG(std::vector<std::vector<std::vector<float>>>& hdg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const float& value) {
 
 	hdg.resize(sgDimZ);
 	for (int z=0; z<sgDimZ; z++) {
@@ -61,7 +61,7 @@ void igisSIM::MPSAlgorithm::_initializeHDG(std::vector<std::vector<std::vector<f
 * @param sgDimZ dimension Z of the grid
 * @param value value of each grid node default is NAN
 */
-void igisSIM::MPSAlgorithm::_initializeSG(std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const float& value) {
+void MPS::MPSAlgorithm::_initializeSG(std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const float& value) {
 	sg.resize(sgDimZ);
 	for (int z=0; z<sgDimZ; z++) {
 		sg[z].resize(sgDimY);
@@ -85,7 +85,7 @@ void igisSIM::MPSAlgorithm::_initializeSG(std::vector<std::vector<std::vector<fl
 * @param grid the grid to copy data in
 * @param value value in copy grid considered to be a NAN value default is -1
 */
-void igisSIM::MPSAlgorithm::_initializeSG(std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const std::vector<std::vector<std::vector<float>>>& grid, const float& nanValue) {
+void MPS::MPSAlgorithm::_initializeSG(std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const std::vector<std::vector<std::vector<float>>>& grid, const float& nanValue) {
 
 	sg.resize(sgDimZ);
 	for (int z=0; z<sgDimZ; z++) {
@@ -93,7 +93,7 @@ void igisSIM::MPSAlgorithm::_initializeSG(std::vector<std::vector<std::vector<fl
 		for (int y=0; y<sgDimY; y++) {
 			sg[z][y].resize(sgDimX);
 			for (int x=0; x<sgDimX; x++) {
-				if(!igisSIM::utility::is_nan(grid[z][y][x])) sg[z][y][x] = grid[z][y][x];
+				if(!MPS::utility::is_nan(grid[z][y][x])) sg[z][y][x] = grid[z][y][x];
 				else sg[z][y][x]= std::numeric_limits<float>::quiet_NaN();
 				// std::cout << "init:: "  << x << y << z << " VAL " <<  _sg[z][y][x] << " " << grid[z][y][x] << std::endl;
 			}
@@ -108,7 +108,7 @@ void igisSIM::MPSAlgorithm::_initializeSG(std::vector<std::vector<std::vector<fl
 * @param sgDimZ dimension Z of the path
 * @param path output simulation path
 */
-void igisSIM::MPSAlgorithm::_initilizePath(const int& sgDimX, const int& sgDimY, const int& sgDimZ, std::vector<int>& path) {
+void MPS::MPSAlgorithm::_initilizePath(const int& sgDimX, const int& sgDimY, const int& sgDimZ, std::vector<int>& path) {
 	//Putting sequential indices
 	int cnt = 0;
 	for (int z=0; z<sgDimZ; z++) {
@@ -126,7 +126,7 @@ void igisSIM::MPSAlgorithm::_initilizePath(const int& sgDimX, const int& sgDimY,
 * @param the pdf as a std::map
 * @param a realization from the pdf
 */
-float igisSIM::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf) {
+float MPS::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf) {
 	float simulatedValue;
 	float randomValue	;
 	randomValue = ((float) rand() / (RAND_MAX));
@@ -156,10 +156,10 @@ float igisSIM::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf) {
 * @param closestCoordinates closest coordinates found
 * @return True if found a closed node
 */
-bool igisSIM::MPSAlgorithm::_IsClosedToNodeInGrid(const int& x, const int& y, const int& z, const int& level, const std::vector<std::vector<std::vector<float>>>& grid, const float& searchRadius, igisSIM::Coords3D& closestCoordinates) {
+bool MPS::MPSAlgorithm::_IsClosedToNodeInGrid(const int& x, const int& y, const int& z, const int& level, const std::vector<std::vector<std::vector<float>>>& grid, const float& searchRadius, MPS::Coords3D& closestCoordinates) {
 	//Using circular search 
 	//TODO: Need to check this again, it runs slow with HD
-	std::vector<igisSIM::Coords3D> L;
+	std::vector<MPS::Coords3D> L;
 	std::vector<float> V;
 	//_circularSearch(x, y, z, grid, 1, searchRadius, L, V);
 	_circularSearch(x, y, z, grid, 1, std::pow(2, level), L, V);
@@ -197,7 +197,7 @@ bool igisSIM::MPSAlgorithm::_IsClosedToNodeInGrid(const int& x, const int& y, co
 	//	for (int cY = fromY; cY<toY; cY+=step) {
 	//		for (int cX = fromX; cX<toX; cX+=step) {
 	//			//Compute distance and get the closest point
-	//			if(!igisSIM::utility::is_nan(grid[cZ][cY][cX])) {
+	//			if(!MPS::utility::is_nan(grid[cZ][cY][cX])) {
 	//				dist = (pow((cX - x)*_sgCellSizeX, 2) + pow((cY - y)*_sgCellSizeY, 2) + pow((cZ - z)*_sgCellSizeZ, 2));
 	//				if (dist <= distMin) {
 	//					distMin = dist;
@@ -226,7 +226,7 @@ bool igisSIM::MPSAlgorithm::_IsClosedToNodeInGrid(const int& x, const int& y, co
 * @param closestCoords closest point used with relocation, if not then the current x, y, z is used
 * @return computed value from softdata
 */
-bool igisSIM::MPSAlgorithm::_getCpdfFromSoftData(const int& x, const int& y, const int& z, const int& level, std::map<float, float>& softPdf, igisSIM::Coords3D& closestCoords) {
+bool MPS::MPSAlgorithm::_getCpdfFromSoftData(const int& x, const int& y, const int& z, const int& level, std::map<float, float>& softPdf, MPS::Coords3D& closestCoords) {
 	//Empty grids check
 	if (_softDataGrids.empty()) return false;
 	//Out of bound check
@@ -240,10 +240,10 @@ bool igisSIM::MPSAlgorithm::_getCpdfFromSoftData(const int& x, const int& y, con
 	closestCoords.setZ(z);
 	if (level == 0) { //For coarse level, then check for the same node localtion in softdata grid
 		//No value check
-		if (igisSIM::utility::is_nan(_softDataGrids[0][z][y][x])) return false;
+		if (MPS::utility::is_nan(_softDataGrids[0][z][y][x])) return false;
 	} else {
 		//Check if node is closed to a search radius if using multiple level, doing the relocation here
-		if (igisSIM::utility::is_nan(_softDataGrids[0][closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()])) {
+		if (MPS::utility::is_nan(_softDataGrids[0][closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()])) {
 			if (!_IsClosedToNodeInGrid(x, y, z, level, _softDataGrids[0], _hdSearchRadius, closestCoords)) return false;
 		}
 		//if (!_IsClosedToNodeInGrid(x, y, z, _softDataGrids[0], _hdSearchRadius, closestCoords)) return false;
@@ -267,12 +267,12 @@ bool igisSIM::MPSAlgorithm::_getCpdfFromSoftData(const int& x, const int& y, con
 /**
 * @brief Show the SG in the terminal
 */
-void igisSIM::MPSAlgorithm::_showSG(void) const {
+void MPS::MPSAlgorithm::_showSG(void) const {
 	for (int z=0; z<_sgDimZ; z++) {
 		std::cout << "Z: " << (z + 1) << "/" << _sgDimZ << std::endl;
 		for (int y=0; y<_sgDimY; y++) {
 			for (int x=0; x<_sgDimX; x++) {
-				std::cout << igisSIM::io::onscreenChars[int(_sg[z][y][x]) % igisSIM::io::onscreenChars.size()];
+				std::cout << MPS::io::onscreenChars[int(_sg[z][y][x]) % MPS::io::onscreenChars.size()];
 			}
 			std::cout << std::endl;
 		}
@@ -283,13 +283,13 @@ void igisSIM::MPSAlgorithm::_showSG(void) const {
 /**
 * @brief Read different data (TI, hard and softdata from files)
 */
-void igisSIM::MPSAlgorithm::_readDataFromFiles(void) {
+void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 	//Reading TI file
 	bool readSucessfull = false;
-	std::string fileExtension = igisSIM::utility::getExtension(_tiFilename);
-	if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = igisSIM::io::readTIFromGS3DCSVFile(_tiFilename, _TI);
-	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = igisSIM::io::readTIFromGSLIBFile(_tiFilename, _TI);
-	else if (fileExtension == "grd3") readSucessfull = igisSIM::io::readTIFromGS3DGRD3File(_tiFilename, _TI);
+	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
+	if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = MPS::io::readTIFromGS3DCSVFile(_tiFilename, _TI);
+	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_tiFilename, _TI);
+	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_tiFilename, _TI);
 	if(!readSucessfull) {
 		std::cout << "Error reading TI " << _tiFilename << std::endl;
 		exit(-1);
@@ -297,11 +297,11 @@ void igisSIM::MPSAlgorithm::_readDataFromFiles(void) {
 
 	//Reading Hard conditional data
 	readSucessfull = false;
-	fileExtension = igisSIM::utility::getExtension(_hardDataFileNames);
-	if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = igisSIM::io::readTIFromGS3DCSVFile(_hardDataFileNames, _hdg);
-	else if (fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = igisSIM::io::readTIFromGSLIBFile(_hardDataFileNames, _hdg);
-	else if (fileExtension == "dat") readSucessfull = igisSIM::io::readHardDataFromEASFile(_hardDataFileNames, -999, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, _hdg);
-	else if (fileExtension == "grd3") readSucessfull = igisSIM::io::readTIFromGS3DGRD3File(_hardDataFileNames, _hdg);
+	fileExtension = MPS::utility::getExtension(_hardDataFileNames);
+	if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = MPS::io::readTIFromGS3DCSVFile(_hardDataFileNames, _hdg);
+	else if (fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_hardDataFileNames, _hdg);
+	else if (fileExtension == "dat") readSucessfull = MPS::io::readHardDataFromEASFile(_hardDataFileNames, -999, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, _hdg);
+	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_hardDataFileNames, _hdg);
 	if((!readSucessfull)&(_debugMode>-1)) {
 		std::cout << "Error reading harddata " << _hardDataFileNames << std::endl;
 	}
@@ -309,11 +309,11 @@ void igisSIM::MPSAlgorithm::_readDataFromFiles(void) {
 	//Reading Soft conditional data
 	for (unsigned int i=0; i<_softDataFileNames.size(); i++) {
 		readSucessfull = false;
-		fileExtension = igisSIM::utility::getExtension(_softDataFileNames[i]);
-		if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = igisSIM::io::readTIFromGS3DCSVFile(_softDataFileNames[i], _softDataGrids[i]);
-		else if (fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = igisSIM::io::readTIFromGSLIBFile(_softDataFileNames[i], _softDataGrids[i]);
-		else if (fileExtension == "dat") readSucessfull = igisSIM::io::readSoftDataFromEASFile(_softDataFileNames[i], _softDataCategories, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, _softDataGrids); //EAS read only 1 file
-		else if (fileExtension == "grd3") readSucessfull = igisSIM::io::readTIFromGS3DGRD3File(_softDataFileNames[i], _softDataGrids[i]);
+		fileExtension = MPS::utility::getExtension(_softDataFileNames[i]);
+		if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = MPS::io::readTIFromGS3DCSVFile(_softDataFileNames[i], _softDataGrids[i]);
+		else if (fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_softDataFileNames[i], _softDataGrids[i]);
+		else if (fileExtension == "dat") readSucessfull = MPS::io::readSoftDataFromEASFile(_softDataFileNames[i], _softDataCategories, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, _softDataGrids); //EAS read only 1 file
+		else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_softDataFileNames[i], _softDataGrids[i]);
 		if(!readSucessfull) {
 			_softDataGrids.clear();
 			if (_debugMode>-1) {
@@ -332,13 +332,13 @@ void igisSIM::MPSAlgorithm::_readDataFromFiles(void) {
 * @param level current grid level
 * @param addedNodes list of added nodes
 */
-void igisSIM::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, const int& level, std::list<igisSIM::Coords3D>& addedNodes) {
+void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, const int& level, std::list<MPS::Coords3D>& addedNodes) {
 	//Searching closest value in hard data and put that into the simulation grid
 	//Only search for the node not NaN and within the radius
 	//Do this only if have a hard data defined or
 	//If current node already has value
-	if(!_hdg.empty() && igisSIM::utility::is_nan(_sg[z][y][x])) {
-		igisSIM::Coords3D closestCoords;
+	if(!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
+		MPS::Coords3D closestCoords;
 		if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, _hdSearchRadius, closestCoords)) {
 			//Adding the closest point to a list to desallocate after
 			addedNodes.push_back(closestCoords);
@@ -352,9 +352,9 @@ void igisSIM::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int&
 * @brief Clear the SG nodes from the list of added nodes found by _fillSGfromHD
 * @param addedNodes list of added nodes
 */
-void igisSIM::MPSAlgorithm::_clearSGFromHD(std::list<igisSIM::Coords3D>& addedNodes) {
+void MPS::MPSAlgorithm::_clearSGFromHD(std::list<MPS::Coords3D>& addedNodes) {
 	//Cleaning the allocated data from the SG
-	for (std::list<igisSIM::Coords3D>::iterator ptToBeRelocated = addedNodes.begin(); ptToBeRelocated != addedNodes.end(); ++ptToBeRelocated) {
+	for (std::list<MPS::Coords3D>::iterator ptToBeRelocated = addedNodes.begin(); ptToBeRelocated != addedNodes.end(); ++ptToBeRelocated) {
 		_sg[ptToBeRelocated->getZ()][ptToBeRelocated->getY()][ptToBeRelocated->getX()] = std::numeric_limits<float>::quiet_NaN();
 	}
 	addedNodes.clear();
@@ -369,7 +369,7 @@ void igisSIM::MPSAlgorithm::_clearSGFromHD(std::list<igisSIM::Coords3D>& addedNo
 * @param str string represents the line
 * @return true if the line contains data
 */
-bool igisSIM::MPSAlgorithm::_readLineConfiguration(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str) {
+bool MPS::MPSAlgorithm::_readLineConfiguration(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str) {
 	ss.clear();
 	data.clear();
 	getline(file, str);
@@ -388,7 +388,7 @@ bool igisSIM::MPSAlgorithm::_readLineConfiguration(std::ifstream& file, std::str
 * @brief Shuffle the simulation grid path based preferential to soft data
 * @param level current multi grid level
 */
-bool igisSIM::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
+bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 	// PATH PREFERENTIAL BY ENTROPY OF SOFT DATA
 	// facEntropy=0 --> prefer soft data, but disregard entroopy
 	// facEntropy>0 --> higher number means more deterministic path based increasingly on Entropy
@@ -399,9 +399,9 @@ bool igisSIM::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& leve
 	int node1DIdx;
 	bool isRelocated = false;
 	bool isAlreadyAllocated = false;
-	std::list<igisSIM::Coords3D> allocatedNodesFromSoftData; //Using to allocate the multiple grid with closest hd values
+	std::list<MPS::Coords3D> allocatedNodesFromSoftData; //Using to allocate the multiple grid with closest hd values
 	std::map<float, float> softPdf;
-	igisSIM::Coords3D closestCoords;
+	MPS::Coords3D closestCoords;
 	//Looping through each index of each multiple grid
 	for (int z=0; z<_sgDimZ; z+= offset) {
 		for (int y=0; y<_sgDimY; y+= offset) {
@@ -471,12 +471,12 @@ bool igisSIM::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& leve
 						}
 					}						
 				}
-				igisSIM::utility::treeDto1D(closestCoords.getX(), closestCoords.getY(), closestCoords.getZ(), _sgDimX, _sgDimY, node1DIdx);
+				MPS::utility::treeDto1D(closestCoords.getX(), closestCoords.getY(), closestCoords.getZ(), _sgDimX, _sgDimY, node1DIdx);
 				ePath.insert ( std::pair<float,int>(randomValue, node1DIdx) );
 				//ePath[randomValue] = cnt;
 				//If closestCoords are different than current coordinate that mean there is a relocation so save the node to reinitialize
 				if (isRelocated) {
-					igisSIM::Coords3D nodeToBeReinitialized;
+					MPS::Coords3D nodeToBeReinitialized;
 					nodeToBeReinitialized.setX(x);
 					nodeToBeReinitialized.setY(y);
 					nodeToBeReinitialized.setZ(z);
@@ -488,7 +488,7 @@ bool igisSIM::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& leve
 
 	//Reset relocated node of soft data to NaN
 	if (isRelocated) {
-		for (std::list<igisSIM::Coords3D>::iterator ptToBeRelocated = allocatedNodesFromSoftData.begin(); ptToBeRelocated != allocatedNodesFromSoftData.end(); ++ptToBeRelocated) {
+		for (std::list<MPS::Coords3D>::iterator ptToBeRelocated = allocatedNodesFromSoftData.begin(); ptToBeRelocated != allocatedNodesFromSoftData.end(); ++ptToBeRelocated) {
 			for (unsigned int i=0; i<_softDataCategories.size(); i++) {
 				_softDataGrids[i][ptToBeRelocated->getZ()][ptToBeRelocated->getY()][ptToBeRelocated->getX()] = std::numeric_limits<float>::quiet_NaN();
 			}
@@ -512,7 +512,7 @@ bool igisSIM::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& leve
 		int tmpX, tmpY, tmpZ;
 
 		for (auto i = _simulationPath.begin(); i != _simulationPath.end(); ++i) {
-			igisSIM::utility::oneDTo3D(*i, _sgDimX, _sgDimY, tmpX, tmpY, tmpZ); 
+			MPS::utility::oneDTo3D(*i, _sgDimX, _sgDimY, tmpX, tmpY, tmpZ); 
 			std::cout << tmpX << "," << tmpY << "," << tmpZ << "  ";
 		}
 		std::cout << std::endl << "PATH END" << std::endl;
@@ -525,7 +525,7 @@ bool igisSIM::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& leve
 * @brief Start the simulation
 * Virtual function implemented from MPSAlgorithm
 */
-void igisSIM::MPSAlgorithm::startSimulation(void) {
+void MPS::MPSAlgorithm::startSimulation(void) {
 
 	//Intitialize random seed or not
 	if (_seed != 0) srand(_seed); //same seed
@@ -541,7 +541,7 @@ void igisSIM::MPSAlgorithm::startSimulation(void) {
 	clock_t endNode, beginRealization, endRealization;
 	double elapsedRealizationSecs, elapsedNodeSecs;
 	int nodeEstimatedSeconds, seconds, hours, minutes, lastProgress;
-	std::list<igisSIM::Coords3D> allocatedNodesFromHardData; //Using to allocate the multiple grid with closest hd values
+	std::list<MPS::Coords3D> allocatedNodesFromHardData; //Using to allocate the multiple grid with closest hd values
 	lastProgress = 0;
 	int nodeCnt = 0, totalNodes = 0;
 	int sg1DIdx, offset;
@@ -576,10 +576,10 @@ void igisSIM::MPSAlgorithm::startSimulation(void) {
 			for (int z=0; z<_sgDimZ; z+=offset) {
 				for (int y=0; y<_sgDimY; y+=offset) {
 					for (int x=0; x<_sgDimX; x+=offset) {
-						igisSIM::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
+						MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
 						_simulationPath.push_back(sg1DIdx);
 						//Fille the simulation node with the value from hard data grid
-						if(!_hdg.empty() && igisSIM::utility::is_nan(_sg[z][y][x])) {
+						if(!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
 							_sg[z][y][x] = _hdg[z][y][x];
 						}
 						//The relocation process happens if the current simulation grid value is still NaN
@@ -632,10 +632,10 @@ void igisSIM::MPSAlgorithm::startSimulation(void) {
 
 			for (unsigned int ii=0; ii<_simulationPath.size(); ii++) {
 				//Get node coordinates
-				igisSIM::utility::oneDTo3D(_simulationPath[ii], _sgDimX, _sgDimY, SG_idxX, SG_idxY, SG_idxZ);
+				MPS::utility::oneDTo3D(_simulationPath[ii], _sgDimX, _sgDimY, SG_idxX, SG_idxY, SG_idxZ);
 
 				//Performing simulation for non NaN value ...
-				if (igisSIM::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX]))
+				if (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX]))
 					_sg[SG_idxZ][SG_idxY][SG_idxX] = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);
 
 				if (_debugMode > -1) {
@@ -648,7 +648,7 @@ void igisSIM::MPSAlgorithm::startSimulation(void) {
 						endNode = clock();
 						elapsedNodeSecs = double(endNode - beginRealization) / CLOCKS_PER_SEC;
 						nodeEstimatedSeconds = (int)((elapsedNodeSecs/(float)(progressionCnt)) * (float)(totalNodes - progressionCnt));
-						igisSIM::utility::secondsToHrMnSec(nodeEstimatedSeconds, hours, minutes, seconds);
+						MPS::utility::secondsToHrMnSec(nodeEstimatedSeconds, hours, minutes, seconds);
 						if (progress > 0) //Ignore first time that cant provide any time estimation
 							std::cout << "Level: " << level << " Progression (%): " << progress << " finish in: " << hours << " h " << minutes << " mn " << seconds << " sec" << std::endl;
 					}
@@ -663,7 +663,7 @@ void igisSIM::MPSAlgorithm::startSimulation(void) {
 			//_showSG();
 
 			//Writting SG to file
-			//igisSIM::io::writeToGSLIBFile("test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			//MPS::io::writeToGSLIBFile("test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 		}
 
 		if (_debugMode > 0) {
@@ -682,21 +682,21 @@ void igisSIM::MPSAlgorithm::startSimulation(void) {
 		  if (_debugMode > -1) {
 		    std::cout << "Write simulation grid to hard drive..." << std::endl;
 		  }
-		  igisSIM::io::writeToGSLIBFile(outputFilename + "_sg_" + std::to_string(n) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
-		  igisSIM::io::writeToGRD3File(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".grd3", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, 3);
-		  //igisSIM::io::writeToGS3DCSVFile(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".csv", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
-		  //igisSIM::io::writeToASCIIFile(outputFilename + "_sg_ascii" + std::to_string(n) + ".txt", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
-		  //igisSIM::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+		  MPS::io::writeToGSLIBFile(outputFilename + "_sg_" + std::to_string(n) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+		  MPS::io::writeToGRD3File(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".grd3", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, 3);
+		  //MPS::io::writeToGS3DCSVFile(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".csv", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+		  //MPS::io::writeToASCIIFile(outputFilename + "_sg_ascii" + std::to_string(n) + ".txt", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+		  //MPS::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 		}
 
 		if (_debugMode > 1) {
 			//Write random path to file
-			igisSIM::io::writeToGSLIBFile(outputFilename + "_path_" + std::to_string(n) + ".gslib", _simulationPath, _sgDimX, _sgDimY, _sgDimZ);
+			MPS::io::writeToGSLIBFile(outputFilename + "_path_" + std::to_string(n) + ".gslib", _simulationPath, _sgDimX, _sgDimY, _sgDimZ);
 		}
 	}
 
 	if (_debugMode > -1) {
-		igisSIM::utility::secondsToHrMnSec((int)(totalSecs/_realizationNumbers), hours, minutes, seconds);
+		MPS::utility::secondsToHrMnSec((int)(totalSecs/_realizationNumbers), hours, minutes, seconds);
 		std::cout << "Total simulation time " << totalSecs << "s"<<std::endl;
 		std::cout << "Average time for " << _realizationNumbers << " simulations (hours:minutes:seconds) : " << hours << ":" << minutes << ":" << seconds << std::endl;
 	}
@@ -725,11 +725,11 @@ void igisSIM::MPSAlgorithm::startSimulation(void) {
 * @param V output vector values of the found nodes
 * @return true if foundCnt is greater than max neighbors allowed
 */
-bool igisSIM::MPSAlgorithm::_addingData(const std::vector<std::vector<std::vector<float>>>& grid, const int& idxX, const int& idxY, const int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<igisSIM::Coords3D>& L, std::vector<float>& V) {
-	if (!igisSIM::utility::is_nan(grid[idxZ][idxY][idxX])) {
+bool MPS::MPSAlgorithm::_addingData(const std::vector<std::vector<std::vector<float>>>& grid, const int& idxX, const int& idxY, const int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<MPS::Coords3D>& L, std::vector<float>& V) {
+	if (!MPS::utility::is_nan(grid[idxZ][idxY][idxX])) {
 		foundCnt++;
 		if (foundCnt > maxNeighboursLimit) return true;
-		igisSIM::Coords3D aCoords;
+		MPS::Coords3D aCoords;
 		aCoords.setX(idxX - sgIdxX);
 		aCoords.setY(idxY - sgIdxY);
 		aCoords.setZ(idxZ - sgIdxZ);
@@ -761,7 +761,7 @@ bool igisSIM::MPSAlgorithm::_addingData(const std::vector<std::vector<std::vecto
 * @param V output vector values of the found nodes
 * @return true if foundCnt is greater than max neighbors allowed
 */
-void igisSIM::MPSAlgorithm::_searchDataInDirection(const std::vector<std::vector<std::vector<float>>>& grid, const int& direction, int& idxX, int& idxY, int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& xOffset, const int& yOffset, const int& zOffset, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<igisSIM::Coords3D>& L, std::vector<float>& V) {
+void MPS::MPSAlgorithm::_searchDataInDirection(const std::vector<std::vector<std::vector<float>>>& grid, const int& direction, int& idxX, int& idxY, int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& xOffset, const int& yOffset, const int& zOffset, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<MPS::Coords3D>& L, std::vector<float>& V) {
 	if(direction == 0) { //Direction X
 		for(int k=-yOffset; k<=yOffset; k++) {
 			idxY = sgIdxY + k;
@@ -810,7 +810,7 @@ void igisSIM::MPSAlgorithm::_searchDataInDirection(const std::vector<std::vector
 * @param L output vector distances between a found nodes and the currrent node
 * @param V output vector values of the found nodes
 */
-void igisSIM::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const std::vector<std::vector<std::vector<float>>>& grid, const int& maxNeighboursLimit, const float& maxRadiusLimit, std::vector<igisSIM::Coords3D>& L, std::vector<float>& V) {
+void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const std::vector<std::vector<std::vector<float>>>& grid, const int& maxNeighboursLimit, const float& maxRadiusLimit, std::vector<MPS::Coords3D>& L, std::vector<float>& V) {
 	int foundCnt = 0;
 	int idxX, idxY, idxZ;
 	int xOffset, yOffset, zOffset;

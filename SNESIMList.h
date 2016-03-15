@@ -10,15 +10,15 @@
 
 #include "SNESIM.h"
 
-namespace igisSIM {
+namespace MPS {
 	class SNESIMList;
 }
 
 /**
 * @brief An implementation of the SNESIM algorithm using a list to store conditional statistics
 */
-class igisSIM::SNESIMList :
-	public igisSIM::SNESIM
+class MPS::SNESIMList :
+	public MPS::SNESIM
 {
 protected:
 	/**

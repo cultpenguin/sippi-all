@@ -18,14 +18,14 @@
 /**
 * @brief Constructors from a configuration file
 */
-igisSIM::SNESIMTree::SNESIMTree(const std::string& configurationFile) : igisSIM::SNESIM(){
+MPS::SNESIMTree::SNESIMTree(const std::string& configurationFile) : MPS::SNESIM(){
 	initialize(configurationFile);
 }
 
 /**
 * @brief Destructors
 */
-igisSIM::SNESIMTree::~SNESIMTree(void) {
+MPS::SNESIMTree::~SNESIMTree(void) {
 
 }
 
@@ -34,7 +34,7 @@ igisSIM::SNESIMTree::~SNESIMTree(void) {
 * @brief Initialize the simulation from a configuration file
 * @param configurationFile configuration file name
 */
-void igisSIM::SNESIMTree::initialize(const std::string& configurationFile) {
+void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 	//Reading configuration file
 	_readConfigurations(configurationFile);
 
@@ -104,7 +104,7 @@ void igisSIM::SNESIMTree::initialize(const std::string& configurationFile) {
 						foundExistingValue = false;
 						foundIdx = 0;
 						//Checking of NaN value
-						if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || igisSIM::utility::is_nan(_TI[tiZ][tiY][tiX])) { //Out of bound or nan
+						if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || MPS::utility::is_nan(_TI[tiZ][tiY][tiX])) { //Out of bound or nan
 							break; //Ignore border stop here
 						} else {
 							//Searching the TI cell value inside the current node
@@ -163,9 +163,9 @@ void igisSIM::SNESIMTree::initialize(const std::string& configurationFile) {
 * @brief Start the simulation
 * Virtual function implemented from MPSAlgorithm
 */
-void igisSIM::SNESIMTree::startSimulation(void) {
+void MPS::SNESIMTree::startSimulation(void) {
 	//Call parent function
-	igisSIM::MPSAlgorithm::startSimulation();
+	MPS::MPSAlgorithm::startSimulation();
 }
 
 /**
@@ -176,11 +176,11 @@ void igisSIM::SNESIMTree::startSimulation(void) {
 * @param level multigrid level
 * @return found node's value
 */
-float igisSIM::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level) {
+float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level) {
 	//Initialize with node's value
 	float foundValue = _sg[sgIdxZ][sgIdxY][sgIdxX];
 	//If have NaN value then doing the simulation ...
-	if (igisSIM::utility::is_nan(_sg[sgIdxZ][sgIdxY][sgIdxX])) {
+	if (MPS::utility::is_nan(_sg[sgIdxZ][sgIdxY][sgIdxX])) {
 		int offset = int(std::pow(2, level));			
 		int sgX, sgY, sgZ;
 		int deltaX, deltaY, deltaZ;
@@ -199,7 +199,7 @@ float igisSIM::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const
 			sgZ = sgIdxZ + deltaZ;
 			if (!(sgX < 0 || sgX >= _sgDimX) && !(sgY < 0 || sgY >= _sgDimY) && !(sgZ < 0 || sgZ >= _sgDimZ)) { 
 				//not overflow
-				if (!igisSIM::utility::is_nan(_sg[sgZ][sgY][sgX])) {
+				if (!MPS::utility::is_nan(_sg[sgZ][sgY][sgX])) {
 					aPartialTemplate.push_back(_sg[sgZ][sgY][sgX]);
 				} else { //NaN value
 					aPartialTemplate.push_back(std::numeric_limits<float>::quiet_NaN());
@@ -232,7 +232,7 @@ float igisSIM::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const
 				nodesToCheck.pop_back();
 				//Showing the current node value and counter
 				for (unsigned int i=0; i<currentTreeNode->size(); i++) {
-					if (igisSIM::utility::is_nan(aPartialTemplate[currentTreeNode->operator[](i).level - 1])) {
+					if (MPS::utility::is_nan(aPartialTemplate[currentTreeNode->operator[](i).level - 1])) {
 						//If the template value is non defined then just go to children
 						nodesToCheck.push_front(&(currentTreeNode->operator[](i).children));
 					} else if (currentTreeNode->operator[](i).value == aPartialTemplate[currentTreeNode->operator[](i).level - 1]) {

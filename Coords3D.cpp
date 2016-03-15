@@ -13,7 +13,7 @@
 *
 * Default value is (0, 0, 0)
 */
-igisSIM::Coords3D::Coords3D(void) {
+MPS::Coords3D::Coords3D(void) {
 }
 
 /**
@@ -22,7 +22,7 @@ igisSIM::Coords3D::Coords3D(void) {
 * @param y y value
 * @param z z value
 */
-igisSIM::Coords3D::Coords3D(const int& x, const int& y, const int& z) {
+MPS::Coords3D::Coords3D(const int& x, const int& y, const int& z) {
 	_x = x;
 	_y = y;
 	_z = z;
@@ -31,10 +31,10 @@ igisSIM::Coords3D::Coords3D(const int& x, const int& y, const int& z) {
 /**
 * @brief Destructors
 */
-igisSIM::Coords3D::~Coords3D(void) {
+MPS::Coords3D::~Coords3D(void) {
 }
 
-namespace igisSIM {
+namespace MPS {
 	/**
 	* @brief Compare two coordinates
 	*
@@ -43,7 +43,7 @@ namespace igisSIM {
 	*
 	* @return true if (x, y, z) are equals
 	*/
-	bool operator==(const igisSIM::Coords3D& lhs, const igisSIM::Coords3D& rhs){
+	bool operator==(const MPS::Coords3D& lhs, const MPS::Coords3D& rhs){
 		return (lhs.getX() == rhs.getX() && lhs.getY() == rhs.getY() && lhs.getZ() == rhs.getZ());
 	}
 }

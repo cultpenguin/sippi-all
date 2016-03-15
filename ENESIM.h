@@ -13,7 +13,7 @@
 
 #include "MPSAlgorithm.h"
 
-namespace igisSIM {
+namespace MPS {
 	class ENESIM;
 	class Coords3D;
 }
@@ -21,8 +21,8 @@ namespace igisSIM {
 /**
 * @brief An implementation of the ENESIM algorithm
 */
-class igisSIM::ENESIM :
-	public igisSIM::MPSAlgorithm
+class MPS::ENESIM :
+	public MPS::MPSAlgorithm
 {
 private:
 

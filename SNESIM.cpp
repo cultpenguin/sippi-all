@@ -17,14 +17,14 @@
 /**
 * @brief Constructors
 */
-igisSIM::SNESIM::SNESIM(void) : igisSIM::MPSAlgorithm(){
+MPS::SNESIM::SNESIM(void) : MPS::MPSAlgorithm(){
 
 }
 
 /**
 * @brief Destructors
 */
-igisSIM::SNESIM::~SNESIM(void) {
+MPS::SNESIM::~SNESIM(void) {
 
 }
 
@@ -32,7 +32,7 @@ igisSIM::SNESIM::~SNESIM(void) {
 * @brief Read configuration file
 * @param fileName configuration filename
 */
-void igisSIM::SNESIM::_readConfigurations(const std::string& fileName) {
+void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	std::ifstream file(fileName);
 	std::string str;
 	std::stringstream ss;
@@ -153,7 +153,7 @@ void igisSIM::SNESIM::_readConfigurations(const std::string& fileName) {
 /**
 * @brief Construct templatefaces and sort them around template center
 */
-void igisSIM::SNESIM::_constructTemplateFaces(void) {
+void MPS::SNESIM::_constructTemplateFaces(void) {
 	int templateCenterX = (int)floor(_templateSizeX / 2);
 	int templateCenterY = (int)floor(_templateSizeY / 2);
 	int templateCenterZ = (int)floor(_templateSizeZ / 2);
@@ -174,28 +174,28 @@ void igisSIM::SNESIM::_constructTemplateFaces(void) {
 	//initialize faces
 	_templateFaces.clear();
 	//Initialize the faces with center point(0, 0, 0)
-	_templateFaces.push_back(igisSIM::Coords3D(0, 0, 0));
+	_templateFaces.push_back(MPS::Coords3D(0, 0, 0));
 	int offsetX, offsetY, offsetZ;
 	int templateIdxX, templateIdxY, templateIdxZ;
 	for (int i=0; i<totalTemplateIndices; i++) {
 		//std::cout << templatePath[i] << " ";
-		igisSIM::utility::oneDTo3D(templatePath[i], _templateSizeX, _templateSizeY, templateIdxX, templateIdxY, templateIdxZ);
+		MPS::utility::oneDTo3D(templatePath[i], _templateSizeX, _templateSizeY, templateIdxX, templateIdxY, templateIdxZ);
 		offsetX = templateIdxX - templateCenterX;
 		offsetY = templateIdxY - templateCenterY;
 		offsetZ = templateIdxZ - templateCenterZ;
 		//Ignore center point
 		if (offsetX != 0 || offsetY != 0 || offsetZ != 0) {
-			_templateFaces.push_back(igisSIM::Coords3D(offsetX, offsetY, offsetZ));
+			_templateFaces.push_back(MPS::Coords3D(offsetX, offsetY, offsetZ));
 		}
 	}
 
 	////Forcing a template like in article
 	//_templateFaces.clear();
-	//_templateFaces.push_back(igisSIM::Coords3D(0, 0, 0));
-	//_templateFaces.push_back(igisSIM::Coords3D(0, 1, 0));
-	//_templateFaces.push_back(igisSIM::Coords3D(1, 0, 0));
-	//_templateFaces.push_back(igisSIM::Coords3D(0, -1, 0));
-	//_templateFaces.push_back(igisSIM::Coords3D(-1, 0, 0));
+	//_templateFaces.push_back(MPS::Coords3D(0, 0, 0));
+	//_templateFaces.push_back(MPS::Coords3D(0, 1, 0));
+	//_templateFaces.push_back(MPS::Coords3D(1, 0, 0));
+	//_templateFaces.push_back(MPS::Coords3D(0, -1, 0));
+	//_templateFaces.push_back(MPS::Coords3D(-1, 0, 0));
 	////Showing the template faces
 	//std::cout << _templateFaces.size() << std::endl;
 	//for (unsigned int i=0; i<_templateFaces.size(); i++) {
@@ -211,7 +211,7 @@ void igisSIM::SNESIM::_constructTemplateFaces(void) {
 * @param y coordinate Y of the current node
 * @param z coordinate Z of the current node
 */
-float igisSIM::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, const int& y, const int& z) {
+float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, const int& y, const int& z) {
 	//Fill probability from TI
 	float foundValue = std::numeric_limits<float>::quiet_NaN();
 	//Looping through all the conditional points to calculate the pdf (probability distribution function)
@@ -236,7 +236,7 @@ float igisSIM::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int&
 	//Empty grids check
 	if (_softDataGrids.empty()) useSoftData = false;
 	//No value check
-	else if (igisSIM::utility::is_nan(_softDataGrids[0][z][y][x])) useSoftData = false;
+	else if (MPS::utility::is_nan(_softDataGrids[0][z][y][x])) useSoftData = false;
 	//Not same size check
 	//else if (_softDataCategories.size() != probabilitiesFromTI.size()) useSoftData = false;
 

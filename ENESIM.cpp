@@ -19,7 +19,7 @@
 /**
 * @brief Constructors
 */
-igisSIM::ENESIM::ENESIM(void) : igisSIM::MPSAlgorithm(){
+MPS::ENESIM::ENESIM(void) : MPS::MPSAlgorithm(){
 	// Multiple grids are not used in ENESIM type algorithms
 	_totalGridsLevel=0;
 	_nMaxCountCpdf=1;
@@ -28,7 +28,7 @@ igisSIM::ENESIM::ENESIM(void) : igisSIM::MPSAlgorithm(){
 /**
 * @brief Destructors
 */
-igisSIM::ENESIM::~ENESIM(void) {
+MPS::ENESIM::~ENESIM(void) {
 
 }
 
@@ -36,7 +36,7 @@ igisSIM::ENESIM::~ENESIM(void) {
 * @brief Read configuration file
 * @param fileName configuration filename
 */
-void igisSIM::ENESIM::_readConfigurations(const std::string& fileName) {
+void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	std::ifstream file(fileName);
 	std::string str;
 	std::stringstream ss;
@@ -153,7 +153,7 @@ void igisSIM::ENESIM::_readConfigurations(const std::string& fileName) {
 * @return true if found a value
 */
 
-bool igisSIM::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPdf) {
+bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPdf) {
 	int maxCpdfCount = _nMaxCountCpdf;
 
 	// map containing the count of conditional data values
@@ -168,7 +168,7 @@ bool igisSIM::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, con
 
 	//Seaching for neighbours to get vector V and L
 	//Doing a circular seach ATM ...
-	std::vector<igisSIM::Coords3D> L;
+	std::vector<MPS::Coords3D> L;
 	std::vector<float> V;
 	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, -1, L, V);
 
@@ -194,7 +194,7 @@ bool igisSIM::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, con
 	float L_dist;  // sum of realtive distance
 	float LC_dist; // distance of L,V to value in TI
 	for (unsigned int i_ti_path=0; i_ti_path<_tiPath.size(); i_ti_path++) {
-		igisSIM::utility::oneDTo3D(_tiPath[i_ti_path], _tiDimX, _tiDimY, TI_idxX, TI_idxY, TI_idxZ);
+		MPS::utility::oneDTo3D(_tiPath[i_ti_path], _tiDimX, _tiDimY, TI_idxX, TI_idxY, TI_idxZ);
 
 		if (_debugMode > 3) {
 			std::cout << "  " << "i_ti_path=" << i_ti_path<< " ===";
@@ -324,7 +324,7 @@ bool igisSIM::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, con
 * @param probability density 2, pdf2
 * @return true if succesfull, and update pdf is available in pdf1
 */
-bool igisSIM::ENESIM::_combinePdf(std::map<float, float>& cPdf, std::map<float, float>& softPdf) {
+bool MPS::ENESIM::_combinePdf(std::map<float, float>& cPdf, std::map<float, float>& softPdf) {
 
 	float key;
 	float val_softpdf;
@@ -372,7 +372,7 @@ bool igisSIM::ENESIM::_combinePdf(std::map<float, float>& cPdf, std::map<float, 
 * @param iterationCnt Iterations counter
 * @return simulated value
 */
-float igisSIM::ENESIM::_getRealizationFromCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
+float MPS::ENESIM::_getRealizationFromCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
 
 	// Get cPdf from training image using ENESIM style
 	std::map<float, float> conditionalPdfFromTi;
@@ -381,7 +381,7 @@ float igisSIM::ENESIM::_getRealizationFromCpdfTiEnesim(const int& sgIdxX, const 
 	// Check if any SoftData are available?
 	//std::multimap<float, float> softPdf;
 	std::map<float, float> softPdf;
-	igisSIM::Coords3D closestCoords;
+	MPS::Coords3D closestCoords;
 	if (_getCpdfFromSoftData(sgIdxX, sgIdxY, sgIdxZ, 0, softPdf, closestCoords)) {
 		  // Combine with conditional pdf from TI
 			_combinePdf(conditionalPdfFromTi,softPdf);
@@ -407,7 +407,7 @@ float igisSIM::ENESIM::_getRealizationFromCpdfTiEnesim(const int& sgIdxX, const 
 * @param iterationCnt Iterations counter
 * @return simulated value
 */
-float igisSIM::ENESIM::_getRealizationFromCpdfTiEnesimMetropolis(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
+float MPS::ENESIM::_getRealizationFromCpdfTiEnesimMetropolis(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
 
 	std::map<float, float> conditionalPdfFromTi;
 	// Check if any SoftData are available?
@@ -420,7 +420,7 @@ float igisSIM::ENESIM::_getRealizationFromCpdfTiEnesimMetropolis(const int& sgId
 	int i=0;;
 	int maxIterations = 100;  // decide whether soft or ti cpdf takes preference..
 	bool isAccepted = false;
-	igisSIM::Coords3D closestCoords;
+	MPS::Coords3D closestCoords;
 	if (_getCpdfFromSoftData(sgIdxX, sgIdxY, sgIdxZ, 0, softPdf, closestCoords)) {
 
 		do {

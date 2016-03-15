@@ -18,14 +18,14 @@
 /**
 * @brief Constructors from a configuration file
 */
-igisSIM::ENESIM_GENERAL::ENESIM_GENERAL(const std::string& configurationFile) : igisSIM::ENESIM(){
+MPS::ENESIM_GENERAL::ENESIM_GENERAL(const std::string& configurationFile) : MPS::ENESIM(){
 	initialize(configurationFile);
 }
 
 /**
 * @brief Destructors
 */
-igisSIM::ENESIM_GENERAL::~ENESIM_GENERAL(void) {
+MPS::ENESIM_GENERAL::~ENESIM_GENERAL(void) {
 	_shuffleEntropyFactor=4;
 }
 
@@ -33,7 +33,7 @@ igisSIM::ENESIM_GENERAL::~ENESIM_GENERAL(void) {
 * @brief Initialize the simulation from a configuration file
 * @param configurationFile configuration file name
 */
-void igisSIM::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
+void MPS::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
 	//Reading configuration file
 	_readConfigurations(configurationFile);
 
@@ -69,9 +69,9 @@ void igisSIM::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
 * @brief Start the simulation
 * Virtual function implemented from MPSAlgorithm
 */
-void igisSIM::ENESIM_GENERAL::startSimulation(void) {
+void MPS::ENESIM_GENERAL::startSimulation(void) {
 	//Call parent function
-	igisSIM::MPSAlgorithm::startSimulation();
+	MPS::MPSAlgorithm::startSimulation();
 }
 
 /**
@@ -82,7 +82,7 @@ void igisSIM::ENESIM_GENERAL::startSimulation(void) {
 * @param level multigrid level
 * @return found node's value
 */
-float igisSIM::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level) {
+float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level) {
 	// return _getRealizationFromCpdfTiEnesimMetropolis(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 	return _getRealizationFromCpdfTiEnesim(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 

@@ -10,15 +10,15 @@
 
 #include "SNESIM.h"
 
-namespace igisSIM {
+namespace MPS {
 	class SNESIMTree;
 }
 
 /**
 * @brief An implementation of the SNESIM algorithm using a tree structure to store conditional statistics
 */
-class igisSIM::SNESIMTree :
-	public igisSIM::SNESIM
+class MPS::SNESIMTree :
+	public MPS::SNESIM
 {
 protected:	
 	/**

@@ -11,14 +11,14 @@
 #include <limits>
 #include "Coords3D.h"
 
-namespace igisSIM {
+namespace MPS {
 	class Coords4D;
 }
 
 /**
 * @brief A 4D coordinates used to keep a 3D coordinate x, y, z and a value v
 */
-class igisSIM::Coords4D: public igisSIM::Coords3D
+class MPS::Coords4D: public MPS::Coords3D
 {
 private:
 	/**
@@ -47,7 +47,7 @@ public:
 	* @param coord3D a coord3D
 	* @param v v value default is NaN
 	*/
-	Coords4D(const igisSIM::Coords3D coord3D, const float& v=std::numeric_limits<float>::quiet_NaN());
+	Coords4D(const MPS::Coords3D coord3D, const float& v=std::numeric_limits<float>::quiet_NaN());
 
 	/**
 	* @brief Destructors
@@ -67,7 +67,7 @@ public:
 	inline void setValue(const float& v) {_v = v;}
 };
 
-namespace igisSIM {
+namespace MPS {
 	/**
 	* @brief Compare two coordinates
 	*
@@ -76,7 +76,7 @@ namespace igisSIM {
 	*
 	* @return true if (x, y, z, v) are equals
 	*/
-	bool operator==(const igisSIM::Coords4D& lhs, const igisSIM::Coords4D& rhs);
+	bool operator==(const MPS::Coords4D& lhs, const MPS::Coords4D& rhs);
 
 	/**
 	* @brief Compare two coordinates
@@ -86,6 +86,6 @@ namespace igisSIM {
 	*
 	* @return true if (x, y, z, v) are inferior
 	*/
-	bool operator<(const igisSIM::Coords4D& lhs, const igisSIM::Coords4D& rhs);
+	bool operator<(const MPS::Coords4D& lhs, const MPS::Coords4D& rhs);
 }
 

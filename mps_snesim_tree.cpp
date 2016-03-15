@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 		parameterFile = "mps_snesim.txt";
 	}
 
-	igisSIM::SNESIMTree aSimulation(parameterFile);
+	MPS::SNESIMTree aSimulation(parameterFile);
 	aSimulation.startSimulation();
 
 	return 0;

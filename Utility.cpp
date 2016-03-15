@@ -2,7 +2,7 @@
 
 #include <algorithm> 
 
-namespace igisSIM {
+namespace MPS {
 	namespace utility {
 		/**
 		* @brief Check if a value is NAN

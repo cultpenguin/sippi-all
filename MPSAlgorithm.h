@@ -19,7 +19,7 @@
 /**
 * @brief Main simulation package
 */
-namespace igisSIM {
+namespace MPS {
 	class MPSAlgorithm;
 	class Coords3D;
 }
@@ -30,7 +30,7 @@ namespace igisSIM {
 * This class contains some shared procedures and functions for different implementation of MPS algorithms.
 * This class cannot be used directly, view DirectSimulation for an example of how to implement an algorithm from this base.
 */
-class igisSIM::MPSAlgorithm
+class MPS::MPSAlgorithm
 {
 private:
 	/**
@@ -54,7 +54,7 @@ private:
 	* @param closestCoordinates closest coordinates found
 	* @return True if found a closed node
 	*/
-	bool _IsClosedToNodeInGrid(const int& x, const int& y, const int& z, const int& level, const std::vector<std::vector<std::vector<float>>>& grid, const float& searchRadius, igisSIM::Coords3D& closestCoordinates);	
+	bool _IsClosedToNodeInGrid(const int& x, const int& y, const int& z, const int& level, const std::vector<std::vector<std::vector<float>>>& grid, const float& searchRadius, MPS::Coords3D& closestCoordinates);	
 	/**
 	* @brief Filling L and V vectors with data
 	* @param grid the grid to search data
@@ -70,7 +70,7 @@ private:
 	* @param V output vector values of the found nodes
 	* @return true if foundCnt is greater than max neighbors allowed
 	*/
-	bool _addingData(const std::vector<std::vector<std::vector<float>>>& grid, const int& idxX, const int& idxY, const int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<igisSIM::Coords3D>& L, std::vector<float>& V);
+	bool _addingData(const std::vector<std::vector<std::vector<float>>>& grid, const int& idxX, const int& idxY, const int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<MPS::Coords3D>& L, std::vector<float>& V);
 	/**
 	* @brief Search data in a direction
 	* @param grid the grid to search data
@@ -90,7 +90,7 @@ private:
 	* @param V output vector values of the found nodes
 	* @return true if foundCnt is greater than max neighbors allowed
 	*/
-	void _searchDataInDirection(const std::vector<std::vector<std::vector<float>>>& grid, const int& direction, int& idxX, int& idxY, int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& xOffset, const int& yOffset, const int& zOffset, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<igisSIM::Coords3D>& L, std::vector<float>& V);
+	void _searchDataInDirection(const std::vector<std::vector<std::vector<float>>>& grid, const int& direction, int& idxX, int& idxY, int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& xOffset, const int& yOffset, const int& zOffset, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<MPS::Coords3D>& L, std::vector<float>& V);
 	
 protected:
 	/**
@@ -308,12 +308,12 @@ protected:
 	* @param level current grid level
 	* @param addedNodes list of added nodes
 	*/
-	void _fillSGfromHD(const int& x, const int& y, const int& z, const int& level, std::list<igisSIM::Coords3D>& addedNodes);
+	void _fillSGfromHD(const int& x, const int& y, const int& z, const int& level, std::list<MPS::Coords3D>& addedNodes);
 	/**
 	* @brief Clear the SG nodes from the list of added nodes found by _fillSGfromHD
 	* @param addedNodes list of added nodes
 	*/
-	void _clearSGFromHD(std::list<igisSIM::Coords3D>& addedNodes);
+	void _clearSGFromHD(std::list<MPS::Coords3D>& addedNodes);
 	/**
 	* @brief Shuffle the simulation grid path based preferential to soft data
 	* @param level current multi grid level
@@ -335,7 +335,7 @@ protected:
 	* @param closestCoords closest point used with relocation, if not then the current x, y, z is used
 	* @return true if found a value
 	*/
-	bool _getCpdfFromSoftData(const int& x, const int& y, const int& z, const int& level, std::map<float, float>& conditionalPoints, igisSIM::Coords3D& closestCoords);
+	bool _getCpdfFromSoftData(const int& x, const int& y, const int& z, const int& level, std::map<float, float>& conditionalPoints, MPS::Coords3D& closestCoords);
 	/**
 	* @brief simulation algorithm main function
 	* @param sgIdxX index X of a node inside the simulation grind
@@ -356,7 +356,7 @@ protected:
 	* @param L output vector distances between a found nodes and the currrent node
 	* @param V output vector values of the found nodes
 	*/
-	void _circularSearch(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const std::vector<std::vector<std::vector<float>>>& grid, const int& maxNeighboursLimit, const float& maxRadiusLimit, std::vector<igisSIM::Coords3D>& L, std::vector<float>& V);
+	void _circularSearch(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const std::vector<std::vector<std::vector<float>>>& grid, const int& maxNeighboursLimit, const float& maxRadiusLimit, std::vector<MPS::Coords3D>& L, std::vector<float>& V);
 
 public:
 	/**

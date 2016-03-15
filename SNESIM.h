@@ -17,7 +17,7 @@
 #include "Coords4D.h"
 #include "Utility.h"
 
-namespace igisSIM {
+namespace MPS {
 	class SNESIM;
 	class Coords3D;
 }
@@ -25,8 +25,8 @@ namespace igisSIM {
 /**
 * @brief Abstrat class of SNESIM implementation
 */
-class igisSIM::SNESIM :
-	public igisSIM::MPSAlgorithm
+class MPS::SNESIM :
+	public MPS::MPSAlgorithm
 {
 protected:
 
@@ -44,8 +44,8 @@ protected:
 			int templateCenterX = (int)floor(_templateSizeX / 2);
 			int templateCenterY = (int)floor(_templateSizeY / 2);
 			int templateCenterZ = (int)floor(_templateSizeZ / 2);	
-			igisSIM::utility::oneDTo3D(idx1, _templateSizeX, _templateSizeY, idx1X, idx1Y, idx1Z);
-			igisSIM::utility::oneDTo3D(idx2, _templateSizeX, _templateSizeY, idx2X, idx2Y, idx2Z);
+			MPS::utility::oneDTo3D(idx1, _templateSizeX, _templateSizeY, idx1X, idx1Y, idx1Z);
+			MPS::utility::oneDTo3D(idx2, _templateSizeX, _templateSizeY, idx2X, idx2Y, idx2Z);
 			return (pow(idx1X - templateCenterX, 2) + pow(idx1Y - templateCenterY, 2) + pow(idx1Z - templateCenterZ, 2)) < (pow(idx2X - templateCenterX, 2) + pow(idx2Y - templateCenterY, 2) + pow(idx2Z - templateCenterZ, 2));
 		}
 	};	
@@ -98,7 +98,7 @@ protected:
 	/**
 	* @brief List of available faces in the template 
 	*/
-	std::vector<igisSIM::Coords3D> _templateFaces;
+	std::vector<MPS::Coords3D> _templateFaces;
 public:
 	/**
 	* @brief Constructors default and empty parameters

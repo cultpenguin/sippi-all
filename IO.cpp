@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <climits>
 
-namespace igisSIM {
+namespace MPS {
 	namespace io {
 		/**
 		* @brief Read a GSLIB file and put data inside a training image, multiple channel supported
@@ -114,7 +114,7 @@ namespace igisSIM {
 
 				//std::cout << dimensions[0] << " " << dimensions[1] << std::endl;
 
-				igisSIM::utility::oneDTo3D(dataCnt, dimensions[0], dimensions[1], idxX, idxY, idxZ);
+				MPS::utility::oneDTo3D(dataCnt, dimensions[0], dimensions[1], idxX, idxY, idxZ);
 				ti[idxZ][idxY][idxX] = dataValue / meanFactor;
 				dataCnt ++;
 			}
@@ -388,7 +388,7 @@ namespace igisSIM {
 						idxZ = (int)((coordZ - minWorldZ) / stepZ);
 						if(dataValue != noDataValue) data[idxZ][idxY][idxX] = dataValue;
 					} else { //Single column file
-						igisSIM::utility::oneDTo3D(dataCnt++, dataSizeX, dataSizeY, idxX, idxY, idxZ);
+						MPS::utility::oneDTo3D(dataCnt++, dataSizeX, dataSizeY, idxX, idxY, idxZ);
 						dataValue = lineData[0];
 						if(dataValue != noDataValue) data[idxZ][idxY][idxX] = dataValue;
 					}
@@ -481,7 +481,7 @@ namespace igisSIM {
 							data[nbCats][idxZ][idxY][idxX] = lineData[nbCats + 3];
 						}
 					} else { //Single column file
-						igisSIM::utility::oneDTo3D(dataCnt++, dataSizeX, dataSizeY, idxX, idxY, idxZ);
+						MPS::utility::oneDTo3D(dataCnt++, dataSizeX, dataSizeY, idxX, idxY, idxZ);
 						for (unsigned int nbCats=0; nbCats<categories.size(); nbCats++) {
 							data[nbCats][idxZ][idxY][idxX] = lineData[nbCats];
 						}
@@ -688,8 +688,8 @@ namespace igisSIM {
 				for (int z=0; z<sgDimZ; z++) {
 					for (int y=0; y<sgDimY; y++) {
 						for (int x=0; x<sgDimX; x++) {
-							min = sg[z][y][x] < min && !igisSIM::utility::is_nan(sg[z][y][x])? sg[z][y][x] : min;
-							max = sg[z][y][x] > max && !igisSIM::utility::is_nan(sg[z][y][x])? sg[z][y][x] : max;
+							min = sg[z][y][x] < min && !MPS::utility::is_nan(sg[z][y][x])? sg[z][y][x] : min;
+							max = sg[z][y][x] > max && !MPS::utility::is_nan(sg[z][y][x])? sg[z][y][x] : max;
 						}
 					}
 				}

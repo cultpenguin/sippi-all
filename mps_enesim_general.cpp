@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
     parameterFile = "mps_enesim.txt";
   }
 
-  igisSIM::ENESIM_GENERAL aSimulation(parameterFile);
+  MPS::ENESIM_GENERAL aSimulation(parameterFile);
 
   aSimulation.startSimulation();
 

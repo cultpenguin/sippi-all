@@ -10,15 +10,15 @@
 
 #include "ENESIM.h"
 
-namespace igisSIM {
+namespace MPS {
 	class ENESIM_GENERAL;
 }
 
 /**
 * @brief An implementation of the Direct Sampling algorithm
 */
-class igisSIM::ENESIM_GENERAL :
-	public igisSIM::ENESIM
+class MPS::ENESIM_GENERAL :
+	public MPS::ENESIM
 {
 protected:
 	/**

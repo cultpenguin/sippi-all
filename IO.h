@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 
-namespace igisSIM {
+namespace MPS {
 	/**
 	* @brief Utility package used for input/output.
 	*

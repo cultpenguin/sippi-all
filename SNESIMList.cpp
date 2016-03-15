@@ -18,14 +18,14 @@
 /**
 * @brief Constructors from a configuration file
 */
-igisSIM::SNESIMList::SNESIMList(const std::string& configurationFile) : igisSIM::SNESIM(){
+MPS::SNESIMList::SNESIMList(const std::string& configurationFile) : MPS::SNESIM(){
 	initialize(configurationFile);
 }
 
 /**
 * @brief Destructors
 */
-igisSIM::SNESIMList::~SNESIMList(void) {
+MPS::SNESIMList::~SNESIMList(void) {
 
 }
 
@@ -33,7 +33,7 @@ igisSIM::SNESIMList::~SNESIMList(void) {
 * @brief Initialize the simulation from a configuration file
 * @param configurationFile configuration file name
 */
-void igisSIM::SNESIMList::initialize(const std::string& configurationFile) {
+void MPS::SNESIMList::initialize(const std::string& configurationFile) {
 
 	//Reading configuration file
 	_readConfigurations(configurationFile);
@@ -78,7 +78,7 @@ void igisSIM::SNESIMList::initialize(const std::string& configurationFile) {
 						tiX = x + deltaX;
 						tiY = y + deltaY;
 						tiZ = z + deltaZ;
-						if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || igisSIM::utility::is_nan(_TI[tiZ][tiY][tiX])) {
+						if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || MPS::utility::is_nan(_TI[tiZ][tiY][tiX])) {
 							//Out of bound or NaN value then just ignore this key
 							isValidKey = false;
 							break;
@@ -127,9 +127,9 @@ void igisSIM::SNESIMList::initialize(const std::string& configurationFile) {
 * @brief Start the simulation
 * Virtual function implemented from MPSAlgorithm
 */
-void igisSIM::SNESIMList::startSimulation(void) {
+void MPS::SNESIMList::startSimulation(void) {
 	//Call parent function
-	igisSIM::MPSAlgorithm::startSimulation();
+	MPS::MPSAlgorithm::startSimulation();
 }
 
 /**
@@ -140,11 +140,11 @@ void igisSIM::SNESIMList::startSimulation(void) {
 * @param level multigrid level
 * @return found node's value
 */
-float igisSIM::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level) {
+float MPS::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level) {
 	//Initialize with node's value
 	float foundValue = _sg[sgIdxZ][sgIdxY][sgIdxX];
 	//If have NaN value then doing the simulation ...
-	if (igisSIM::utility::is_nan(_sg[sgIdxZ][sgIdxY][sgIdxX])) {
+	if (MPS::utility::is_nan(_sg[sgIdxZ][sgIdxY][sgIdxX])) {
 		int offset = int(std::pow(2, level));			
 		int sgX, sgY, sgZ;
 		int deltaX, deltaY, deltaZ;
@@ -163,7 +163,7 @@ float igisSIM::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const
 			sgZ = sgIdxZ + deltaZ;
 			if (!(sgX < 0 || sgX >= _sgDimX) && !(sgY < 0 || sgY >= _sgDimY) && !(sgZ < 0 || sgZ >= _sgDimZ)) { 
 				//not overflow
-				if (!igisSIM::utility::is_nan(_sg[sgZ][sgY][sgX])) {
+				if (!MPS::utility::is_nan(_sg[sgZ][sgY][sgX])) {
 					nodeTemplate.push_back(_sg[sgZ][sgY][sgX]);
 				} else { //NaN value
 					nodeTemplate.push_back(std::numeric_limits<float>::quiet_NaN());
@@ -187,7 +187,7 @@ float igisSIM::SNESIMList::_simulate(const int& sgIdxX, const int& sgIdxY, const
 			conditionPointsUsedCnt = 0;
 			//maxLevel = 0;
 			for(std::string::size_type i = 0; i < nodeTemplate.size(); ++i) {
-				if ((dictionaryTemplate[i + 1] == nodeTemplate[i]) && (!igisSIM::utility::is_nan(nodeTemplate[i]))) { //Is a matched
+				if ((dictionaryTemplate[i + 1] == nodeTemplate[i]) && (!MPS::utility::is_nan(nodeTemplate[i]))) { //Is a matched
 					currentLevel = i;
 					//Template found so go to higher level node
 					if (currentLevel > maxLevel) { 	
