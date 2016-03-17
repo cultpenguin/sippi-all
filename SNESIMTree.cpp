@@ -189,6 +189,7 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		//Initialize a value
 		std::vector<float> aPartialTemplate;
 		//Building a template based on the neighbor points
+		// Find conditional data
 		for (unsigned int i=1; i<_templateFaces.size(); i++) { //For all the set of templates available except the first one at the template center
 			//For each template faces
 			deltaX = offset * _templateFaces[i].getX();

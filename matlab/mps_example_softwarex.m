@@ -13,7 +13,11 @@ SIM=zeros(50,80).*NaN; %  simulation grid
 
 
 % options for all
-nc=5;Oorg.n_multiple_grids=5;; % --> !!
+nhard=1;6;
+nc=5; % TEMPLATE SIZE
+Oorg.n_multiple_grids=1;; % --> !!
+Oorg.shuffle_simulation_grid=1;
+
 %nc=5;Oorg.n_multiple_grids=0;; % --> !!
 %nc=2;Oorg.n_multiple_grids=3;; % --> !!
 
@@ -32,9 +36,9 @@ O{io}=Oorg;
 O{io}.method='mps_snesim_tree';
 O{io}.n_cond=-1;
 
-io=io+1;
-O{io}=Oorg;
-O{io}.method='mps_snesim_list';
+% io=io+1;
+% O{io}=Oorg;
+% O{io}.method='mps_snesim_list';
 % 
 % io=io+1;
 % O{io}=Oorg;
@@ -48,11 +52,11 @@ O{io}.method='mps_snesim_list';
 % O{io}.n_max_cpdf_count=10;
 % O{io}.n_max_ite=1000;
 
-io=io+1;
-O{io}=Oorg;
-O{io}.method='mps_enesim_general';
-O{io}.n_max_cpdf_count=1;
-%O{io}.n_max_ite=100000;
+% io=io+1;
+% O{io}=Oorg;
+% O{io}.method='mps_enesim_general';
+% O{io}.n_max_cpdf_count=1;
+% O{io}.n_max_ite=100000;
 
 for io=1:length(O);
     O{io}.n_real=3;
@@ -65,11 +69,10 @@ end
 %% cond
 rng(1);
 clear d_c
-nc=6;
-d_x=ceil(rand(1,nc).*(O{1}.simulation_grid_size(1)-1));
-d_y=ceil(rand(1,nc).*(O{1}.simulation_grid_size(2)-1));
+d_x=ceil(rand(1,nhard).*(O{1}.simulation_grid_size(1)-1));
+d_y=ceil(rand(1,nhard).*(O{1}.simulation_grid_size(2)-1));
 d_z=d_y.*O{1}.origin(1);
-for i=1:nc
+for i=1:nhard
     d_c(i)=TI(d_y(i),d_x(i));
 end
 f_cond='f_cond.dat';
@@ -103,7 +106,7 @@ title('a) Training image')
 %print_mul('mps_softwareX_ti')
 caxis([-1 1])
 D=SIM.*0-1;
-for i=1:nc
+for i=1:nhard
     D(d_y(i),d_x(i))=d_c(i);;
 end
 
@@ -178,6 +181,8 @@ for io=1:nO;
         end
     end
     [em,ev]=etype(reals_cond{io});
+    d=reals_cond{1}(:);P0=(sum(d==0))/length(d);
+
     subplot(nO,nr_use,j+ir+1);
     imagesc(x,y,em);caxis([0 1]);axis image
     hold on
@@ -185,39 +190,15 @@ for io=1:nO;
     scatter(d_cond(:,1),d_cond(:,2),30,d_cond(:,4),'filled')
     hold off
 
-    
-    
     subplot(nO,nr_use,j+ir+2);
     imagesc(x,y,ev);caxis([0 .2]);axis image
     
+    title(sprintf('P_{1Dmarg}=[%3.2f %3.2f]',P0,1-P0))
     
 end
-print_mul('mps_softwareX_realsCond')
+fname=sprintf('mps_softwareX_NMG%d_NC%d_TS%d_SH%d_NH%d',Oc{1}.n_multiple_grids,Oc{1}.n_cond,Oc{1}.template_size(1),Oc{1}.shuffle_simulation_grid,nhard);
+s=suptitle(fname);
+set(s,'interpreter','none')
+print_mul(fname)
 
-%%
-return
-for io=1;
-    figure(5+io);clf;set_paper;
-    [em,ev]=etype(reals_cond{io});
-    subplot(2,2,1);
-    imagesc(x,y,em);axis image
-    hold on
-    plot(d_x,d_y,'k.','MarkerSize',14)
-    scatter(d_x,d_y,10,d_cond,'filled')
-    %for i=1:length(d_cond);
-    %end
-    hold off
-    ylabel(O{io}.method)
-    title('etype mean')
-    
-    
-    subplot(2,2,2);
-    imagesc(ev);colorbar;axis image
-    title('etype variance')
-    
-    subplot(2,2,4);
-    imagesc(ev);caxis([0,.01]);colorbar;axis image
-    title('etype variance')
-    
-    print_mul(sprintf('mps_softwareX_etype_i%d',io))
-end
+
