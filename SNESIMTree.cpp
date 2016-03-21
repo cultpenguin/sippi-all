@@ -264,7 +264,7 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 				conditionalPoints.insert ( std::pair<float, int>(_searchTree[level][j].value, sumCounters) );
 				maxConditionalPoints = conditionPointsUsedCnt;
 				//foundValue = _searchTree[level][j].value;
-			} else if(conditionPointsUsedCnt == maxConditionalPoints && conditionPointsUsedCnt != 0) {
+			} else if(conditionPointsUsedCnt == maxConditionalPoints) {
 				conditionalPoints.insert ( std::pair<float, int>(_searchTree[level][j].value, sumCounters) );
 			}
 		}

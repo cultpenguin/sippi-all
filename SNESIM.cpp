@@ -116,6 +116,8 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	// Hard data search radius
 	_readLineConfiguration(file, ss, data, s, str);
 	_hdSearchRadius = stof(data[1]);
+	//Get the maximum value of template size into the search radius
+	_hdSearchRadius = std::max(std::max(_templateSizeX, _templateSizeY), _templateSizeZ);
 	// Softdata categories
 	//std::cout << s << std::endl;
 	if(_readLineConfiguration(file, ss, data, s, str)) {

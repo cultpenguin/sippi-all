@@ -161,8 +161,8 @@ bool MPS::MPSAlgorithm::_IsClosedToNodeInGrid(const int& x, const int& y, const 
 	//TODO: Need to check this again, it runs slow with HD
 	std::vector<MPS::Coords3D> L;
 	std::vector<float> V;
-	//_circularSearch(x, y, z, grid, 1, searchRadius, L, V);
-	_circularSearch(x, y, z, grid, 1, std::pow(2, level), L, V);
+	_circularSearch(x, y, z, grid, 1, searchRadius, L, V);
+	//_circularSearch(x, y, z, grid, 1, std::pow(2, level), L, V);
 	bool foundClosest = L.size() > 0;
 	if (foundClosest) {
 		closestCoordinates.setX(L[0].getX() + x);
