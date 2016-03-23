@@ -341,7 +341,9 @@ void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, 
 		MPS::Coords3D closestCoords;
 		if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, _hdSearchRadius, closestCoords)) {
 			//Adding the closest point to a list to desallocate after
-			addedNodes.push_back(closestCoords);
+			//addedNodes.push_back(closestCoords);
+			//Adding the current location to a list to desallocate after
+			addedNodes.push_back(MPS::Coords3D(x, y, z));
 			//Temporally put the closest node found to the sg cell
 			_sg[z][y][x] = _hdg[closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()];
 		}
