@@ -157,63 +157,69 @@ float MPS::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf) {
 * @return True if found a closed node
 */
 bool MPS::MPSAlgorithm::_IsClosedToNodeInGrid(const int& x, const int& y, const int& z, const int& level, const std::vector<std::vector<std::vector<float>>>& grid, const float& searchRadius, MPS::Coords3D& closestCoordinates) {
-	//Using circular search 
-	//TODO: Need to check this again, it runs slow with HD
-	std::vector<MPS::Coords3D> L;
-	std::vector<float> V;
-	_circularSearch(x, y, z, grid, 1, searchRadius, L, V);
-	//_circularSearch(x, y, z, grid, 1, std::pow(2, level), L, V);
-	bool foundClosest = L.size() > 0;
-	if (foundClosest) {
-		closestCoordinates.setX(L[0].getX() + x);
-		closestCoordinates.setY(L[0].getY() + y);
-		closestCoordinates.setZ(L[0].getZ() + z);
-	}
-	return foundClosest;
-
-	////define search area
-	//int fromX, toX, fromY, toY, fromZ, toZ;
-	//fromX = (int)((x - (searchRadius)) / _sgCellSizeX);
-	//toX = (int)((x + (searchRadius)) / _sgCellSizeX);
-	//fromY = (int)((y - (searchRadius)) / _sgCellSizeY);
-	//toY = (int)((y + (searchRadius)) / _sgCellSizeY);
-	//fromZ = (int)((z - (searchRadius)) / _sgCellSizeZ);
-	//toZ = (int)((z + (searchRadius)) / _sgCellSizeZ);
-	////clamp value to avoid out of bounds
-	//if (fromX < 0) fromX = 0;
-	//if (toX > _sgDimX) toX = _sgDimX;
-	//if (fromY < 0) fromY = 0;
-	//if (toY > _sgDimY) toY = _sgDimY;
-	//if (fromZ < 0) fromZ = 0;
-	//if (toZ > _sgDimZ) toZ = _sgDimZ;
-	////searching for the closest point TODO: use circular search for better performance
-	//float distMin = pow(searchRadius, 2); //avoid the sqrt later for computing the 3d distance
-	//float dist = 0;
-	//bool foundClosest = false;
-	//int closestX = fromX, closestY = fromY, closestZ = fromZ;
-	//int step = std::pow(2, level);
-	////std::cout << fromX << " " << toX << " " << fromY << " " << toY << " " << fromZ << " " << toZ << " " << step << std::endl;
-	//for (int cZ = fromZ; cZ<toZ; cZ+=step) {
-	//	for (int cY = fromY; cY<toY; cY+=step) {
-	//		for (int cX = fromX; cX<toX; cX+=step) {
-	//			//Compute distance and get the closest point
-	//			if(!MPS::utility::is_nan(grid[cZ][cY][cX])) {
-	//				dist = (pow((cX - x)*_sgCellSizeX, 2) + pow((cY - y)*_sgCellSizeY, 2) + pow((cZ - z)*_sgCellSizeZ, 2));
-	//				if (dist <= distMin) {
-	//					distMin = dist;
-	//					closestX = cX;
-	//					closestY = cY;
-	//					closestZ = cZ;
-	//					foundClosest = true;
-	//				}
-	//			}
-	//		}
-	//	}
+	////Using circular search 
+	////TODO: Need to check this again, it runs slow with HD
+	//std::vector<MPS::Coords3D> L;
+	//std::vector<float> V;
+	//_circularSearch(x, y, z, grid, 1, searchRadius, L, V);
+	////_circularSearch(x, y, z, grid, 1, std::pow(2, level), L, V);
+	//bool foundClosest = L.size() > 0;
+	//if (foundClosest) {
+	//	closestCoordinates.setX(L[0].getX() + x);
+	//	closestCoordinates.setY(L[0].getY() + y);
+	//	closestCoordinates.setZ(L[0].getZ() + z);
 	//}
-	//closestCoordinates.setX(closestX);
-	//closestCoordinates.setY(closestY);
-	//closestCoordinates.setZ(closestZ);
 	//return foundClosest;
+
+	//define search area
+	int fromX, toX, fromY, toY, fromZ, toZ;
+	/*fromX = (int)((x - (searchRadius)) / _sgCellSizeX);
+	toX = (int)((x + (searchRadius)) / _sgCellSizeX);
+	fromY = (int)((y - (searchRadius)) / _sgCellSizeY);
+	toY = (int)((y + (searchRadius)) / _sgCellSizeY);
+	fromZ = (int)((z - (searchRadius)) / _sgCellSizeZ);
+	toZ = (int)((z + (searchRadius)) / _sgCellSizeZ);*/
+	fromX = (int)(x - (searchRadius));
+	toX = (int)(x + (searchRadius));
+	fromY = (int)(y - (searchRadius));
+	toY = (int)(y + (searchRadius));
+	fromZ = (int)(z - (searchRadius));
+	toZ = (int)(z + (searchRadius));
+	//clamp value to avoid out of bounds
+	if (fromX < 0) fromX = 0;
+	if (toX > _sgDimX) toX = _sgDimX;
+	if (fromY < 0) fromY = 0;
+	if (toY > _sgDimY) toY = _sgDimY;
+	if (fromZ < 0) fromZ = 0;
+	if (toZ > _sgDimZ) toZ = _sgDimZ;
+	//searching for the closest point TODO: use circular search for better performance
+	float distMin = pow(searchRadius, 2); //avoid the sqrt later for computing the 3d distance
+	float dist = 0;
+	bool foundClosest = false;
+	int closestX = fromX, closestY = fromY, closestZ = fromZ;
+	int step = std::pow(2, level);
+	//std::cout << fromX << " " << toX << " " << fromY << " " << toY << " " << fromZ << " " << toZ << " " << step << std::endl;
+	for (int cZ = fromZ; cZ<toZ; cZ+=step) {
+		for (int cY = fromY; cY<toY; cY+=step) {
+			for (int cX = fromX; cX<toX; cX+=step) {
+				//Compute distance and get the closest point
+				if(!MPS::utility::is_nan(grid[cZ][cY][cX])) {
+					dist = (pow((cX - x)*_sgCellSizeX, 2) + pow((cY - y)*_sgCellSizeY, 2) + pow((cZ - z)*_sgCellSizeZ, 2));
+					if (dist <= distMin) {
+						distMin = dist;
+						closestX = cX;
+						closestY = cY;
+						closestZ = cZ;
+						foundClosest = true;
+					}
+				}
+			}
+		}
+	}
+	closestCoordinates.setX(closestX);
+	closestCoordinates.setY(closestY);
+	closestCoordinates.setZ(closestZ);
+	return foundClosest;
 }
 
 /**
