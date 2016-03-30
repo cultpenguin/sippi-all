@@ -165,9 +165,9 @@ bool MPS::MPSAlgorithm::_IsClosedToNodeInGrid(const int& x, const int& y, const 
 	//_circularSearch(x, y, z, grid, 1, std::pow(2, level), L, V);
 	bool foundClosest = L.size() > 0;
 	if (foundClosest) {
-		closestCoordinates.setX(x - L[0].getX());
-		closestCoordinates.setY(y - L[0].getY());
-		closestCoordinates.setZ(z - L[0].getZ());
+		closestCoordinates.setX(x + L[0].getX());
+		closestCoordinates.setY(y + L[0].getY());
+		closestCoordinates.setZ(z + L[0].getZ());
 	}
 	return foundClosest;
 
@@ -179,12 +179,13 @@ bool MPS::MPSAlgorithm::_IsClosedToNodeInGrid(const int& x, const int& y, const 
 	//toY = (int)((y + (searchRadius)) / _sgCellSizeY);
 	//fromZ = (int)((z - (searchRadius)) / _sgCellSizeZ);
 	//toZ = (int)((z + (searchRadius)) / _sgCellSizeZ);*/
-	//fromX = (int)(x - (searchRadius));
-	//toX = (int)(x + (searchRadius));
-	//fromY = (int)(y - (searchRadius));
-	//toY = (int)(y + (searchRadius));
-	//fromZ = (int)(z - (searchRadius));
-	//toZ = (int)(z + (searchRadius));
+	//float levelSearchRadius = std::pow(2, level) *  searchRadius;
+	//fromX = (int)(x - (levelSearchRadius));
+	//toX = (int)(x + (levelSearchRadius));
+	//fromY = (int)(y - (levelSearchRadius));
+	//toY = (int)(y + (levelSearchRadius));
+	//fromZ = (int)(z - (levelSearchRadius));
+	//toZ = (int)(z + (levelSearchRadius));
 	////clamp value to avoid out of bounds
 	//if (fromX < 0) fromX = 0;
 	//if (toX > _sgDimX) toX = _sgDimX;
@@ -351,7 +352,8 @@ void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, 
 			//Adding the current location to a list to desallocate after
 			addedNodes.push_back(MPS::Coords3D(x, y, z));
 			//Temporally put the closest node found to the sg cell
-			_sg[z][y][x] = _hdg[closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()];
+			//_sg[z][y][x] = _hdg[closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()];
+			//_sg[z][y][x] = std::numeric_limits<float>::quiet_NaN();
 		}
 	}
 }
@@ -579,7 +581,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				std::cout << "Define simulation path for level " << level << std::endl;
 			}
 			_simulationPath.clear();
-			allocatedNodesFromHardData.clear();
+			//std::cout << allocatedNodesFromHardData.size() << std::endl;
+		
 			nodeCnt = 0;
 			totalNodes = (_sgDimX / offset) * (_sgDimY / offset) * (_sgDimZ / offset);
 			for (int z=0; z<_sgDimZ; z+=offset) {
@@ -608,7 +611,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}
 			}
-
+			//std::cout << allocatedNodesFromHardData.size() << std::endl << std::endl;
 			//Shuffle simulation path indices vector for a random path
 			if (_debugMode > -1) {
 				std::cout << "Suffling simulation path using type " << _shuffleSgPath << std::endl;
@@ -638,6 +641,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			if (_debugMode > -1) {
 				std::cout << "Simulating " << std::endl;
 			}
+
+			////Cleaning the allocated data from the SG
+			//_clearSGFromHD(allocatedNodesFromHardData);
 
 			for (unsigned int ii=0; ii<_simulationPath.size(); ii++) {
 				//Get node coordinates
