@@ -307,13 +307,15 @@ protected:
 	* @param z coordinate Z of the current node
 	* @param level current grid level
 	* @param addedNodes list of added nodes
+	* @param putbackNodes list of node to put back later
 	*/
-	void _fillSGfromHD(const int& x, const int& y, const int& z, const int& level, std::list<MPS::Coords3D>& addedNodes);
+	void _fillSGfromHD(const int& x, const int& y, const int& z, const int& level, std::vector<MPS::Coords3D>& addedNodes, std::vector<MPS::Coords3D>& putbackNodes);
 	/**
 	* @brief Clear the SG nodes from the list of added nodes found by _fillSGfromHD
 	* @param addedNodes list of added nodes
+	* @param putbackNodes list of node to put back later
 	*/
-	void _clearSGFromHD(std::list<MPS::Coords3D>& addedNodes);
+	void _clearSGFromHD(std::vector<MPS::Coords3D>& addedNodes, std::vector<MPS::Coords3D>& putbackNodes);
 	/**
 	* @brief Shuffle the simulation grid path based preferential to soft data
 	* @param level current multi grid level
