@@ -16,7 +16,7 @@
 %           mps_enesim_read_par, mps_enesim_write_par
 %
 %
-function [reals,Othread]=mps_cpp_thread(TI,SIM,O,verbose);
+function [reals,O,Othread]=mps_cpp_thread(TI,SIM,O,verbose);
 reals=[];
 
 if ~isfield(O,'n_real');
@@ -70,11 +70,10 @@ parfor i=1:actual_threads;
     cd(cwd);
     cd(outdir{i});
     disp(pwd);
-    [r{i}]=mps_cpp(TI,SIM,Othread{i});
+    [r{i},Othread{i}]=mps_cpp(TI,SIM,Othread{i});
 end
 %%
 cd(cwd);
-
 if (Othread{1}.simulation_grid_size(3)==1)&&(Othread{1}.simulation_grid_size(2)==1)
     ndim=1;
 elseif (Othread{1}.simulation_grid_size(3)==1)
@@ -90,6 +89,18 @@ for i=1:actual_threads;
         reals=cat(ndim+1,reals,r{i});
     end
 end
+
+%%
+if nargout>1
+    fn=fieldnames(Othread{1});
+    
+    for i=1:length(fn) 
+        if ~isfield(O,fn{i})
+            O.(fn{i})=Othread{1}.(fn{i});
+        end
+    end
+end
+%%
 
 
 
