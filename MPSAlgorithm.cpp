@@ -338,8 +338,9 @@ void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 * @param z coordinate Z of the current node
 * @param level current grid level
 * @param addedNodes list of added nodes
+* @param putbackNodes list of node to put back later
 */
-void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, const int& level, std::list<MPS::Coords3D>& addedNodes) {
+void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, const int& level, std::vector<MPS::Coords3D>& addedNodes, std::vector<MPS::Coords3D>& putbackNodes) {
 	//Searching closest value in hard data and put that into the simulation grid
 	//Only search for the node not NaN and within the radius
 	//Do this only if have a hard data defined or
@@ -349,10 +350,13 @@ void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, 
 		if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, _hdSearchRadius, closestCoords)) {
 			//Adding the closest point to a list to desallocate after
 			//addedNodes.push_back(closestCoords);
+			putbackNodes.push_back(closestCoords);
 			//Adding the current location to a list to desallocate after
 			addedNodes.push_back(MPS::Coords3D(x, y, z));
 			//Temporally put the closest node found to the sg cell
 			_sg[z][y][x] = _hdg[closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()];
+			//Temporally put NaN value to the hdg value relocated so the same point will not be relocated more than 2 times
+			_hdg[closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()] = std::numeric_limits<float>::quiet_NaN();
 			//_sg[z][y][x] = std::numeric_limits<float>::quiet_NaN();
 		}
 	}
@@ -361,13 +365,19 @@ void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, 
 /**
 * @brief Clear the SG nodes from the list of added nodes found by _fillSGfromHD
 * @param addedNodes list of added nodes
+* @param putbackNodes list of node to put back later
 */
-void MPS::MPSAlgorithm::_clearSGFromHD(std::list<MPS::Coords3D>& addedNodes) {
+void MPS::MPSAlgorithm::_clearSGFromHD(std::vector<MPS::Coords3D>& addedNodes, std::vector<MPS::Coords3D>& putbackNodes) {
 	//Cleaning the allocated data from the SG
-	for (std::list<MPS::Coords3D>::iterator ptToBeRelocated = addedNodes.begin(); ptToBeRelocated != addedNodes.end(); ++ptToBeRelocated) {
-		_sg[ptToBeRelocated->getZ()][ptToBeRelocated->getY()][ptToBeRelocated->getX()] = std::numeric_limits<float>::quiet_NaN();
+	for (int i=0; i<addedNodes.size(); i++) {
+		_hdg[putbackNodes[i].getZ()][putbackNodes[i].getY()][putbackNodes[i].getX()] = _sg[addedNodes[i].getZ()][addedNodes[i].getY()][addedNodes[i].getX()];
+		_sg[addedNodes[i].getZ()][addedNodes[i].getY()][addedNodes[i].getX()] = std::numeric_limits<float>::quiet_NaN(); 
 	}
+	//for (std::list<MPS::Coords3D>::iterator ptToBeRelocated = addedNodes.begin(); ptToBeRelocated != addedNodes.end(); ++ptToBeRelocated) {
+	//	_sg[ptToBeRelocated->getZ()][ptToBeRelocated->getY()][ptToBeRelocated->getX()] = std::numeric_limits<float>::quiet_NaN();
+	//}
 	addedNodes.clear();
+	putbackNodes.clear();
 }
 
 /**
@@ -551,7 +561,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 	clock_t endNode, beginRealization, endRealization;
 	double elapsedRealizationSecs, elapsedNodeSecs;
 	int nodeEstimatedSeconds, seconds, hours, minutes, lastProgress;
-	std::list<MPS::Coords3D> allocatedNodesFromHardData; //Using to allocate the multiple grid with closest hd values
+	std::vector<MPS::Coords3D> allocatedNodesFromHardData; //Using to allocate the multiple grid with closest hd values
+	std::vector<MPS::Coords3D> nodeToPutBack; //Using to allocate the multiple grid with closest hd values
 	lastProgress = 0;
 	int nodeCnt = 0, totalNodes = 0;
 	int sg1DIdx, offset;
@@ -596,7 +607,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 						}
 						//The relocation process happens if the current simulation grid value is still NaN
 						//Moving hard data to grid node only on coarsed level
-						if(level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData);
+						if(level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);
 						//Progression
 						if (_debugMode > -1 && !_hdg.empty()) {
 							nodeCnt ++;
@@ -611,7 +622,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}
 			}
-			MPS::io::writeToGSLIBFile(outputFilename + "after_relocation_before_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			//MPS::io::writeToGSLIBFile(outputFilename + "after_relocation_before_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			//std::cout << "After relocation" << std::endl;
+			//_showSG();
 
 			//std::cout << allocatedNodesFromHardData.size() << std::endl << std::endl;
 			//Shuffle simulation path indices vector for a random path
@@ -671,17 +684,20 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}
 			}
-			MPS::io::writeToGSLIBFile(outputFilename + "after_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			//MPS::io::writeToGSLIBFile(outputFilename + "after_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			//std::cout << "After simulation" << std::endl;
+			//_showSG();
 
 			//Cleaning the allocated data from the SG
-			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData);
+			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData, nodeToPutBack);
 
-			MPS::io::writeToGSLIBFile(outputFilename + "after_cleaning_relocation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			//MPS::io::writeToGSLIBFile(outputFilename + "after_cleaning_relocation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 
 
 			//Printing SG out to check
 			//if (level == 0 && _debugMode > -1) {
-			_showSG();
+			//std::cout << "After cleaning relocation" << std::endl;
+			//_showSG();
 
 			//Writting SG to file
 			//MPS::io::writeToGSLIBFile(outputFilename + "test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
