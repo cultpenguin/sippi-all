@@ -352,7 +352,7 @@ void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, 
 			//Adding the current location to a list to desallocate after
 			addedNodes.push_back(MPS::Coords3D(x, y, z));
 			//Temporally put the closest node found to the sg cell
-			//_sg[z][y][x] = _hdg[closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()];
+			_sg[z][y][x] = _hdg[closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()];
 			//_sg[z][y][x] = std::numeric_limits<float>::quiet_NaN();
 		}
 	}
@@ -611,6 +611,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}
 			}
+			MPS::io::writeToGSLIBFile(outputFilename + "after_relocation_before_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+
 			//std::cout << allocatedNodesFromHardData.size() << std::endl << std::endl;
 			//Shuffle simulation path indices vector for a random path
 			if (_debugMode > -1) {
@@ -669,16 +671,20 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}
 			}
+			MPS::io::writeToGSLIBFile(outputFilename + "after_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 
 			//Cleaning the allocated data from the SG
 			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData);
 
+			MPS::io::writeToGSLIBFile(outputFilename + "after_cleaning_relocation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+
+
 			//Printing SG out to check
 			//if (level == 0 && _debugMode > -1) {
-			//_showSG();
+			_showSG();
 
 			//Writting SG to file
-			//MPS::io::writeToGSLIBFile("test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			//MPS::io::writeToGSLIBFile(outputFilename + "test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 		}
 
 		if (_debugMode > 0) {
