@@ -21,7 +21,7 @@ Oorg.shuffle_simulation_grid=1;
 %nc=5;Oorg.n_multiple_grids=0;; % --> !!
 %nc=2;Oorg.n_multiple_grids=3;; % --> !!
 
-Oorg.n_real=4;100;             %  optional number of realization
+Oorg.n_real=100;             %  optional number of realization
 Oorg.rseed=1;             %  optional number of realization
 
 Oorg.template_size=[nc nc 1]; % SNESIM TYPE COND

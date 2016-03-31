@@ -622,7 +622,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}
 			}
-			//MPS::io::writeToGSLIBFile(outputFilename + "after_relocation_before_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			if (_debugMode > -1) {
+			  MPS::io::writeToGSLIBFile(outputFilename + "after_relocation_before_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			}
 			//std::cout << "After relocation" << std::endl;
 			//_showSG();
 
@@ -684,23 +686,27 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}
 			}
-			//MPS::io::writeToGSLIBFile(outputFilename + "after_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			if (_debugMode > 0) {
+			  MPS::io::writeToGSLIBFile(outputFilename + "after_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			}
 			//std::cout << "After simulation" << std::endl;
 			//_showSG();
 
 			//Cleaning the allocated data from the SG
 			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData, nodeToPutBack);
-
-			//MPS::io::writeToGSLIBFile(outputFilename + "after_cleaning_relocation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
-
+			if (_debugMode > 0) {
+			  MPS::io::writeToGSLIBFile(outputFilename + "after_cleaning_relocation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			}
 
 			//Printing SG out to check
 			//if (level == 0 && _debugMode > -1) {
 			//std::cout << "After cleaning relocation" << std::endl;
 			//_showSG();
 
-			//Writting SG to file
-			//MPS::io::writeToGSLIBFile(outputFilename + "test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			if (_debugMode > 1) {
+			  //Writting SG to file
+			  MPS::io::writeToGSLIBFile(outputFilename + "test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			}
 		}
 
 		if (_debugMode > 0) {
