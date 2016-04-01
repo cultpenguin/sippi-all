@@ -891,4 +891,4 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 		_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 	}
 	//cout << "After searching: " << L.size() << " " << V.size() << endl;
-}
+} 
