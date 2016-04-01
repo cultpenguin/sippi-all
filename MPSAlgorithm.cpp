@@ -312,7 +312,7 @@ void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 	if((!readSucessfull)&(_debugMode>-1)) {
 		std::cout << "Error reading harddata " << _hardDataFileNames << std::endl;
 	}
-	
+
 	//Reading Soft conditional data
 	for (unsigned int i=0; i<_softDataFileNames.size(); i++) {
 		readSucessfull = false;
@@ -348,7 +348,7 @@ void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, 
 	if(!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
 		MPS::Coords3D closestCoords;
 		//if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, _hdSearchRadius, closestCoords)) {
-		if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, pow(2, level) + 1, closestCoords)) { //Limit within the direct neighbor
+		if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, pow(2, level), closestCoords)) { //Limit within the direct neighbor
 			//Adding the closest point to a list to desallocate after
 			//addedNodes.push_back(closestCoords);
 			putbackNodes.push_back(closestCoords);
@@ -569,7 +569,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 	lastProgress = 0;
 	int nodeCnt = 0, totalNodes = 0;
 	int sg1DIdx, offset;
-	
+
 	for (int n=0; n<_realizationNumbers; n++) {
 		beginRealization = clock();
 		//Initialize the iteration count grid
@@ -577,13 +577,13 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 		//Initialize Simulation Grid from hard data or with NaN value
 		_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ);
 		/*if(!_hdg.empty()) {
-			std::cout << "Initialize from hard data " << _hardDataFileNames << std::endl;
-			_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ, _hdg, std::numeric_limits<float>::quiet_NaN());
+		std::cout << "Initialize from hard data " << _hardDataFileNames << std::endl;
+		_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ, _hdg, std::numeric_limits<float>::quiet_NaN());
 		} else {
-			if (_debugMode>0) {
-				std::cout << "Initialize with NaN value" << std::endl;
-			}
-			_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ);
+		if (_debugMode>0) {
+		std::cout << "Initialize with NaN value" << std::endl;
+		}
+		_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ);
 		}*/
 
 		//Multi level grids
@@ -597,7 +597,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			}
 			_simulationPath.clear();
 			//std::cout << allocatedNodesFromHardData.size() << std::endl;
-		
+
 			nodeCnt = 0;
 			totalNodes = (_sgDimX / offset) * (_sgDimY / offset) * (_sgDimZ / offset);
 			for (int z=0; z<_sgDimZ; z+=offset) {
@@ -628,10 +628,10 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				}
 			}
 			if (_debugMode > -1) {
-			  MPS::io::writeToGSLIBFile(outputFilename + "after_relocation_before_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
-			}
-			//std::cout << "After relocation" << std::endl;
-			//_showSG();
+				MPS::io::writeToGSLIBFile(outputFilename + "after_relocation_before_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+				std::cout << "After relocation" << std::endl;
+				_showSG();
+			}			
 
 			//std::cout << allocatedNodesFromHardData.size() << std::endl << std::endl;
 			//Shuffle simulation path indices vector for a random path
@@ -692,25 +692,26 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				}
 			}
 			if (_debugMode > 0) {
-			  MPS::io::writeToGSLIBFile(outputFilename + "after_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
-			}
-			//std::cout << "After simulation" << std::endl;
-			//_showSG();
+				MPS::io::writeToGSLIBFile(outputFilename + "after_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+				std::cout << "After simulation" << std::endl;
+				_showSG();
+			}			
 
 			//Cleaning the allocated data from the SG
 			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData, nodeToPutBack);
 			if (_debugMode > 0) {
-			  MPS::io::writeToGSLIBFile(outputFilename + "after_cleaning_relocation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+				MPS::io::writeToGSLIBFile(outputFilename + "after_cleaning_relocation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+				std::cout << "After cleaning relocation" << std::endl;
+				_showSG();		
 			}
 
 			//Printing SG out to check
 			//if (level == 0 && _debugMode > -1) {
-			//std::cout << "After cleaning relocation" << std::endl;
-			//_showSG();
+
 
 			if (_debugMode > 1) {
-			  //Writting SG to file
-			  MPS::io::writeToGSLIBFile(outputFilename + "test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+				//Writting SG to file
+				MPS::io::writeToGSLIBFile(outputFilename + "test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 			}
 		}
 
@@ -726,15 +727,15 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 		}
 
 		if (_debugMode > -2) {
-		  //Write result to file
-		  if (_debugMode > -1) {
-		    std::cout << "Write simulation grid to hard drive..." << std::endl;
-		  }
-		  MPS::io::writeToGSLIBFile(outputFilename + "_sg_" + std::to_string(n) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
-		  MPS::io::writeToGRD3File(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".grd3", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, 3);
-		  //MPS::io::writeToGS3DCSVFile(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".csv", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
-		  //MPS::io::writeToASCIIFile(outputFilename + "_sg_ascii" + std::to_string(n) + ".txt", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
-		  //MPS::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+			//Write result to file
+			if (_debugMode > -1) {
+				std::cout << "Write simulation grid to hard drive..." << std::endl;
+			}
+			MPS::io::writeToGSLIBFile(outputFilename + "_sg_" + std::to_string(n) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			MPS::io::writeToGRD3File(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".grd3", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, 3);
+			//MPS::io::writeToGS3DCSVFile(outputFilename + "_sg_gs3d_" + std::to_string(n) + ".csv", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+			//MPS::io::writeToASCIIFile(outputFilename + "_sg_ascii" + std::to_string(n) + ".txt", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
+			//MPS::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 		}
 
 		if (_debugMode > 1) {
