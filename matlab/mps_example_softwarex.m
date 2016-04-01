@@ -13,9 +13,9 @@ SIM=zeros(50,80).*NaN; %  simulation grid
 
 
 % options for all
-nhard=1;6;
-nc=5; % TEMPLATE SIZE
-Oorg.n_multiple_grids=1;; % --> !!
+nhard=1;30;1;6;30;
+nc=9; % TEMPLATE SIZE
+Oorg.n_multiple_grids=3; % --> !!
 Oorg.shuffle_simulation_grid=1;
 
 %nc=5;Oorg.n_multiple_grids=0;; % --> !!
@@ -36,9 +36,9 @@ O{io}=Oorg;
 O{io}.method='mps_snesim_tree';
 O{io}.n_cond=-1;
 
-% io=io+1;
-% O{io}=Oorg;
-% O{io}.method='mps_snesim_list';
+%io=io+1;
+%O{io}=Oorg;
+%O{io}.method='mps_snesim_list';
 % 
 % io=io+1;
 % O{io}=Oorg;
@@ -57,14 +57,15 @@ O{io}.n_cond=-1;
 % O{io}.method='mps_enesim_general';
 % O{io}.n_max_cpdf_count=1;
 % O{io}.n_max_ite=100000;
+% O{io}.n_cond=nc;
 
 for io=1:length(O);
     O{io}.n_real=3;
     tic
-    [reals{io},O{io}]=mps_cpp(TI,SIM,O{io});
+    [reals{io},O{io},Othread{io}]=mps_cpp_thread(TI,SIM,O{io});
+    %[reals{io},O{io}]=mps_cpp(TI,SIM,O{io});
     t1(io)=toc;
 end
-
 
 %% cond
 rng(1);
@@ -86,10 +87,19 @@ for io=1:length(Oc);
     Oc{io}.hard_data_filename=f_cond;
     Oc{io}.hard_data_search_radius=1;
     tic
-    %[reals_cond{io},Oc{io}]=mps_cpp_thread(TI,SIM,Oc{io});
-    [reals_cond{io},Oc{io}]=mps_cpp(TI,SIM,Oc{io});
+    [reals_cond{io},Oc{io}]=mps_cpp_thread(TI,SIM,Oc{io});
+    %[reals_cond{io},Oc{io}]=mps_cpp(TI,SIM,Oc{io});
     t2(io)=toc;
 end
+
+%% SNESIM FORTRAN
+S = snesim_init(TI);
+S.fconddata.fname=Oc{1}.hard_data_filename;
+S.nsim=Oorg.n_real;
+S.max_cond=Oorg.n_cond;
+S.nmulgrids=Oorg.n_multiple_grids+1;
+
+S=snesim(S,1:size(SIM,2),1:size(SIM,1));
 
 %%
 x=[0:1:O{1}.simulation_grid_size(1)-1].*O{1}.grid_cell_size(1)+O{1}.origin(1);
@@ -144,7 +154,11 @@ for io=1:nO;
             set(h_t,'HorizontalAlignment','Left')
             pos=get(h_t,'Position');
             pos(1)=-50;
-            set(h_t,'Position',pos);
+            set(h_t,'Position',pos);fname=sprintf('mps_softwareX_NMG%d_NC%d_TS%d_SH%d_NH%d',Oc{1}.n_multiple_grids,Oc{1}.n_cond,Oc{1}.template_size(1),Oc{1}.shuffle_simulation_grid,nhard);
+s=suptitle(fname);
+set(s,'interpreter','none')
+print_mul(fname)
+
         end
     end
     [em,ev]=etype(reals{io});
@@ -161,10 +175,10 @@ print_mul('mps_softwareX_reals')
 %% plot cond
 figure(4);clf;set_paper;%('portrait');
 nO=length(reals);
-for io=1:nO;
+for io=1:(nO);
     j=(io-1)*nr_use;
     for ir=1:nr;
-        subplot(nO,nr_use,j+ir);
+        subplot(nO+1,nr_use,j+ir);
         imagesc(x,y,reals_cond{io}(:,:,ir));
         set(gca,'FontSize',8)
         axis image;
@@ -183,14 +197,14 @@ for io=1:nO;
     [em,ev]=etype(reals_cond{io});
     d=reals_cond{1}(:);P0=(sum(d==0))/length(d);
 
-    subplot(nO,nr_use,j+ir+1);
+    subplot(nO+1,nr_use,j+ir+1);
     imagesc(x,y,em);caxis([0 1]);axis image
     hold on
     plot(d_cond(:,1),d_cond(:,2),'w.','MarkerSize',30)
     scatter(d_cond(:,1),d_cond(:,2),30,d_cond(:,4),'filled')
     hold off
 
-    subplot(nO,nr_use,j+ir+2);
+    subplot(nO+1,nr_use,j+ir+2);
     imagesc(x,y,ev);caxis([0 .2]);axis image
     
     title(sprintf('P_{1Dmarg}=[%3.2f %3.2f]',P0,1-P0))
@@ -201,4 +215,41 @@ s=suptitle(fname);
 set(s,'interpreter','none')
 print_mul(fname)
 
+
+% PLOT SNESIM RESULTS
+for i=1:3;
+    subplot(nO+1,nr_use,nr_use*(nO)+i)
+    imagesc(S.D(:,:,i));
+    axis image;
+    set(gca,'FontSize',8)
+
+    if i==1;
+        txt=sprintf('%s) SNESIM (STANFORD)',char(96+io));
+        h_t=title(txt,'interp','none','FontSize',16);
+        set(h_t,'HorizontalAlignment','Left')
+        pos=get(h_t,'Position');
+        pos(1)=-50;
+        set(h_t,'Position',pos);
+    end
+end
+subplot(nO+1,nr_use,nr_use*(nO)+4)
+imagesc(S.etype.mean);
+caxis([0 1])
+axis image;
+set(gca,'FontSize',8)
+hold on
+plot(d_cond(:,1),d_cond(:,2),'w.','MarkerSize',30)
+scatter(d_cond(:,1),d_cond(:,2),30,d_cond(:,4),'filled')
+hold off
+
+subplot(nO+1,nr_use,nr_use*(nO)+5)
+imagesc(S.etype.var);
+axis image;
+caxis([0 0.2])
+set(gca,'FontSize',8)
+
+fname=sprintf('mps_softwareX_NMG%d_NC%d_TS%d_SH%d_NH%d_SNESIM',Oc{1}.n_multiple_grids,Oc{1}.n_cond,Oc{1}.template_size(1),Oc{1}.shuffle_simulation_grid,nhard);
+s=suptitle(fname);
+set(s,'interpreter','none')
+print_mul(fname)
 
