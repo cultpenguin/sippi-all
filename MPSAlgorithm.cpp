@@ -347,7 +347,8 @@ void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, 
 	//If current node already has value
 	if(!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
 		MPS::Coords3D closestCoords;
-		if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, _hdSearchRadius, closestCoords)) {
+		//if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, _hdSearchRadius, closestCoords)) {
+		if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, pow(2, level) + 1, closestCoords)) { //Limit within the direct neighbor
 			//Adding the closest point to a list to desallocate after
 			//addedNodes.push_back(closestCoords);
 			putbackNodes.push_back(closestCoords);
@@ -371,7 +372,9 @@ void MPS::MPSAlgorithm::_clearSGFromHD(std::vector<MPS::Coords3D>& addedNodes, s
 	//Cleaning the allocated data from the SG
 	for (int i=0; i<addedNodes.size(); i++) {
 		_hdg[putbackNodes[i].getZ()][putbackNodes[i].getY()][putbackNodes[i].getX()] = _sg[addedNodes[i].getZ()][addedNodes[i].getY()][addedNodes[i].getX()];
-		_sg[addedNodes[i].getZ()][addedNodes[i].getY()][addedNodes[i].getX()] = std::numeric_limits<float>::quiet_NaN(); 
+		if ((addedNodes[i].getZ() != putbackNodes[i].getZ()) || (addedNodes[i].getY() != putbackNodes[i].getY()) || (addedNodes[i].getX() != putbackNodes[i].getX())) {
+			_sg[addedNodes[i].getZ()][addedNodes[i].getY()][addedNodes[i].getX()] = std::numeric_limits<float>::quiet_NaN(); 
+		}
 	}
 	//for (std::list<MPS::Coords3D>::iterator ptToBeRelocated = addedNodes.begin(); ptToBeRelocated != addedNodes.end(); ++ptToBeRelocated) {
 	//	_sg[ptToBeRelocated->getZ()][ptToBeRelocated->getY()][ptToBeRelocated->getX()] = std::numeric_limits<float>::quiet_NaN();
@@ -572,7 +575,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 		//Initialize the iteration count grid
 		_initializeSG(_sgIterations, _sgDimX, _sgDimY, _sgDimZ, 0);
 		//Initialize Simulation Grid from hard data or with NaN value
-		if(!_hdg.empty()) {
+		_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ);
+		/*if(!_hdg.empty()) {
 			std::cout << "Initialize from hard data " << _hardDataFileNames << std::endl;
 			_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ, _hdg, std::numeric_limits<float>::quiet_NaN());
 		} else {
@@ -580,7 +584,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				std::cout << "Initialize with NaN value" << std::endl;
 			}
 			_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ);
-		}
+		}*/
 
 		//Multi level grids
 		for (int level=_totalGridsLevel; level>=0; level--) {
@@ -600,14 +604,15 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				for (int y=0; y<_sgDimY; y+=offset) {
 					for (int x=0; x<_sgDimX; x+=offset) {
 						MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
-						_simulationPath.push_back(sg1DIdx);
-						//Fille the simulation node with the value from hard data grid
-						if(!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
-							_sg[z][y][x] = _hdg[z][y][x];
-						}
+						_simulationPath.push_back(sg1DIdx);						
 						//The relocation process happens if the current simulation grid value is still NaN
 						//Moving hard data to grid node only on coarsed level
 						if(level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);
+						else if(level == 0 && !_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
+							//Level = 0
+							//Fille the simulation node with the value from hard data grid
+							_sg[z][y][x] = _hdg[z][y][x];
+						}
 						//Progression
 						if (_debugMode > -1 && !_hdg.empty()) {
 							nodeCnt ++;
@@ -625,8 +630,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			if (_debugMode > -1) {
 			  MPS::io::writeToGSLIBFile(outputFilename + "after_relocation_before_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 			}
-			//std::cout << "After relocation" << std::endl;
-			//_showSG();
+			std::cout << "After relocation" << std::endl;
+			_showSG();
 
 			//std::cout << allocatedNodesFromHardData.size() << std::endl << std::endl;
 			//Shuffle simulation path indices vector for a random path
@@ -689,8 +694,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			if (_debugMode > 0) {
 			  MPS::io::writeToGSLIBFile(outputFilename + "after_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 			}
-			//std::cout << "After simulation" << std::endl;
-			//_showSG();
+			std::cout << "After simulation" << std::endl;
+			_showSG();
 
 			//Cleaning the allocated data from the SG
 			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData, nodeToPutBack);
@@ -700,8 +705,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 			//Printing SG out to check
 			//if (level == 0 && _debugMode > -1) {
-			//std::cout << "After cleaning relocation" << std::endl;
-			//_showSG();
+			std::cout << "After cleaning relocation" << std::endl;
+			_showSG();
 
 			if (_debugMode > 1) {
 			  //Writting SG to file
