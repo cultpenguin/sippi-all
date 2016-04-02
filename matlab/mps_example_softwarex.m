@@ -13,10 +13,10 @@ SIM=zeros(50,80).*NaN; %  simulation grid
 
 
 % options for all
-nhard=1;30;1;6;30;
-nc=9; % TEMPLATE SIZE
-Oorg.n_multiple_grids=3; % --> !!
-Oorg.shuffle_simulation_grid=1;
+nhard=9;30;1;6;30;
+nc=2; % TEMPLATE SIZE
+Oorg.n_multiple_grids=2; % --> !!
+%Oorg.shuffle_simulation_grid=1;
 
 %nc=5;Oorg.n_multiple_grids=0;; % --> !!
 %nc=2;Oorg.n_multiple_grids=3;; % --> !!
@@ -96,6 +96,7 @@ end
 S = snesim_init(TI);
 S.fconddata.fname=Oc{1}.hard_data_filename;
 S.nsim=Oorg.n_real;
+%S.nsim=4;
 S.max_cond=Oorg.n_cond;
 S.nmulgrids=Oorg.n_multiple_grids+1;
 
@@ -155,10 +156,9 @@ for io=1:nO;
             pos=get(h_t,'Position');
             pos(1)=-50;
             set(h_t,'Position',pos);fname=sprintf('mps_softwareX_NMG%d_NC%d_TS%d_SH%d_NH%d',Oc{1}.n_multiple_grids,Oc{1}.n_cond,Oc{1}.template_size(1),Oc{1}.shuffle_simulation_grid,nhard);
-s=suptitle(fname);
-set(s,'interpreter','none')
-print_mul(fname)
-
+            s=suptitle(fname);
+            set(s,'interpreter','none')
+            
         end
     end
     [em,ev]=etype(reals{io});
@@ -206,6 +206,10 @@ for io=1:(nO);
 
     subplot(nO+1,nr_use,j+ir+2);
     imagesc(x,y,ev);caxis([0 .2]);axis image
+    hold on
+    plot(d_cond(:,1),d_cond(:,2),'ko','MarkerSize',5)
+    hold off
+
     
     title(sprintf('P_{1Dmarg}=[%3.2f %3.2f]',P0,1-P0))
     
@@ -244,6 +248,9 @@ hold off
 
 subplot(nO+1,nr_use,nr_use*(nO)+5)
 imagesc(S.etype.var);
+hold on
+plot(d_cond(:,1),d_cond(:,2),'ko','MarkerSize',5)
+    hold off
 axis image;
 caxis([0 0.2])
 set(gca,'FontSize',8)
