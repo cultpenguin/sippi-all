@@ -5,27 +5,25 @@
 %
 
 clear all;close all
-TI=channels;TI=TI(2:2:end,2:2:end);
+TI=channels;
 %TI=maze;TI=TI(10:1:110,10:1:110);           %  training image
-%TI=TI(2:2:end,2:2:end);
-SIM=zeros(50,80).*NaN; %  simulation grid
-%[reals,O]=mps_cpp(TI,SIM,O);
+TI=TI(2:2:end,2:2:end);
+%SIM=zeros(50,80).*NaN; %  simulation grid
+
+SIM=zeros(10,20).*NaN; %  simulation grid
 
 
 % options for all
-nhard=9;30;1;6;30;
-nc=2; % TEMPLATE SIZE
-Oorg.n_multiple_grids=2; % --> !!
-%Oorg.shuffle_simulation_grid=1;
-
+nhard=15;5;1;6;30;
+nc=9; % TEMPLATE SIZE
+Oorg.n_multiple_grids=1; % --> !!
 %nc=5;Oorg.n_multiple_grids=0;; % --> !!
 %nc=2;Oorg.n_multiple_grids=3;; % --> !!
-
+%Oorg.shuffle_simulation_grid=1;
 Oorg.n_real=100;             %  optional number of realization
 Oorg.rseed=1;             %  optional number of realization
 
 Oorg.template_size=[nc nc 1]; % SNESIM TYPE COND
-
 Oorg.n_cond=nc^2; % ENESIM TYPE COND
 
 %% different methods
@@ -52,12 +50,12 @@ O{io}.n_cond=-1;
 % O{io}.n_max_cpdf_count=10;
 % O{io}.n_max_ite=1000;
 
-% io=io+1;
-% O{io}=Oorg;
-% O{io}.method='mps_enesim_general';
-% O{io}.n_max_cpdf_count=1;
-% O{io}.n_max_ite=100000;
-% O{io}.n_cond=nc;
+io=io+1;
+O{io}=Oorg;
+O{io}.method='mps_enesim_general';
+O{io}.n_max_cpdf_count=1;
+O{io}.n_max_ite=100000;
+O{io}.n_cond=nc;
 
 for io=1:length(O);
     O{io}.n_real=3;
@@ -75,6 +73,7 @@ d_y=ceil(rand(1,nhard).*(O{1}.simulation_grid_size(2)-1));
 d_z=d_y.*O{1}.origin(1);
 for i=1:nhard
     d_c(i)=TI(d_y(i),d_x(i));
+    %d_c(i)=1;
 end
 f_cond='f_cond.dat';
 d_cond=[d_x(:) d_y(:) d_z(:) d_c(:)];
@@ -89,19 +88,19 @@ for io=1:length(Oc);
     tic
     [reals_cond{io},Oc{io}]=mps_cpp_thread(TI,SIM,Oc{io});
     %[reals_cond{io},Oc{io}]=mps_cpp(TI,SIM,Oc{io});
-    t2(io)=toc;
+    t2(io)=toc
 end
 
 %% SNESIM FORTRAN
 S = snesim_init(TI);
 S.fconddata.fname=Oc{1}.hard_data_filename;
 S.nsim=Oorg.n_real;
-%S.nsim=4;
+S.nsim=max([4 ceil(Oorg.n_real/10)]);
 S.max_cond=Oorg.n_cond;
 S.nmulgrids=Oorg.n_multiple_grids+1;
-
+tic;
 S=snesim(S,1:size(SIM,2),1:size(SIM,1));
-
+t2(io+1)=toc
 %%
 x=[0:1:O{1}.simulation_grid_size(1)-1].*O{1}.grid_cell_size(1)+O{1}.origin(1);
 y=[0:1:O{1}.simulation_grid_size(2)-1].*O{1}.grid_cell_size(2)+O{1}.origin(2);
