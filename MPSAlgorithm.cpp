@@ -869,6 +869,15 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 	int maxZOffset = _sgDimZ - 1;
 
 	int maxDim = std::max(std::max(maxXOffset, maxYOffset), maxZOffset);
+
+	//Check center point
+	if (!MPS::utility::is_nan(grid[sgIdxZ][sgIdxY][sgIdxX])) {
+		foundCnt++;
+		MPS::Coords3D aCoords(0, 0, 0);
+		L.push_back(aCoords);
+		V.push_back(grid[sgIdxZ][sgIdxY][sgIdxX]);
+	}
+
 	for(int i=1; i<maxDim; i++) {
 		//maximum neighbor count check
 		if (foundCnt > maxNeighboursLimit) break;
