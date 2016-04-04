@@ -348,7 +348,7 @@ void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, 
 	if(!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
 		MPS::Coords3D closestCoords;
 		//if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, _hdSearchRadius, closestCoords)) {
-		if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, pow(2, level), closestCoords)) { //Limit within the direct neighbor
+		if (_IsClosedToNodeInGrid(x, y, z, level, _hdg, ceil(pow(2, level) / 2), closestCoords)) { //Limit within the direct neighbor
 			//Adding the closest point to a list to desallocate after
 			//addedNodes.push_back(closestCoords);
 			putbackNodes.push_back(closestCoords);
@@ -359,6 +359,7 @@ void MPS::MPSAlgorithm::_fillSGfromHD(const int& x, const int& y, const int& z, 
 			//Temporally put NaN value to the hdg value relocated so the same point will not be relocated more than 2 times
 			_hdg[closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()] = std::numeric_limits<float>::quiet_NaN();
 			//_sg[z][y][x] = std::numeric_limits<float>::quiet_NaN();
+			//std::cout << x << " " << y << " " << z << " " << pow(2, level) << " " << level << std::endl;
 		}
 	}
 }
