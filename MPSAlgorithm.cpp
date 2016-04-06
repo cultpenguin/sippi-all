@@ -893,7 +893,9 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 
 		//Get a random search direction
 		randomDirection = rand() % 6;
-		std::cout << randomDirection << std::endl;
+		if (_debugMode > 2) {
+			std::cout << "Random search directtion = " << randomDirection << std::endl;
+		}
 		switch (randomDirection) {
 		case 0 : //X Y Z
 				//direction +X
