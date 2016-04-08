@@ -10,12 +10,12 @@ TI=channels;
 TI=TI(2:2:end,2:2:end);
 %SIM=zeros(50,80).*NaN; %  simulation grid
 
-SIM=zeros(10,20).*NaN; %  simulation grid
+SIM=zeros(50,60).*NaN; %  simulation grid
 
 
 % options for all
 nhard=15;5;1;6;30;
-nc=9; % TEMPLATE SIZE
+nc=5; % TEMPLATE SIZE
 Oorg.n_multiple_grids=1; % --> !!
 %nc=5;Oorg.n_multiple_grids=0;; % --> !!
 %nc=2;Oorg.n_multiple_grids=3;; % --> !!
@@ -55,7 +55,8 @@ O{io}=Oorg;
 O{io}.method='mps_enesim_general';
 O{io}.n_max_cpdf_count=1;
 O{io}.n_max_ite=100000;
-O{io}.n_cond=nc;
+%O{io}.n_max_ite=100;
+%O{io}.n_cond=nc;
 
 for io=1:length(O);
     O{io}.n_real=3;
