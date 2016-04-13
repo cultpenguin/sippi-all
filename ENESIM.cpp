@@ -158,7 +158,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 	// map containing the count of conditional data values
 	std::map<float, int> conditionalCount;
-
+        
 	int CpdfCount = 0;
 	float valueFromTI;
 	float LC_dist_min = RAND_MAX;
@@ -168,15 +168,16 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 	//Seaching for neighbours to get vector V and L
 	//Doing a circular seach ATM ...
+	
 	std::vector<MPS::Coords3D> L;
 	std::vector<float> V;
 	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, -1, L, V);
 
+	
 	// The training image path is shifted such that a random start location is chosen
 	int ti_shift;
 	ti_shift = (std::rand() % (int)(_tiDimX*_tiDimY*_tiDimZ));
 	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
-
 
 	// At this point V represents the conditional value(s), and L realtive position(s) oF of the contitional values(s).
 	// In the folloing the training image should be scanned for all matches of V,L
@@ -191,6 +192,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	float V_center_ti; // value of the central node in the TI
 	V_center_ti=-1;
 
+	
 	float L_dist;  // sum of realtive distance
 	float LC_dist; // distance of L,V to value in TI
 	for (unsigned int i_ti_path=0; i_ti_path<_tiPath.size(); i_ti_path++) {
@@ -210,7 +212,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 		int TI_x, TI_y, TI_z;
 		int matchedCnt = 0; //, previousMatchedCnt = 0;
 		matchedCnt = 0;
-
+                
 		LC_dist=0;
 		for (unsigned int i=0; i<L.size(); i++) {
 			//For each pixel relatively to the current pixel based on vector L
@@ -285,7 +287,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 
 	} // END SCAN OF TI FOR CPDF
-
+			
 	// CHECK THAT conditionalCount HAS AT LEAST ONE COUNT
 	// This may not always be the case when no conditional event has been found!
 	if (CpdfCount==0 ) {

@@ -59,7 +59,6 @@ O{io}=Oorg;
 O{io}.method='mps_enesim_general';
 O{io}.n_max_cpdf_count=1;
 O{io}.n_max_ite=100000;
-%O{io}.n_cond=3*nc;
 
 for io=1:length(O);
     O{io}.n_real=3;

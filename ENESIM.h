@@ -33,6 +33,14 @@ protected:
 	int _nMaxCountCpdf;
 
 	/**
+	* @brief Select whether to use Metropolis style soft data conditioning
+	*/
+	int _MetropolisSoftData = 0;
+	//_MetropolisSoftData = 1;
+
+
+
+	/**
 	* @brief Read configuration file
 	* @param fileName configuration filename
 	*/
