@@ -103,7 +103,17 @@ elseif strcmp(O.method(1:10),'mps_enesim');
     end
     if ~isfield(O,'parameter_filename');O.parameter_filename='enesim.txt';end
     O=mps_enesim_write_par(O);
+elseif strcmp(O.method(1:11),'mps_genesim');
+    if strcmp(O.method,'mps_enesim');
+        O.method='mps_genesim';
+    end
+    if ~isfield(O,'parameter_filename');O.parameter_filename='genesim.txt';end
+    O=mps_enesim_write_par(O);
+else
+    disp(sprintf('%s: no method for ''%s''',mfilename,O.method));
+    return
 end
+
 %% RUN MPS CODE
 % make output folder if it does not exist
 if ~exist(O.output_folder,'dir')
