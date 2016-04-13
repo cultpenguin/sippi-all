@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
   if (argc>1) {
     parameterFile = argv[1];
   } else {
-    parameterFile = "mps_enesim.txt";
+    parameterFile = "mps_genesim.txt";
   }
 
   MPS::ENESIM_GENERAL aSimulation(parameterFile);
