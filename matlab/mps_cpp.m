@@ -8,8 +8,8 @@
 %   TI=channels;           %  training image
 %   SIM=zeros(80,60).*NaN; %  simulation grid
 %   O.method='mps_snesim_tree'; % MPS algorithm to run (def='mps_snesim_tree') 
-%   %O.method='mps_snesim_list'; % MPS algorithm to run (def='mps_snesim_tree') 
-%   %O.method='mps_enesim_general'; % MPS algorithm to run (def='mps_snesim_tree') 
+%   %O.method='mps_snesim_list'; % 
+%   %O.method='mps_genesim'; % 
 %   O.n_real=1;             %  optional number of realization
 %   [reals,O]=mps_cpp(TI,SIM,O);
 %
@@ -87,27 +87,29 @@ end
 if ~isfield(O,'method');
   O.method='mps_snesim_tree';
   %O.method='mps_snesim_list';
-  %O.method='mps_enesim_general';
+  %O.method='mps_genesim';
 end
 
 %% WRITE PARAMETER FILE
-if strcmp(O.method(1:10),'mps_snesim');
+if strfind(O.method,'snesim');
     if strcmp(O.method,'mps_snesim');
         O.method='mps_snesim_tree';
     end
     if ~isfield(O,'parameter_filename');O.parameter_filename='snesim.txt';end
     O=mps_snesim_write_par(O);
-elseif strcmp(O.method(1:10),'mps_enesim');
-    if strcmp(O.method,'mps_enesim');
-        O.method='mps_enesim_general';
-    end
-    if ~isfield(O,'parameter_filename');O.parameter_filename='enesim.txt';end
-    O=mps_enesim_write_par(O);
-elseif strcmp(O.method(1:11),'mps_genesim');
-    if strcmp(O.method,'mps_enesim');
-        O.method='mps_genesim';
-    end
+elseif (strcmp(O.method,'mps_genesim'))||(strcmp(O.method,'mps_enesim_general'))
+    O.method='mps_genesim';
     if ~isfield(O,'parameter_filename');O.parameter_filename='genesim.txt';end
+    O=mps_enesim_write_par(O);
+elseif strcmp(O.method,'mps_dsam');
+    O.method='mps_genesim';
+    O.n_max_cpdf_count=1;
+    if ~isfield(O,'parameter_filename');O.parameter_filename='dsam.txt';end
+    O=mps_enesim_write_par(O);
+elseif strcmp(O.method,'mps_enesim');
+    O.method='mps_genesim';
+    O.n_max_cpdf_count=1e+20;
+    if ~isfield(O,'parameter_filename');O.parameter_filename='enesim.txt';end
     O=mps_enesim_write_par(O);
 else
     disp(sprintf('%s: no method for ''%s''',mfilename,O.method));

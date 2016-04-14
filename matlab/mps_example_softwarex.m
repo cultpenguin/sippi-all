@@ -19,7 +19,7 @@ SIM=zeros(50,80).*NaN; %  simulation grid
 % options for all
 nhard=6;20;15;5;1;6;30;
 nc=7; % TEMPLATE SIZE
-Oorg.n_multiple_grids=4; % --> !!
+Oorg.n_multiple_grids=3; % --> !!
 %nc=5;Oorg.n_multiple_grids=0;; % --> !!
 %nc=2;Oorg.n_multiple_grids=3;; % --> !!
 %Oorg.shuffle_simulation_grid=1;
@@ -28,6 +28,8 @@ Oorg.rseed=1;             %  optional number of realization
 
 Oorg.template_size=[nc nc 1]; % SNESIM TYPE COND
 Oorg.n_cond=nc^2; % ENESIM TYPE COND
+
+
 
 %% different methods
 io=0;
@@ -44,19 +46,19 @@ O{io}.n_min_node_count=2;
 % 
 io=io+1;
 O{io}=Oorg;
-O{io}.method='mps_enesim_general';
+O{io}.method='mps_genesim';
 O{io}.n_max_cpdf_count=100000;
 O{io}.n_max_ite=100000;
 % 
 io=io+1;
 O{io}=Oorg;
-O{io}.method='mps_enesim_general';
+O{io}.method='mps_genesim';
 O{io}.n_max_cpdf_count=10;
 O{io}.n_max_ite=100000;
 
 io=io+1;
 O{io}=Oorg;
-O{io}.method='mps_enesim_general';
+O{io}.method='mps_genesim';
 O{io}.n_max_cpdf_count=1;
 O{io}.n_max_ite=100000;
 

@@ -18,7 +18,7 @@ O.rseed=1;  % Random Seed
 
 if ~isfield(O,'method')
     O.method='mps_enesim_general'; % MPS algorithm to run
-    %O.method='mps_snesim_tree'; % MPS algorithm to run (def='mps_snesim_tree')
+    O.method='mps_snesim_tree'; % MPS algorithm to run (def='mps_snesim_tree')
     %O.method='mps_snesim_list'; % MPS algorithm to run (def='mps_snesim_tree')
 end
 if ~isfield(O,'n_max_cpdf_count')
