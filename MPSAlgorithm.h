@@ -54,7 +54,7 @@ private:
 	* @param closestCoordinates closest coordinates found
 	* @return True if found a closed node
 	*/
-	bool _IsClosedToNodeInGrid(const int& x, const int& y, const int& z, const int& level, const std::vector<std::vector<std::vector<float>>>& grid, const float& searchRadius, MPS::Coords3D& closestCoordinates);	
+	bool _IsClosedToNodeInGrid(const int& x, const int& y, const int& z, const int& level, const std::vector<std::vector<std::vector<float>>>& grid, const float& searchRadius, MPS::Coords3D& closestCoordinates);
 	/**
 	* @brief Filling L and V vectors with data
 	* @param grid the grid to search data
@@ -91,7 +91,7 @@ private:
 	* @return true if foundCnt is greater than max neighbors allowed
 	*/
 	void _searchDataInDirection(const std::vector<std::vector<std::vector<float>>>& grid, const int& direction, int& idxX, int& idxY, int& idxZ, int& foundCnt, const int& maxNeighboursLimit, const int& xOffset, const int& yOffset, const int& zOffset, const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::vector<MPS::Coords3D>& L, std::vector<float>& V);
-	
+
 protected:
 	/**
 	* @brief The simulation grid
@@ -101,6 +101,14 @@ protected:
 	* @brief The hard data grid (same size as simulation grid)
 	*/
 	std::vector<std::vector<std::vector<float>>> _hdg;
+	/**
+	* @brief Temporary grid 1 - meaning define by type of sim-algorithm (same size as simulation grid)
+	*/
+	std::vector<std::vector<std::vector<float>>> _tg1;
+	/**
+	* @brief Temporary grid 2 - meaning define by type of sim-algorithm (same size as simulation grid)
+	*/
+	std::vector<std::vector<std::vector<float>>> _tg2;
 	/**
 	* @brief hard data search radius for multiple grids
 	*/
@@ -275,7 +283,7 @@ protected:
 	* @param sgDimZ dimension Z of the path
 	* @param path output simulation path
 	*/
-	void _initilizePath(const int& sgDimX, const int& sgDimY, const int& sgDimZ, std::vector<int>& path);	
+	void _initilizePath(const int& sgDimX, const int& sgDimY, const int& sgDimZ, std::vector<int>& path);
 	/**
 	* @brief Initialize the Simulation Grid with a value, default is NaN
 	* @param sg the simulation GRID

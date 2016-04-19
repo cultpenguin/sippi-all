@@ -21,4 +21,10 @@ try
     cmd=[fn,'_path*'];
     %%disp(sprintf('%s: trying to delete ''%s''',mfilename,cmd));
     delete(cmd);
+
+    cmd=[fn,'_tg*'];
+    %%disp(sprintf('%s: trying to delete ''%s''',mfilename,cmd));
+    delete(cmd);
+
+
 end

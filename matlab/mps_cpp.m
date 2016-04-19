@@ -174,25 +174,46 @@ for i=1:O.n_real
   end
 end
 
+%% READ TEMPORARY GRID VALUES
+if (O.debug>1)
+    for i=1:O.n_real
+        fname_tg1=sprintf('%s%s%s%s_temp1_%d.gslib',O.output_folder,filesep,f,e,i-1);
+        if exist(fname_tg1,'file')
+            O.TG1=read_eas_matrix(fname_tg1);
+        end
+        fname_tg2=sprintf('%s%s%s%s_temp2_%d.gslib',O.output_folder,filesep,f,e,i-1);
+        if exist(fname_tg2,'file')
+            O.TG2=read_eas_matrix(fname_tg2);
+        end
+        
+    end
+    
+end
+
 %%
 if (O.debug>1)
 for i=1:O.n_real
     fname_path=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,i-1);
+
     
+
     try
-        P=read_eas(fname_path);
+        PP=read_eas(fname_path);
     catch
         disp(sprintf('%s: problems reading output file (%s) - waiting a bit an retrying',mfilename,fname));
         pause(5);
-        P=read_eas(fname_path);
+        PP=read_eas(fname_path);
     end
-    O.path(:,i)=P(:);
+    O.path(:,i)=PP(:);
  
     if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
         % 1D
     elseif (O.simulation_grid_size(3)==1)
         % 2D
-        [ix,iy]=ind2sub([O.simulation_grid_size(2),O.simulation_grid_size(1)],P(:)+1);
+        try
+            O.P=read_eas_matrix(fname_path);
+        end
+        [ix,iy]=ind2sub([O.simulation_grid_size(2),O.simulation_grid_size(1)],PP(:)+1);
         for j=1:length(ix);
             O.path_index(iy(j),ix(j),i)=j;
         end
@@ -203,6 +224,11 @@ for i=1:O.n_real
     
 end
 end
+
+
+O.x=[0:1:(O.simulation_grid_size(1)-1)].*O.grid_cell_size(1)+O.origin(1);
+O.y=[0:1:(O.simulation_grid_size(2)-1)].*O.grid_cell_size(2)+O.origin(2);
+O.z=[0:1:(O.simulation_grid_size(3)-1)].*O.grid_cell_size(3)+O.origin(3);
 
 %%
 mps_cpp_clean(O);
