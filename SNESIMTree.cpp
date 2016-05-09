@@ -269,6 +269,9 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 			}
 		}
 
+		if (_debugMode>1) {
+    	_tg1[sgIdxZ][sgIdxY][sgIdxX] =  conditionPointsUsedCnt;
+		}
 		//Get the value from cpdf
 		foundValue = _cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);
 		//std::cout << std::endl;

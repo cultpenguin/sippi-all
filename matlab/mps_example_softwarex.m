@@ -8,23 +8,28 @@ clear all;close all
 TI=channels;
 %TI=maze;TI=TI(10:1:110,10:1:110);           %  training image
 TI=TI(2:2:end,2:2:end);
-%SIM=zeros(50,80).*NaN; %  simulation grid
+SIM=zeros(50,80).*NaN; %  simulation grid
 
-SIM=zeros(10,20).*NaN; %  simulation grid
+% small fast test
+%TI=channels;
+%TI=TI(3:3:end,3:3:end);
+%SIM=zeros(10,20).*NaN; %  simulation grid
 
 
 % options for all
-nhard=15;5;1;6;30;
-nc=9; % TEMPLATE SIZE
-Oorg.n_multiple_grids=1; % --> !!
+nhard=6;20;15;5;1;6;30;
+nc=7; % TEMPLATE SIZE
+Oorg.n_multiple_grids=3; % --> !!
 %nc=5;Oorg.n_multiple_grids=0;; % --> !!
 %nc=2;Oorg.n_multiple_grids=3;; % --> !!
 %Oorg.shuffle_simulation_grid=1;
-Oorg.n_real=100;             %  optional number of realization
+Oorg.n_real=300;             %  optional number of realization
 Oorg.rseed=1;             %  optional number of realization
 
 Oorg.template_size=[nc nc 1]; % SNESIM TYPE COND
 Oorg.n_cond=nc^2; % ENESIM TYPE COND
+
+
 
 %% different methods
 io=0;
@@ -32,30 +37,30 @@ io=0;
 io=io+1;
 O{io}=Oorg;
 O{io}.method='mps_snesim_tree';
-O{io}.n_cond=-1;
-
-%io=io+1;
-%O{io}=Oorg;
-%O{io}.method='mps_snesim_list';
+O{io}.n_min_node_count=2;
+%O{io}.n_cond_max=10;
+io=io+1;
+O{io}=Oorg;
+O{io}.method='mps_snesim_list';
+O{io}.n_min_node_count=2;
 % 
-% io=io+1;
-% O{io}=Oorg;
-% O{io}.method='mps_enesim_general';
-% O{io}.n_max_cpdf_count=100000;
-% O{io}.n_max_ite=1000;
+io=io+1;
+O{io}=Oorg;
+O{io}.method='mps_genesim';
+O{io}.n_max_cpdf_count=100000;
+O{io}.n_max_ite=100000;
 % 
-% io=io+1;
-% O{io}=Oorg;
-% O{io}.method='mps_enesim_general';
-% O{io}.n_max_cpdf_count=10;
-% O{io}.n_max_ite=1000;
+io=io+1;
+O{io}=Oorg;
+O{io}.method='mps_genesim';
+O{io}.n_max_cpdf_count=10;
+O{io}.n_max_ite=100000;
 
 io=io+1;
 O{io}=Oorg;
-O{io}.method='mps_enesim_general';
+O{io}.method='mps_genesim';
 O{io}.n_max_cpdf_count=1;
 O{io}.n_max_ite=100000;
-O{io}.n_cond=nc;
 
 for io=1:length(O);
     O{io}.n_real=3;
@@ -92,14 +97,18 @@ for io=1:length(Oc);
 end
 
 %% SNESIM FORTRAN
-S = snesim_init(TI);
+x=[0:1:(O{1}.simulation_grid_size(1)-1)].*O{1}.grid_cell_size(1)+O{1}.origin(1);
+y=[0:1:(O{1}.simulation_grid_size(2)-1)].*O{1}.grid_cell_size(2)+O{2}.origin(2);
+
+S = snesim_init(TI,x,y);
 S.fconddata.fname=Oc{1}.hard_data_filename;
 S.nsim=Oorg.n_real;
 S.nsim=max([4 ceil(Oorg.n_real/10)]);
 S.max_cond=Oorg.n_cond;
 S.nmulgrids=Oorg.n_multiple_grids+1;
 tic;
-S=snesim(S,1:size(SIM,2),1:size(SIM,1));
+S=snesim(S);
+%S=snesim(S,x,y);
 t2(io+1)=toc
 %%
 x=[0:1:O{1}.simulation_grid_size(1)-1].*O{1}.grid_cell_size(1)+O{1}.origin(1);
@@ -107,7 +116,7 @@ y=[0:1:O{1}.simulation_grid_size(2)-1].*O{1}.grid_cell_size(2)+O{1}.origin(2);
 
 try;close(1);end
 figure(1);set_paper;
-cmap_ref=colormap;
+cmap_ref=1-gray;
 subplot(1,2,1);
 imagesc(TI);axis image;
 xlabel('X [pixel #]')
@@ -126,14 +135,15 @@ caxis([-1 1])
 xlabel('X')
 ylabel('Y')
 hold on
+scatter(d_cond(:,1),d_cond(:,2),50,1-d_cond(:,4),'filled')
 scatter(d_cond(:,1),d_cond(:,2),40,d_cond(:,4),'filled')
 hold off
 title('b) Simulation grid with hard data')
 colormap(cmap_linear([1 1 1; cmap_ref(1,:) ; cmap_ref(end,:)]))
-print_mul('mps_softwareX_ti_sim')
+print_mul(sprintf('mps_softwareX_ti_sim_NH%d',nhard))
 
 %% plot uncond
-figure(3);clf;set_paper;%('portrait');
+figure(3);clf;set_paper;('portrait');
 nr=Oorg.n_real;
 nr=3;
 nr_use=5;
@@ -172,13 +182,14 @@ print_mul('mps_softwareX_reals')
 
 
 %% plot cond
-figure(4);clf;set_paper;%('portrait');
+figure(4);clf;set_paper('portrait');
 nO=length(reals);
 for io=1:(nO);
     j=(io-1)*nr_use;
     for ir=1:nr;
-        subplot(nO+1,nr_use,j+ir);
+        ax1=subplot(nO+3,nr_use,j+ir);
         imagesc(x,y,reals_cond{io}(:,:,ir));
+        colormap(ax1,1-gray);
         set(gca,'FontSize',8)
         axis image;
         if ir==1;
@@ -191,38 +202,50 @@ for io=1:(nO);
             pos=get(h_t,'Position');
             pos(1)=-50;
             set(h_t,'Position',pos);
+           
         end
     end
     [em,ev]=etype(reals_cond{io});
     d=reals_cond{1}(:);P0=(sum(d==0))/length(d);
 
-    subplot(nO+1,nr_use,j+ir+1);
+    ax2=subplot(nO+3,nr_use,j+ir+1);
     imagesc(x,y,em);caxis([0 1]);axis image
+    colormap(ax2,1-gray);
+    set(gca,'FontSize',8)
+        
     hold on
-    plot(d_cond(:,1),d_cond(:,2),'w.','MarkerSize',30)
+    %plot(d_cond(:,1),d_cond(:,2),'w.','MarkerSize',30)
+    scatter(d_cond(:,1),d_cond(:,2),40,1-d_cond(:,4),'filled')
     scatter(d_cond(:,1),d_cond(:,2),30,d_cond(:,4),'filled')
     hold off
-
-    subplot(nO+1,nr_use,j+ir+2);
-    imagesc(x,y,ev);caxis([0 .2]);axis image
+    if io==1; title('Etype mean');   end
+    
+    
+    ax3=subplot(nO+3,nr_use,j+ir+2);
+    imagesc(x,y,sqrt(ev));caxis([0.2 .7]);axis image
+    colormap(ax3,1-gray);
+    set(gca,'FontSize',8)
     hold on
     plot(d_cond(:,1),d_cond(:,2),'ko','MarkerSize',5)
     hold off
-
+    if io==1; title('Etype std');   end
     
-    title(sprintf('P_{1Dmarg}=[%3.2f %3.2f]',P0,1-P0))
+    
+    %title(sprintf('P_{1Dmarg}=[%3.2f %3.2f]',P0,1-P0))
     
 end
 fname=sprintf('mps_softwareX_NMG%d_NC%d_TS%d_SH%d_NH%d',Oc{1}.n_multiple_grids,Oc{1}.n_cond,Oc{1}.template_size(1),Oc{1}.shuffle_simulation_grid,nhard);
+print_mul(fname)
 s=suptitle(fname);
 set(s,'interpreter','none')
-print_mul(fname)
+print_mul([fname,'_title'])
 
-
+%%
 % PLOT SNESIM RESULTS
 for i=1:3;
-    subplot(nO+1,nr_use,nr_use*(nO)+i)
+    ax1=subplot(nO+3,nr_use,nr_use*(nO)+i)
     imagesc(S.D(:,:,i));
+    colormap(ax1,1-gray);
     axis image;
     set(gca,'FontSize',8)
 
@@ -235,8 +258,9 @@ for i=1:3;
         set(h_t,'Position',pos);
     end
 end
-subplot(nO+1,nr_use,nr_use*(nO)+4)
-imagesc(S.etype.mean);
+ax2=subplot(nO+3,nr_use,nr_use*(nO)+4)
+imagesc(S.x,S.y,S.etype.mean);
+colormap(ax2,1-gray);
 caxis([0 1])
 axis image;
 set(gca,'FontSize',8)
@@ -245,13 +269,14 @@ plot(d_cond(:,1),d_cond(:,2),'w.','MarkerSize',30)
 scatter(d_cond(:,1),d_cond(:,2),30,d_cond(:,4),'filled')
 hold off
 
-subplot(nO+1,nr_use,nr_use*(nO)+5)
-imagesc(S.etype.var);
+ax3=subplot(nO+3,nr_use,nr_use*(nO)+5)
+imagesc(S.x,S.y,sqrt(S.etype.var));
+colormap(ax3,1-gray);
 hold on
 plot(d_cond(:,1),d_cond(:,2),'ko','MarkerSize',5)
-    hold off
+hold off
 axis image;
-caxis([0 0.2])
+caxis([0.2 .7])
 set(gca,'FontSize',8)
 
 fname=sprintf('mps_softwareX_NMG%d_NC%d_TS%d_SH%d_NH%d_SNESIM',Oc{1}.n_multiple_grids,Oc{1}.n_cond,Oc{1}.template_size(1),Oc{1}.shuffle_simulation_grid,nhard);
@@ -259,3 +284,5 @@ s=suptitle(fname);
 set(s,'interpreter','none')
 print_mul(fname)
 
+%%
+save(fname)

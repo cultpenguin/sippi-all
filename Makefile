@@ -7,7 +7,7 @@ CPPFLAGS = -g -static -O3 -std=c++11 -Wl,--no-as-needed ## Should fix threading 
 LDLIBS =  -lstdc++ -lpthread
 
 
-OBJS_mps_enesim_general = utility.o io.o coords3d.o mpsalgorithm.o enesim.o enesim_general.o mps_enesim_general.o
+OBJS_mps_genesim = utility.o io.o coords3d.o mpsalgorithm.o enesim.o enesim_general.o mps_genesim.o
 OBJS_mps_snesim_list = utility.o io.o coords3d.o coords4d.o mpsalgorithm.o snesim.o snesimlist.o mps_snesim_list.o
 OBJS_mps_snesim_tree = utility.o io.o coords3d.o coords4d.o mpsalgorithm.o snesim.o snesimtree.o mps_snesim_tree.o
 
@@ -17,8 +17,8 @@ OBJS_mps_snesim_tree = utility.o io.o coords3d.o coords4d.o mpsalgorithm.o snesi
 #	$(CC) $(CPPFLAGS) $(OBJS) -o mps_class_objects $(LDLIBS)
 
 # PROGRAMS
-mps_enesim_general: $(OBJS_mps_enesim_general)
-	$(CC) $(CPPFLAGS) $(OBJS_mps_enesim_general) -o mps_enesim_general $(LDLIBS)
+mps_genesim: $(OBJS_mps_genesim)
+	$(CC) $(CPPFLAGS) $(OBJS_mps_genesim) -o mps_genesim $(LDLIBS)
 
 
 mps_snesim_list: $(OBJS_mps_snesim_list)
@@ -28,8 +28,8 @@ mps_snesim_tree: $(OBJS_mps_snesim_tree)
 	$(CC) $(CPPFLAGS) $(OBJS_mps_snesim_tree) -o mps_snesim_tree $(LDLIBS)
 
 # MAIN OBJECTS
-mps_enesim_general.o: Coords3D.h ENESIM.h ENESIM_GENERAL.h MPSAlgorithm.h Utility.h IO.h mps_enesim_general.cpp
-		$(CC) $(CPPFLAGS) -c mps_enesim_general.cpp -o mps_enesim_general.o
+mps_genesim.o: Coords3D.h ENESIM.h ENESIM_GENERAL.h MPSAlgorithm.h Utility.h IO.h mps_genesim.cpp
+		$(CC) $(CPPFLAGS) -c mps_genesim.cpp -o mps_genesim.o
 
 mps_enesim_metropolis.o: Coords3D.h ENESIM.h ENESIM_METROPOLIS.h MPSAlgorithm.h Utility.h IO.h mps_enesim_metropolis.cpp
 		$(CC) $(CPPFLAGS) -c mps_enesim_metropolis.cpp -o mps_enesim_metropolis.o
@@ -79,6 +79,6 @@ snesimtree.o: Coords3D.h Coords4D.h SNESIMTree.h SNESIM.h MPSAlgorithm.h Utility
 
 
 clean:
-	rm -f *.o mps *.exe mps_enesim_general mps_snesim_tree mps_snesim_list
+	rm -f *.o mps *.exe mps_genesim mps_snesim_tree mps_snesim_list
 
-all: mps_enesim_general mps_snesim_list mps_snesim_tree
+all: mps_genesim mps_snesim_list mps_snesim_tree

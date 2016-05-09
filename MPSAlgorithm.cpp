@@ -157,7 +157,7 @@ float MPS::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf) {
 * @return True if found a closed node
 */
 bool MPS::MPSAlgorithm::_IsClosedToNodeInGrid(const int& x, const int& y, const int& z, const int& level, const std::vector<std::vector<std::vector<float>>>& grid, const float& searchRadius, MPS::Coords3D& closestCoordinates) {
-	//Using circular search 
+	//Using circular search
 	//TODO: Need to check this again, it runs slow with HD
 	std::vector<MPS::Coords3D> L;
 	std::vector<float> V;
@@ -374,7 +374,7 @@ void MPS::MPSAlgorithm::_clearSGFromHD(std::vector<MPS::Coords3D>& addedNodes, s
 	for (int i=0; i<addedNodes.size(); i++) {
 		_hdg[putbackNodes[i].getZ()][putbackNodes[i].getY()][putbackNodes[i].getX()] = _sg[addedNodes[i].getZ()][addedNodes[i].getY()][addedNodes[i].getX()];
 		if ((addedNodes[i].getZ() != putbackNodes[i].getZ()) || (addedNodes[i].getY() != putbackNodes[i].getY()) || (addedNodes[i].getX() != putbackNodes[i].getX())) {
-			_sg[addedNodes[i].getZ()][addedNodes[i].getY()][addedNodes[i].getX()] = std::numeric_limits<float>::quiet_NaN(); 
+			_sg[addedNodes[i].getZ()][addedNodes[i].getY()][addedNodes[i].getX()] = std::numeric_limits<float>::quiet_NaN();
 		}
 	}
 	//for (std::list<MPS::Coords3D>::iterator ptToBeRelocated = addedNodes.begin(); ptToBeRelocated != addedNodes.end(); ++ptToBeRelocated) {
@@ -431,7 +431,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 		for (int y=0; y<_sgDimY; y+= offset) {
 			for (int x=0; x<_sgDimX; x+= offset) {
 				randomValue = ((float) rand() / (RAND_MAX));
-				// Any Soft data??					
+				// Any Soft data??
 				if (_getCpdfFromSoftData(x, y, z, level, softPdf, closestCoords)) {
 					//Check if the closest node found already in the current relocated node
 					isAlreadyAllocated = (std::find(allocatedNodesFromSoftData.begin(), allocatedNodesFromSoftData.end(), closestCoords) != allocatedNodesFromSoftData.end());
@@ -441,7 +441,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 						float Ei; // Partial Entropy
 						float I; // Informatin content
 						float p; // probability
-						float q; // a priori 1D marginal								
+						float q; // a priori 1D marginal
 						E=0;
 						for(auto it = softPdf.cbegin(); it != softPdf.cend(); ++it) {
 							//// COMPUTE ENTROPY FOR SOFT PDF
@@ -456,25 +456,25 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 								E=E+Ei;
 							} else if (_shuffleSgPath==3) {
 								// THIS IS REALLY ONLY FOR TESTING WITH THE STREBELLE TI!!!
-								// soft probability							
+								// soft probability
 								p = it->second;
 								// 1D marginal
 								if ( (it->first) < .5) {
 									q=0.72;
 								} else {
 									q=0.28;
-								}				
+								}
 
 								//Ei=p*(-1*log2(p/q));
 								Ei=p*(-1*log(p/q) / log(2.));
 								E=E+Ei;
-								//	
+								//
 							}
 							//Put the relocated softdata into the softdata grid to continue the simulation
 							if (isRelocated) {
 								for (unsigned int i=0; i<_softDataCategories.size(); i++) {
 									if (it->first == _softDataCategories[i]) {
-										_softDataGrids[i][z][y][x] = it->second;	
+										_softDataGrids[i][z][y][x] = it->second;
 										break;
 									}
 								}
@@ -493,7 +493,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 							std::cout << ", I=" << I;
 							std::cout << ", randomV=" << randomValue << std::endl;
 						}
-					}						
+					}
 				}
 				MPS::utility::treeDto1D(closestCoords.getX(), closestCoords.getY(), closestCoords.getZ(), _sgDimX, _sgDimY, node1DIdx);
 				ePath.insert ( std::pair<float,int>(randomValue, node1DIdx) );
@@ -536,7 +536,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 		int tmpX, tmpY, tmpZ;
 
 		for (auto i = _simulationPath.begin(); i != _simulationPath.end(); ++i) {
-			MPS::utility::oneDTo3D(*i, _sgDimX, _sgDimY, tmpX, tmpY, tmpZ); 
+			MPS::utility::oneDTo3D(*i, _sgDimX, _sgDimY, tmpX, tmpY, tmpZ);
 			std::cout << tmpX << "," << tmpY << "," << tmpZ << "  ";
 		}
 		std::cout << std::endl << "PATH END" << std::endl;
@@ -577,6 +577,14 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 		_initializeSG(_sgIterations, _sgDimX, _sgDimY, _sgDimZ, 0);
 		//Initialize Simulation Grid from hard data or with NaN value
 		_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ);
+		//Initialize temporary grids if debugMode is high
+		if (_debugMode>1) {
+			//_initializeSG(_tg1, _sgDimX, _sgDimY, _sgDimZ);
+			//_initializeSG(_tg2, _sgDimX, _sgDimY, _sgDimZ);
+			_initializeSG(_tg1, _sgDimX, _sgDimY, _sgDimZ);
+			_initializeSG(_tg2, _sgDimX, _sgDimY, _sgDimZ);
+		}
+
 		/*if(!_hdg.empty()) {
 		std::cout << "Initialize from hard data " << _hardDataFileNames << std::endl;
 		_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ, _hdg, std::numeric_limits<float>::quiet_NaN());
@@ -605,7 +613,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				for (int y=0; y<_sgDimY; y+=offset) {
 					for (int x=0; x<_sgDimX; x+=offset) {
 						MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
-						_simulationPath.push_back(sg1DIdx);						
+						_simulationPath.push_back(sg1DIdx);
 						//The relocation process happens if the current simulation grid value is still NaN
 						//Moving hard data to grid node only on coarsed level
 						if(level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);
@@ -628,11 +636,11 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}
 			}
-			if (_debugMode > -1) {
+			if (_debugMode > 2) {
 				MPS::io::writeToGSLIBFile(outputFilename + "after_relocation_before_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 				std::cout << "After relocation" << std::endl;
 				_showSG();
-			}			
+			}
 
 			//std::cout << allocatedNodesFromHardData.size() << std::endl << std::endl;
 			//Shuffle simulation path indices vector for a random path
@@ -692,25 +700,25 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}
 			}
-			if (_debugMode > 0) {
+			if (_debugMode > 2) {
 				MPS::io::writeToGSLIBFile(outputFilename + "after_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 				std::cout << "After simulation" << std::endl;
 				_showSG();
-			}			
+			}
 
 			//Cleaning the allocated data from the SG
 			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData, nodeToPutBack);
-			if (_debugMode > 0) {
+			if (_debugMode > 2) {
 				MPS::io::writeToGSLIBFile(outputFilename + "after_cleaning_relocation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 				std::cout << "After cleaning relocation" << std::endl;
-				_showSG();		
+				_showSG();
 			}
 
 			//Printing SG out to check
 			//if (level == 0 && _debugMode > -1) {
 
 
-			if (_debugMode > 1) {
+			if (_debugMode > 2) {
 				//Writting SG to file
 				MPS::io::writeToGSLIBFile(outputFilename + "test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 			}
@@ -738,6 +746,14 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			//MPS::io::writeToASCIIFile(outputFilename + "_sg_ascii" + std::to_string(n) + ".txt", _sg, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 			//MPS::io::writeToGS3DCSVFile(outputFilename + "_ti_gs3d_" + std::to_string(n) + ".csv", _TI, _tiDimX, _tiDimY, _tiDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ);
 		}
+
+
+		if (_debugMode>1) {
+			//Write temporary grids to  file
+			MPS::io::writeToGSLIBFile(outputFilename + "_temp1_" + std::to_string(n) + ".gslib", _tg1, _sgDimX, _sgDimY, _sgDimZ);
+			MPS::io::writeToGSLIBFile(outputFilename + "_temp2_" + std::to_string(n) + ".gslib", _tg2, _sgDimX, _sgDimY, _sgDimZ);
+		}
+
 
 		if (_debugMode > 1) {
 			//Write random path to file
@@ -984,7 +1000,7 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 
 				//direction -Z
 				idxZ = sgIdxZ - zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);	
+				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
 				//direction +X
 				idxX = sgIdxX + xOffset;
@@ -1000,7 +1016,7 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 
 				//direction -Z
 				idxZ = sgIdxZ - zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);	
+				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
 				//direction +X
 				idxX = sgIdxX + xOffset;
@@ -1008,7 +1024,7 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 
 				//direction -X
 				idxX = sgIdxX - xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);	
+				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
 				//direction +Y
 				idxY = sgIdxY + yOffset;
@@ -1016,7 +1032,7 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 
 				//direction -Y
 				idxY = sgIdxY - yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);						
+				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 		default : //Z Y X
 				//direction +Z
 				idxZ = sgIdxZ + zOffset;
@@ -1033,15 +1049,15 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 				//direction -Y
 				idxY = sgIdxY - yOffset;
 				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
-				
+
 				//direction +X
 				idxX = sgIdxX + xOffset;
 				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
 				//direction -X
 				idxX = sgIdxX - xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);				
+				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 		}
 	}
 	//cout << "After searching: " << L.size() << " " << V.size() << endl;
-} 
+}

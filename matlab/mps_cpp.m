@@ -8,8 +8,8 @@
 %   TI=channels;           %  training image
 %   SIM=zeros(80,60).*NaN; %  simulation grid
 %   O.method='mps_snesim_tree'; % MPS algorithm to run (def='mps_snesim_tree') 
-%   %O.method='mps_snesim_list'; % MPS algorithm to run (def='mps_snesim_tree') 
-%   %O.method='mps_enesim_general'; % MPS algorithm to run (def='mps_snesim_tree') 
+%   %O.method='mps_snesim_list'; % 
+%   %O.method='mps_genesim'; % 
 %   O.n_real=1;             %  optional number of realization
 %   [reals,O]=mps_cpp(TI,SIM,O);
 %
@@ -87,23 +87,35 @@ end
 if ~isfield(O,'method');
   O.method='mps_snesim_tree';
   %O.method='mps_snesim_list';
-  %O.method='mps_enesim_general';
+  %O.method='mps_genesim';
 end
 
 %% WRITE PARAMETER FILE
-if strcmp(O.method(1:10),'mps_snesim');
+if strfind(O.method,'snesim');
     if strcmp(O.method,'mps_snesim');
         O.method='mps_snesim_tree';
     end
     if ~isfield(O,'parameter_filename');O.parameter_filename='snesim.txt';end
     O=mps_snesim_write_par(O);
-elseif strcmp(O.method(1:10),'mps_enesim');
-    if strcmp(O.method,'mps_enesim');
-        O.method='mps_enesim_general';
-    end
+elseif (strcmp(O.method,'mps_genesim'))||(strcmp(O.method,'mps_enesim_general'))
+    O.method='mps_genesim';
+    if ~isfield(O,'parameter_filename');O.parameter_filename='genesim.txt';end
+    O=mps_enesim_write_par(O);
+elseif strcmp(O.method,'mps_dsam');
+    O.method='mps_genesim';
+    O.n_max_cpdf_count=1;
+    if ~isfield(O,'parameter_filename');O.parameter_filename='dsam.txt';end
+    O=mps_enesim_write_par(O);
+elseif strcmp(O.method,'mps_enesim');
+    O.method='mps_genesim';
+    O.n_max_cpdf_count=1e+20;
     if ~isfield(O,'parameter_filename');O.parameter_filename='enesim.txt';end
     O=mps_enesim_write_par(O);
+else
+    disp(sprintf('%s: no method for ''%s''',mfilename,O.method));
+    return
 end
+
 %% RUN MPS CODE
 % make output folder if it does not exist
 if ~exist(O.output_folder,'dir')
@@ -162,25 +174,46 @@ for i=1:O.n_real
   end
 end
 
+%% READ TEMPORARY GRID VALUES
+if (O.debug>1)
+    for i=1:O.n_real
+        fname_tg1=sprintf('%s%s%s%s_temp1_%d.gslib',O.output_folder,filesep,f,e,i-1);
+        if exist(fname_tg1,'file')
+            O.TG1=read_eas_matrix(fname_tg1);
+        end
+        fname_tg2=sprintf('%s%s%s%s_temp2_%d.gslib',O.output_folder,filesep,f,e,i-1);
+        if exist(fname_tg2,'file')
+            O.TG2=read_eas_matrix(fname_tg2);
+        end
+        
+    end
+    
+end
+
 %%
 if (O.debug>1)
 for i=1:O.n_real
     fname_path=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,i-1);
+
     
+
     try
-        P=read_eas(fname_path);
+        PP=read_eas(fname_path);
     catch
         disp(sprintf('%s: problems reading output file (%s) - waiting a bit an retrying',mfilename,fname));
         pause(5);
-        P=read_eas(fname_path);
+        PP=read_eas(fname_path);
     end
-    O.path(:,i)=P(:);
+    O.path(:,i)=PP(:);
  
     if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
         % 1D
     elseif (O.simulation_grid_size(3)==1)
         % 2D
-        [ix,iy]=ind2sub([O.simulation_grid_size(2),O.simulation_grid_size(1)],P(:)+1);
+        try
+            O.P=read_eas_matrix(fname_path);
+        end
+        [ix,iy]=ind2sub([O.simulation_grid_size(2),O.simulation_grid_size(1)],PP(:)+1);
         for j=1:length(ix);
             O.path_index(iy(j),ix(j),i)=j;
         end
@@ -191,6 +224,11 @@ for i=1:O.n_real
     
 end
 end
+
+
+O.x=[0:1:(O.simulation_grid_size(1)-1)].*O.grid_cell_size(1)+O.origin(1);
+O.y=[0:1:(O.simulation_grid_size(2)-1)].*O.grid_cell_size(2)+O.origin(2);
+O.z=[0:1:(O.simulation_grid_size(3)-1)].*O.grid_cell_size(3)+O.origin(3);
 
 %%
 mps_cpp_clean(O);
