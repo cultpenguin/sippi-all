@@ -7,6 +7,7 @@
 
 if ~exist('TI','var');
     TI=load('TI.asc');           %  training image
+    %try;TI=read_eas_matrix('gv.ti');end
 end
 
 if ~exist('SIM','var');
@@ -15,6 +16,7 @@ end
 
 O.n_real=1;  % Number of realizations
 O.rseed=1;  % Random Seed
+
 
 if ~isfield(O,'method')
     O.method='mps_enesim_general'; % MPS algorithm to run
