@@ -563,7 +563,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 	// Write license information to screen
 	if (_debugMode>-2) {
 		std::cout << "__________________________________________________________________________________" << std::endl;
-	 	std::cout << "MPSlib: a C++ libary for multiple point simulation" << std::endl;
+	 	std::cout << "MPSlib: a C++ library for multiple point simulation" << std::endl;
 	 	std::cout << "(c) 2015-2016 I-GIS (www.i-gis.dk) and" << std::endl;
 		std::cout << "              Solid Earth Geophysics, Niels Bohr Institute (http://imgp.nbi.ku.dk)" << std::endl;
 		std::cout << "This program comes with ABSOLUTELY NO WARRANTY;"  << std::endl;

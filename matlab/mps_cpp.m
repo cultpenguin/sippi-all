@@ -49,11 +49,12 @@ O.verbose=verbose;
 doWriteTI=1;
 if doWriteTI==1;
   O.ti_filename='ti.dat';
-  [ny,nx,nz]=size(TI);
+  %[ny,nx,nz]=size(TI);
+  [nx,ny,nz]=size(TI);
   t_title=sprintf('%d %d %d',nx,ny,nz);
   t_row='rowHeader';
-  tTI=TI';
-  write_eas(O.ti_filename,tTI(:),t_row,t_title);
+  write_eas(O.ti_filename,TI(:),t_row,t_title);
+  % tTI=TI';write_eas(O.ti_filename,tTI(:),t_row,t_title);
 end
 
 %% write simulation grid
