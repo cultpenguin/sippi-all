@@ -1,5 +1,5 @@
-# MPS: a C++ class for Multiple-Point based sequential Simulation
-MPS provides a set of algorithms for simulation of models based on a multiple point
+# MPSlib: a C++ class for Multiple-Point based sequential Simulation
+MPSlib provides a set of algorithms for simulation of models based on a multiple point
 statistical model inferred from a training image.
 
 The goal of developing these codes has been to produce a set of algorithms, based
@@ -7,23 +7,23 @@ on sequential simulation, for simulation of multiple point statistical random mo
 The code should be easy to compile and extend, and should be allowed for both
 commercial and non-commercial use.
 
-MPS (version 1.0) has been developed by
+MPSlib (version 1.0) has been developed by
 [I-GIS](http://www.i-gis.dk/)
 and
 [Solid Earth Physics, Niels Bohr Institute](http://imgp.nbi.ku.dk/).
 
-Development has been funded by the Danish National Hightech Foundation (now: the Innovation fund) thorugh the ERGO (Effective high-resolution Geological Modeling) project, a collaboration between
+Development has been funded by the Danish National Hightech Foundation (now: the Innovation fund) through the ERGO (Effective high-resolution Geological Modeling) project, a collaboration between
 [IGIS](http://i-gis.dk/),
 [GEUS](http://geus.dk/), and 
 [Niels Bohr Institute](http://nbi.ku.dk/).
 
 # Documentation
-MPS is documented through Doxygen.
+MPSlib is documented through Doxygen.
 
 # Compilation
-The MPS codes are written in standard [C++11](https://www.wikiwand.com/en/C%2B%2B11).
+The MPSlib codes are written in standard [C++11](https://www.wikiwand.com/en/C%2B%2B11).
 
-MPS has been developed using the GNU C++ compiler (tested on Windows, Linux and OSX), and Visual Studio C++.
+MPSlib has been developed using the GNU C++ compiler (tested on Windows, Linux and OSX), and Visual Studio C++.
 
 ## Linux (GCC version 4.8.3)
 On Ubuntu Linux 14.04, the following compiler flags are used:
@@ -40,7 +40,7 @@ Compiler flags:
 
 CPPFLAGS = -g -static -O3
 
-MPS has been tested uing mingw in windows. Note that not all builds of mingw will work. Therefor we specifically make use of mingw-w64 ([http://mingw-w64.org/doku.php]), which can be obtained in a number of ways.
+MPSlib has been tested using mingw in windows. Note that not all builds of mingw will work. Therefor we specifically make use of mingw-w64 ([http://mingw-w64.org/doku.php]), which can be obtained in a number of ways.
 
 One (recommended) approach is to make use of MSYS2. Follow the guide at [http://msys2.github.io/] to install MSYS2, and then install the mingw_w64 toolchain using:
 
@@ -51,7 +51,7 @@ One (recommended) approach is to make use of MSYS2. Follow the guide at [http://
 # Release history
 
 ## v1.0 [15-02-2016]
-Initial release of MPS, with
+Initial release of MPSlib, with
 `mps_snesim_list`, 
 `mps_snesim_tree`, and
 `mps_genesim`.
