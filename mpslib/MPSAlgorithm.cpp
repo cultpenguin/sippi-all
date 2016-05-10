@@ -559,6 +559,19 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 * Virtual function implemented from MPSAlgorithm
 */
 void MPS::MPSAlgorithm::startSimulation(void) {
+	
+	// Write license information to screen
+	if (_debugMode>-2) {
+		std::cout << "__________________________________________________________________________________" << std::endl;
+	 	std::cout << "MPSlib: a C++ libary for multiple point simulation" << std::endl;
+	 	std::cout << "(c) 2015-2016 I-GIS (www.i-gis.dk) and" << std::endl;
+		std::cout << "              Solid Earth Geophysics, Niels Bohr Institute (http://imgp.nbi.ku.dk)" << std::endl;
+		std::cout << "This program comes with ABSOLUTELY NO WARRANTY;"  << std::endl;
+    	std::cout << "This is free software, and you are welcome to redistribute it"  << std::endl;
+    	std::cout << "under certain conditions. See 'COPYING.LESSER'for details."  << std::endl;
+		std::cout << "__________________________________________________________________________________" << std::endl;
+	}
+
 
 	//Intitialize random seed or not
 	if (_seed != 0) srand(_seed); //same seed
@@ -588,8 +601,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 		_initializeSG(_sg, _sgDimX, _sgDimY, _sgDimZ);
 		//Initialize temporary grids if debugMode is high
 		if (_debugMode>1) {
-			//_initializeSG(_tg1, _sgDimX, _sgDimY, _sgDimZ);
-			//_initializeSG(_tg2, _sgDimX, _sgDimY, _sgDimZ);
+			// Initialize some extra grids for extra information
 			_initializeSG(_tg1, _sgDimX, _sgDimY, _sgDimZ);
 			_initializeSG(_tg2, _sgDimX, _sgDimY, _sgDimZ);
 		}

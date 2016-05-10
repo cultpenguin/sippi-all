@@ -22,6 +22,6 @@ mps_snesim_list:
 	$(CC) $(CPPFLAGS) mps_snesim_list.cpp SNESIMList.cpp mpslib/mpslib.a -o $@ -I mpslib/ $(LDLIBS)
 
 clean:
-	rm -f *.o mps *.exe mps_genesim mps_snesim_tree mps_snesim_list $(MPSLIB)
+	rm -f *.o mps *.exe mps_genesim mps_snesim_tree mps_snesim_list mpslib/*.o $(MPSLIB)
 
 
