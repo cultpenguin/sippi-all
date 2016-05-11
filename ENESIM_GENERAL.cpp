@@ -20,9 +20,9 @@
 #include <list>
 
 #include "ENESIM_GENERAL.h"
-#include "IO.h"
-#include "Utility.h"
-#include "Coords3D.h"
+#include "mpslib/IO.h"
+#include "mpslib/Utility.h"
+#include "mpslib/Coords3D.h"
 
 /**
 * @brief Constructors from a configuration file

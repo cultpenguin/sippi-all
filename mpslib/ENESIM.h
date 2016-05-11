@@ -44,7 +44,7 @@ protected:
 	/**
 	* @brief Select whether to use Metropolis style soft data conditioning
 	*/
-	int _MetropolisSoftData = 0;
+	int _MetropolisSoftData; // = 0;
 	//_MetropolisSoftData = 1;
 
 

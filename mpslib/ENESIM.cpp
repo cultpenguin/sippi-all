@@ -32,6 +32,7 @@ MPS::ENESIM::ENESIM(void) : MPS::MPSAlgorithm(){
 	// Multiple grids are not used in ENESIM type algorithms
 	_totalGridsLevel=0;
 	_nMaxCountCpdf=1;
+	_MetropolisSoftData=0;
 }
 
 /**
@@ -359,13 +360,13 @@ bool MPS::ENESIM::_combinePdf(std::map<float, float>& cPdf, std::map<float, floa
 		val_softpdf=softPdf[key];
 
 		if (cPdf.count(key)) {
-				// the key is set in both the soft and coniditional pdf.
-				val_cpdf=cPdf[key];
-				//std::cout << "  key=" << key << " P SO="<< val_softpdf << std::endl;
+			// the key is set in both the soft and coniditional pdf.
+			val_cpdf=cPdf[key];
+			//std::cout << "  key=" << key << " P SO="<< val_softpdf << std::endl;
 
 		} else {
 			// the key is not set for the conditional pdf
-				val_cpdf=0.00001;
+			val_cpdf=0.00001;
 		}
 		//std::cout << "sum pdf = " << sum_cpdf << std::endl;
 		//std::cout << "CPDF_TI   INDEX=" << iter->first << "  COUNT =" << iter->second << " ->";
@@ -406,8 +407,8 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesim(const int& sgIdxX, const int&
 	std::map<float, float> softPdf;
 	MPS::Coords3D closestCoords;
 	if (_getCpdfFromSoftData(sgIdxX, sgIdxY, sgIdxZ, 0, softPdf, closestCoords)) {
-		  // Combine with conditional pdf from TI
-			_combinePdf(conditionalPdfFromTi,softPdf);
+		// Combine with conditional pdf from TI
+		_combinePdf(conditionalPdfFromTi,softPdf);
 	}
 
 	// sample from conditional pdf
@@ -467,7 +468,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimMetropolis(const int& sgIdxX, 
 
 			// accept simulatedValue with probabilty from soft data
 			if (randomValue<pAcc) {
-					isAccepted=true;
+				isAccepted=true;
 			}
 			i++;
 		} while ((i<maxIterations)&(!isAccepted));
@@ -483,7 +484,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimMetropolis(const int& sgIdxX, 
 
 		// sample from conditional pdf
 		simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
-  }
+	}
 
 
 

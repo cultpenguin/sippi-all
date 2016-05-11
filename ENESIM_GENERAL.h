@@ -17,7 +17,7 @@
 //
 #pragma once
 
-#include "ENESIM.h"
+#include "mpslib/ENESIM.h"
 
 namespace MPS {
 	class ENESIM_GENERAL;

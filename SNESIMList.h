@@ -17,7 +17,7 @@
 //
 #pragma once
 
-#include "SNESIM.h"
+#include "mpslib/SNESIM.h"
 
 namespace MPS {
 	class SNESIMList;

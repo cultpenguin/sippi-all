@@ -6,7 +6,7 @@ SRC_DIR = .
 # variant 1
 SRCS ?= $(shell find $(SRC_DIR) -name '*.cpp' | sed "s/[^\/]*\/[^\/]*\///")
 # variant 2
-# SRCS = Utility.cpp IO.cpp
+# SRCS = Utility.cpp IO.cpp Coords3D.cpp Coords4D.cpp MPSAlgorithm.cpp SNESIM.cpp ENESIM.cpp
 
 %.o : $(SRC_DIR)/%.cpp
 	$(CC) -o $@ $(INCLUDES) $(CPPFLAGS) -c $^

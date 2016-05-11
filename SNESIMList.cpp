@@ -21,8 +21,8 @@
 #include <list>
 
 #include "SNESIMList.h"
-#include "IO.h"
-#include "Coords3D.h"
+#include "mpslib/IO.h"
+#include "mpslib/Coords3D.h"
 
 /**
 * @brief Constructors from a configuration file

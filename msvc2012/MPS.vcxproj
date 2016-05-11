@@ -18,9 +18,31 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\mpslib\Coords3D.cpp" />
+    <ClCompile Include="..\mpslib\Coords4D.cpp" />
+    <ClCompile Include="..\mpslib\ENESIM.cpp" />
+    <ClCompile Include="..\mpslib\IO.cpp" />
+    <ClCompile Include="..\mpslib\MPSAlgorithm.cpp" />
+    <ClCompile Include="..\mpslib\SNESIM.cpp" />
+    <ClCompile Include="..\mpslib\Utility.cpp" />
+    <ClCompile Include="..\mps_snesim_tree.cpp" />
+    <ClCompile Include="..\SNESIMTree.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\mpslib\Coords3D.h" />
+    <ClInclude Include="..\mpslib\Coords4D.h" />
+    <ClInclude Include="..\mpslib\ENESIM.h" />
+    <ClInclude Include="..\mpslib\IO.h" />
+    <ClInclude Include="..\mpslib\MPSAlgorithm.h" />
+    <ClInclude Include="..\mpslib\SNESIM.h" />
+    <ClInclude Include="..\mpslib\Utility.h" />
+    <ClInclude Include="..\SNESIMTree.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DAE157F1-C3BA-43C8-9ACF-823CB8811CDF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
+    <ProjectName>MPSLIB</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -127,31 +149,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Coords3D.cpp" />
-    <ClCompile Include="..\Coords4D.cpp" />
-    <ClCompile Include="..\ENESIM.cpp" />
-    <ClCompile Include="..\ENESIM_GENERAL.cpp" />
-    <ClCompile Include="..\IO.cpp" />
-    <ClCompile Include="..\MPSAlgorithm.cpp" />
-    <ClCompile Include="..\mps_snesim_tree.cpp" />
-    <ClCompile Include="..\SNESIM.cpp" />
-    <ClCompile Include="..\SNESIMList.cpp" />
-    <ClCompile Include="..\SNESIMTree.cpp" />
-    <ClCompile Include="..\Utility.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Coords3D.h" />
-    <ClInclude Include="..\Coords4D.h" />
-    <ClInclude Include="..\ENESIM.h" />
-    <ClInclude Include="..\ENESIM_GENERAL.h" />
-    <ClInclude Include="..\IO.h" />
-    <ClInclude Include="..\MPSAlgorithm.h" />
-    <ClInclude Include="..\SNESIM.h" />
-    <ClInclude Include="..\SNESIMList.h" />
-    <ClInclude Include="..\SNESIMTree.h" />
-    <ClInclude Include="..\Utility.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
