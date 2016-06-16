@@ -49,12 +49,14 @@ O.verbose=verbose;
 doWriteTI=1;
 if doWriteTI==1;
   O.ti_filename='ti.dat';
-  %[ny,nx,nz]=size(TI);
-  [nx,ny,nz]=size(TI);
-  t_title=sprintf('%d %d %d',nx,ny,nz);
-  t_row='rowHeader';
-  write_eas(O.ti_filename,TI(:),t_row,t_title);
-  % tTI=TI';write_eas(O.ti_filename,tTI(:),t_row,t_title);
+  write_eas_matrix(O.ti_filename,TI);
+  
+  
+  %[nx,ny,nz]=size(TI);
+  %t_title=sprintf('%d %d %d',nx,ny,nz);
+  %t_row='rowHeader';
+  %%write_eas(O.ti_filename,TI(:),t_row,t_title);
+  %tTI=TI';write_eas(O.ti_filename,tTI(:),t_row,t_title);
 end
 
 %% write simulation grid
@@ -155,24 +157,28 @@ O.time=toc;
 [p,f,e]=fileparts(O.ti_filename);
 clear D;
 for i=1:O.n_real
-  fname=sprintf('%s%s%s%s_sg_%d.gslib',O.output_folder,filesep,f,e,i-1);
-  try
-      D=read_eas(fname);
-  catch
-      disp(sprintf('%s: problems reading output file (%s) - waiting a bit an retrying',mfilename,fname));
-      pause(5);
-      D=read_eas(fname);
-  end
+  fname=sprintf('%s%s%s%s_sg_%d.gslib',O.output_folder,filesep,f,e,i-1);  
+  D=read_eas_matrix(fname);
+  %try
+  %    D=read_eas(fname);
+  %catch
+  %    disp(sprintf('%s: problems reading output file (%s) - waiting a bit an retrying',mfilename,fname));
+  %    pause(5);
+  %    D=read_eas(fname);
+  %end
   
   if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
     % 1D
     reals=D;
   elseif (O.simulation_grid_size(3)==1)
     % 2D
-    reals(:,:,i)=reshape(D,O.simulation_grid_size(1),O.simulation_grid_size(2))';
+    %reals(:,:,i)=reshape(D,O.simulation_grid_size(1),O.simulation_grid_size(2))';
+    reals(:,:,i)=D;
   else
     % 3D
+    reals(:,:,:,i)=D;
   end
+  
 end
 
 %% READ TEMPORARY GRID VALUES

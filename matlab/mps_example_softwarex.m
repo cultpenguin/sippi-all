@@ -1,11 +1,8 @@
+% mps_example_softwarex
 %
-% SOMETHING OIS VERY BAD SINCE THE LAST UPDATE
-% ENESIM IS 20 TIMES SLOWER, (W/WO hard data) when MAXIT=1);
-%
-%
-
+% Figure for SoftwareX manuscript 
 clear all;close all
-TI=channels;
+load TI_channels       
 %TI=maze;TI=TI(10:1:110,10:1:110);           %  training image
 TI=TI(2:2:end,2:2:end);
 SIM=zeros(50,80).*NaN; %  simulation grid
