@@ -32,5 +32,5 @@ GENESIM in Direct Sampling mode, with a maximum of 1 event to establish the cond
 
 
 # Condtional simulation
-![Reference image](https://octodex.github.com/images/yaktocat.png)
+![Reference image](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/mps_examples_hard_data.png)
 
