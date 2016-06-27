@@ -158,7 +158,12 @@ O.time=toc;
 clear D;
 for i=1:O.n_real
   fname=sprintf('%s%s%s%s_sg_%d.gslib',O.output_folder,filesep,f,e,i-1);  
-  D=read_eas_matrix(fname);
+  try
+      D=read_eas_matrix(fname);
+  catch
+      disp(sprintf('%s: COULD NOT READ %s',mfileanme,fname))
+      keyboard
+  end
   %try
   %    D=read_eas(fname);
   %catch
