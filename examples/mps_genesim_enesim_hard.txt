@@ -1,4 +1,4 @@
-Number of realizations # 200
+Number of realizations # 4
 Random Seed (0 `random` seed) # 0
 Maximum number of counts for conditional pdf # 1000000000
 Max number of conditional point # 25
@@ -18,7 +18,7 @@ Shuffle Simulation Grid path (1 : random, 0 : sequential) # 1
 Shuffle Training Image path (1 : random, 0 : sequential) # 1
 HardData filename  (same size as the simulation grid)# mps_hard_data.dat
 HardData seach radius (world units) # 1
-Softdata categories (separated by ;) # 0;1;2;3
-Soft datafilenames (separated by ; only need (number_categories - 1) grids) # mps_soft_data.dat
+Softdata categories (separated by ;) # 0;1
+Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft.dat
 Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
 Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 1

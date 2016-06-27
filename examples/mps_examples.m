@@ -13,7 +13,7 @@ f_ti{1}='ti_cb_6x6_40_40_1.dat';
 f_ti{2}='ti_strebelle_125_125_1.dat';
 f_ti{3}='ti_cb_101_101_4cat.dat';
 f_ti{4}='ti_cb_6x6_102_102_1.dat';
-i_ti=3;
+i_ti=4;
 
 
 % load TI
@@ -69,7 +69,7 @@ pos_hard(:,3)=O.z(1);
 val_hard(:,1)=m_ref(i_hard);
 write_eas('mps_hard_data.dat',[pos_hard val_hard]);
 
-%% soft data
+% soft data
 ind=unique(m_ref(:));
 clear p_soft;
 [h,hx]=hist(m_ref(:),ind)
@@ -79,7 +79,7 @@ for i=1:length(ind);
     ii=find(m_ref==ind(i));
     p_soft(ii,i)=1;    
 end
-p_soft=p_soft+.4;
+p_soft=p_soft+.7;
 sum_p_soft=sum(p_soft')';
 NM=repmat(sum_p_soft,[1,length(ind)]);
 p_soft=p_soft./NM;
@@ -90,7 +90,7 @@ write_eas('mps_soft_data.dat',[xx(:) yy(:) yy(:).*0+O.z(1) p_soft]);
 %%
 % figures
 figure(1);
-imagesc(O.x,O.y,TI);
+imagesc(O.x,O.y,m_ref);
 xlabel('X')
 ylabel('Y')
 title('Reference model')
@@ -192,5 +192,21 @@ O.parameter_filename='mps_genesim_hard_soft.txt';
 O.method='mps_genesim'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
+
+
+%%
+%% CONDIIONAL SOFT DATA
+O.hard_data_filename = 'mps_hard_data.dat';
+O.soft_data_filename = 'mps_soft_data.dat';
+O.soft_data_categories='0;1;2;3';
+
+% MPS_SNESIM_TREE
+O.parameter_filename='mps_snesim_hard_soft_200.txt';
+O.method='mps_snesim_tree'; 
+O.n_real=200;            
+[reals,O]=mps_cpp(TI,SIM,O);
+[Emean,Estd,Emode]=etype(reals);
+figure(4);
+imagesc(O.x,O.y,Emode);
 
 
