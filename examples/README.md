@@ -32,5 +32,9 @@ GENESIM in Direct Sampling mode, with a maximum of 1 event to establish the cond
 
 
 # Condtional simulation
-![Reference image](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/mps_examples_hard_data.png)
+Reference 'image' from which hard and soft data is created
+![Reference image](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/mps_examples_reference.png)
+
+Hard data:
+![Hard data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/mps_examples_hard_data.png)
 
