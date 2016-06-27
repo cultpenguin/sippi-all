@@ -31,7 +31,7 @@ GENESIM in Direct Sampling mode, with a maximum of 1 event to establish the cond
 	../mps_genesim mps_genesim_dsam_unconditional.txt
 
 
-# Condtional simulation
+# Condtional simulation - Hard data
 Reference 'image' from which hard and soft data is created
 ![Reference image](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/mps_examples_reference.png)
 
@@ -45,4 +45,18 @@ Examples of runnig simulation conditional to the hard data
 	../mps_genesim mps_genesim_enesim_hard.txt
 	../mps_genesim mps_genesim_hard.txt
 	../mps_genesim mps_genesim_dsam_hard.txt
+
+
+# Condtional simulation - Soft data
+Soft data:
+![Soft data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/mps_examples_soft_data.png)
+
+Examples of runnig simulation conditional to the hard data
+
+	../mps_snesim_tree mps_snesim_hard_soft.txt
+	../mps_snesim_list mps_snesim_hard_soft.txt
+	../mps_genesim mps_genesim_enesim_hard_soft.txt
+	../mps_genesim mps_genesim_hard_soft.txt
+
+
 
