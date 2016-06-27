@@ -1,12 +1,18 @@
 ## Examples
-This folder contains a number of examples for runnin
+This folder contains a number of examples for running
 
 	mps_genesim
 	mps_snesim_tree
 	mps_snesim_list
 
+ALl parameter files have been generated using the Matlab interface to MPSlib 
+(thorugh mps_examples.m), but this is not needed to run the examples. 
 
-# uncondtional simualation
+For all example the simulation grid is 80x40 pixels.
+4 realizations are genearted from each run. 
+
+
+# uncondtional simulation
 SNESIM type simulation:
 
 	../mps_snesim_tree mps_snesim_unconditional.txt
@@ -23,3 +29,8 @@ GENESIM in scanning for only up to 10 events to establish the conditional pdf:
 GENESIM in Direct Sampling mode, with a maximum of 1 event to establish the conditional pdf:
 
 	../mps_genesim mps_genesim_dsam_unconditional.txt
+
+
+# Condtional simulation
+![Reference image](https://octodex.github.com/images/yaktocat.png)
+
