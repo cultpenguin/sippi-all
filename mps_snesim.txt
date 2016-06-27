@@ -15,7 +15,7 @@ Simulation grid world/origin Z # 0
 Simulation grid grid cell size X # 1
 Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
-Training image file (spaces not allowed) # TI/mps_ti.dat
+Training image file (spaces not allowed) # TI/ti_cb_4x4_40_40_1.dat
 Output folder (spaces in name not allowed) # .
 Shuffle Simulation Grid path (1 : random, 0 : sequential) # 1
 Shuffle Training Image path (1 : random, 0 : sequential) # 1
@@ -23,5 +23,5 @@ HardData filename  (same size as the simulation grid)# conditional.dat
 HardData seach radius (world units) # 1
 Softdata categories (separated by ;) # 0;1
 Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft.dat
-Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
+Number of threads (minimum 1, maximum 8 - depend on your CPU) # 4
 Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 1
