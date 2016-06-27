@@ -1,8 +1,9 @@
 ## Examples
-This folder contains a number of example of parameters files for 
-mps_genesim
-mps_snesim_tree
-mps_snesim_list
+This folder contains a number of examples for runnin
+
+	mps_genesim
+	mps_snesim_tree
+	mps_snesim_list
 
 
 # uncondtional simualation
