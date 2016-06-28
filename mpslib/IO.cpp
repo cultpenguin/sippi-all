@@ -26,6 +26,21 @@
 
 namespace MPS {
 	namespace io {
+
+
+		/**
+		* @brief check if file exists
+		*
+		* @param fileName source's file name
+		*
+		* @return true if filename exists
+		*/
+		bool file_exist(const std::string& fileName)
+		{
+    	std::ifstream infile(fileName);
+    	return infile.good();
+		}
+
 		/**
 		* @brief Read a GSLIB file and put data inside a training image, multiple channel supported
 		*

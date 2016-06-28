@@ -42,6 +42,14 @@ MPS::SNESIM::~SNESIM(void) {
 * @param fileName configuration filename
 */
 void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
+
+	// Check that parameter file exist
+	if  (!(MPS::io::file_exist(fileName))) {
+		std::cout << "Paremeter file '" << fileName << "' does not exist -> quitting" << std::endl;
+		exit(0);
+		return;
+	}
+
 	std::ifstream file(fileName);
 	std::string str;
 	std::stringstream ss;

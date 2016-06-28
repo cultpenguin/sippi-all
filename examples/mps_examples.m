@@ -17,7 +17,7 @@ i_ti=4;
 
 
 % load TI
-TI=read_eas_matrix(['..',filesep,'TI',filesep,f_ti{i_ti}]);
+TI=read_eas_matrix(['..',filesep,'ti',filesep,f_ti{i_ti}]);
 
 % setup simulation grid
 SIM=zeros(ny,nx);

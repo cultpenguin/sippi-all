@@ -12,7 +12,7 @@ Simulation grid world/origin Z # 0
 Simulation grid grid cell size X # 1
 Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
-Training image file (spaces not allowed) # TI/ti_cb_4x4_40_40_1.dat
+Training image file (spaces not allowed) # ti/ti_cb_4x4_40_40_1.dat
 Output folder (spaces in name not allowed) # .
 Shuffle Simulation Grid path (1 : random, 0 : sequential) # 1
 Shuffle Training Image path (1 : random, 0 : sequential) # 1

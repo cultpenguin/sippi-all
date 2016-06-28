@@ -12,16 +12,18 @@ all: $(MPSLIB) mps_genesim mps_snesim_list mps_snesim_tree
 $(MPSLIB):
 	cd mpslib; make; cd ..
 
-mps_genesim: 
+mps_genesim:
 	$(CC) $(CPPFLAGS) mps_genesim.cpp ENESIM_GENERAL.cpp mpslib/mpslib.a -o $@ -I mpslib/ $(LDLIBS)
-	
-mps_snesim_tree: 
+
+mps_snesim_tree:
 	$(CC) $(CPPFLAGS) mps_snesim_tree.cpp SNESIMTree.cpp mpslib/mpslib.a -o $@ -I mpslib/ $(LDLIBS)
 
-mps_snesim_list: 
+mps_snesim_list:
 	$(CC) $(CPPFLAGS) mps_snesim_list.cpp SNESIMList.cpp mpslib/mpslib.a -o $@ -I mpslib/ $(LDLIBS)
+
+remake:
+	make clean
+	make all
 
 clean:
 	rm -f *.o mps *.exe mps_genesim mps_snesim_tree mps_snesim_list mpslib/*.o $(MPSLIB)
-
-
