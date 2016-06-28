@@ -69,16 +69,22 @@ if doSetSIM==1;
 end
 
 %%
-% WRITE HARD DATA IF NECESSARY
-if isfield(O,'d_cond');
-    if ~isfield(O,'d_cond');
-        O.hard_data_filename='d_cond.eas';
+% WRITE HARD DATA IF SET AS VARIABLE
+if isfield(O,'d_hard');
+    if ~isfield(O,'d_hard');
+        O.hard_data_filename='d_hard.dat';
     end
-    write_eas(O.hard_data_filename,O.d_cond);
+    write_eas(O.hard_data_filename,O.d_hard);
 end
 
 
-% WRITE SOFT DATA IF NECESSARY
+% WRITE SOFT DATA IF SET AS VARIABLE
+if isfield(O,'d_soft');
+    if ~isfield(O,'d_soft');
+        O.soft_data_filename='d_soft.dat';
+    end
+    write_eas(O.soft_data_filename,O.d_soft);
+end
 
 %%
 if ~isfield(O,'method');

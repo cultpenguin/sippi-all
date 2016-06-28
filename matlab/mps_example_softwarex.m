@@ -2,8 +2,9 @@
 %
 % Figure for SoftwareX manuscript 
 clear all;close all
-load TI_channels       
+%load TI_channels       
 %TI=maze;TI=TI(10:1:110,10:1:110);           %  training image
+TI=read_eas_matrix(['..',filesep,'ti',filesep,'ti_strebelle_250_250_1.dat']);
 TI=TI(2:2:end,2:2:end);
 SIM=zeros(50,80).*NaN; %  simulation grid
 
@@ -16,6 +17,7 @@ SIM=zeros(50,80).*NaN; %  simulation grid
 % options for all
 nhard=6;20;15;5;1;6;30;
 nc=7; % TEMPLATE SIZE
+nc=9; % TEMPLATE SIZE
 Oorg.n_multiple_grids=3; % --> !!
 %nc=5;Oorg.n_multiple_grids=0;; % --> !!
 %nc=2;Oorg.n_multiple_grids=3;; % --> !!
@@ -26,6 +28,7 @@ Oorg.rseed=1;             %  optional number of realization
 Oorg.template_size=[nc nc 1]; % SNESIM TYPE COND
 Oorg.n_cond=nc^2; % ENESIM TYPE COND
 
+Oorg.n_real=80;             %  optional number of realization
 
 
 %% different methods
@@ -67,9 +70,10 @@ for io=1:length(O);
     t1(io)=toc;
 end
 
-%% cond
+%% cond HARD
 rng(1);
-clear d_c
+clear d_cnc=7; % TEMPLATE SIZE
+
 d_x=ceil(rand(1,nhard).*(O{1}.simulation_grid_size(1)-1));
 d_y=ceil(rand(1,nhard).*(O{1}.simulation_grid_size(2)-1));
 d_z=d_y.*O{1}.origin(1);
@@ -77,15 +81,58 @@ for i=1:nhard
     d_c(i)=TI(d_y(i),d_x(i));
     %d_c(i)=1;
 end
-f_cond='f_cond.dat';
+f_cond='f_hard.dat';
 d_cond=[d_x(:) d_y(:) d_z(:) d_c(:)];
 write_eas(f_cond,d_cond);
 
+
+
+%% cond SOFT
+
+try;clear d_soft;end
+ny=O{1}.simulation_grid_size(2);
+nx=O{1}.simulation_grid_size(1);
+[xx,yy]=meshgrid(O{1}.x,O{1}.y);
+m_ref=TI(1:nx,1:ny);
+n_s=7;
+m_soft=conv2(TI,ones(n_s,n_s),'same')./n_s^2;
+m_soft=1+m_soft([1:ny]+n_s,[1:nx]+n_s)*4;
+
+figure(11);clf;
+imagesc(m_soft);axis image;colorbar;set(gca,'ydir','reverse');
+[h hx]=hist(TI(:),[0 1]);
+marg_1d=h./sum(h);
+
+p_0 = ones(nx*ny,1)*marg_1d(1);
+p_1 = ones(nx*ny,1)*marg_1d(2);
+
+p_0 = p_0.*m_soft(:);
+p_1 = p_1./m_soft(:);
+
+sp=(p_0+p_1);
+p_0=p_0./sp;
+p_1=p_1./sp;
+
+d_soft=[xx(:) yy(:) yy(:).*0+O{1}.z(1) p_0 p_1];
+f_soft='f_soft.dat';
+write_eas(f_soft,d_soft);
+figure(12);clf;
+scatter(d_soft(:,1),d_soft(:,2),10,d_soft(:,4),'filled')
+colorbar
+caxis([0 1])
+set(gca,'ydir','reverse');
+
+%%
+use_soft_data=1;
 Oc=O;
 for io=1:length(Oc);
-    Oc{io}.d_cond=d_cond;
+    Oc{io}.d_hard=d_cond;
+    if use_soft_data==1;
+        Oc{io}.d_soft=d_soft;
+    end
     Oc{io}.n_real=Oorg.n_real;
     Oc{io}.hard_data_filename=f_cond;
+    Oc{io}.soft_data_filename=f_soft;
     Oc{io}.hard_data_search_radius=1;
     tic
     [reals_cond{io},Oc{io}]=mps_cpp_thread(TI,SIM,Oc{io});
@@ -93,20 +140,7 @@ for io=1:length(Oc);
     t2(io)=toc
 end
 
-%% SNESIM FORTRAN
-x=[0:1:(O{1}.simulation_grid_size(1)-1)].*O{1}.grid_cell_size(1)+O{1}.origin(1);
-y=[0:1:(O{1}.simulation_grid_size(2)-1)].*O{1}.grid_cell_size(2)+O{2}.origin(2);
 
-S = snesim_init(TI,x,y);
-S.fconddata.fname=Oc{1}.hard_data_filename;
-S.nsim=Oorg.n_real;
-S.nsim=max([4 ceil(Oorg.n_real/10)]);
-S.max_cond=Oorg.n_cond;
-S.nmulgrids=Oorg.n_multiple_grids+1;
-tic;
-S=snesim(S);
-%S=snesim(S,x,y);
-t2(io+1)=toc
 %%
 x=[0:1:O{1}.simulation_grid_size(1)-1].*O{1}.grid_cell_size(1)+O{1}.origin(1);
 y=[0:1:O{1}.simulation_grid_size(2)-1].*O{1}.grid_cell_size(2)+O{1}.origin(2);
@@ -237,7 +271,25 @@ s=suptitle(fname);
 set(s,'interpreter','none')
 print_mul([fname,'_title'])
 
+return
+
 %%
+%% SNESIM FORTRAN
+x=[0:1:(O{1}.simulation_grid_size(1)-1)].*O{1}.grid_cell_size(1)+O{1}.origin(1);
+y=[0:1:(O{1}.simulation_grid_size(2)-1)].*O{1}.grid_cell_size(2)+O{2}.origin(2);
+
+S = snesim_init(TI,x,y);
+S.fconddata.fname=Oc{1}.hard_data_filename;
+S.nsim=Oorg.n_real;
+S.nsim=max([4 ceil(Oorg.n_real/10)]);
+S.max_cond=Oorg.n_cond;
+S.nmulgrids=Oorg.n_multiple_grids+1;
+tic;
+S=snesim(S);
+%S=snesim(S,x,y);
+t2(io+1)=toc
+
+
 % PLOT SNESIM RESULTS
 for i=1:3;
     ax1=subplot(nO+3,nr_use,nr_use*(nO)+i)
