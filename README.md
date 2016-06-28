@@ -23,6 +23,11 @@ The latest relases, containing statically compiles binaries for windows and Linu
 
 The source can be downloaded from github
 [https://github.com/ergosimulation/mpslib](https://github.com/ergosimulation/mpslib)
+and compiled using
+
+	git clone https://github.com/ergosimulation/mpslib.git MPSlib
+	cd MPSlib
+	make
 
 # Documentation
 MPSlib is documented through Doxygen.
