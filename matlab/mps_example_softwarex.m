@@ -2,6 +2,7 @@
 %
 % Figure for SoftwareX manuscript 
 %
+rng(1);
 clear all;close all
 
 nx=80;ny=50;
@@ -12,11 +13,12 @@ TI=TI(2:2:end,2:2:end);
 
 SIM=zeros(ny,nx).*NaN; %  simulation grid
 
-
 % options for all
 nhard=6;20;15;5;1;6;30;
 nc=7; % TEMPLATE SIZE
-nc=9; % TEMPLATE SIZE
+%nc=9; % TEMPLATE SIZE
+%nc=2;
+%nc=5;
 Oorg.n_multiple_grids=3; % --> !!
 
 %nc=5;Oorg.n_multiple_grids=0;; % --> !!
@@ -28,12 +30,11 @@ Oorg.rseed=1;             %  optional number of realization
 Oorg.template_size=[nc nc 1]; % SNESIM TYPE COND
 Oorg.n_cond=nc^2; % ENESIM TYPE COND
 
-Oorg.n_real=30;             %  optional number of realization
-
+Oorg.n_real=300;             %  optional number of realization
+Oorg.shuffle_simulation_grid=1;
 
 x=0:1:(nx-1);
 y=0:1:(ny-1);
-
 
 %% different methods
 io=0;
@@ -43,17 +44,18 @@ O{io}=Oorg;
 O{io}.method='mps_snesim_tree';
 O{io}.n_min_node_count=2;
 %O{io}.n_cond_max=10;
+
 io=io+1;
 O{io}=Oorg;
 O{io}.method='mps_snesim_list';
 O{io}.n_min_node_count=2;
-% 
+
 io=io+1;
 O{io}=Oorg;
 O{io}.method='mps_genesim';
 O{io}.n_max_cpdf_count=100000;
 O{io}.n_max_ite=100000;
-% 
+ 
 io=io+1;
 O{io}=Oorg;
 O{io}.method='mps_genesim';
@@ -86,11 +88,16 @@ write_eas(f_cond,d_cond);
 % soft
 try;clear d_soft;end
 [xx,yy]=meshgrid(x,y);
-m_ref=TI(1:nx,1:ny);
-n_s=6;
-m_soft=.5+.6*conv2(TI-.5,ones(n_s,n_s),'same')./n_s^2;
-m_soft=m_soft([1:ny]+n_shift,[1:nx]+n_shift);
+m_ref=TI(1:ny,1:nx);
+n_s=5;
+m_soft_conv=conv2(TI-.5,ones(n_s,n_s),'same')./n_s^2;
+m_soft_conv=m_soft_conv([1:ny]+n_shift,[1:nx]+n_shift);
 
+m_soft=0.*m_soft_conv;
+c_frac=linspace(0,.7,size(m_soft,2));
+for ix=1:size(m_soft,2);
+    m_soft(:,ix)=0.5 + c_frac(ix)*m_soft_conv(:,ix);
+end
 
 p_0 = 1-m_soft(:);
 p_1 = m_soft(:);
@@ -145,7 +152,6 @@ scatter(d_cond(:,1),d_cond(:,2),40,d_cond(:,4),'filled')
 hold off
 title('b) Simulation grid\newline hard and soft data, P(m_i)=1')
 
-
 print_mul(sprintf('mps_softwareX_ti_sim_NH%d',nhard))
 
 %% UNCONDITIONAL SIMULATION
@@ -181,6 +187,7 @@ for io=1:length(Oc_s);
         Oc_s{io}.soft_data_filename=f_soft;
     end
     tic
+    
     [reals_cond_s{io},Oc_s{io}]=mps_cpp_thread(TI,SIM,Oc_s{io});
     t3(io)=toc
 end
@@ -265,7 +272,6 @@ for io=1:(nO);
     hold off
     if io==1; title('Etype mean');   end
     
-    
     ax3=subplot(nO+3,nr_use,j+ir+2);
     imagesc(x,y,sqrt(ev));caxis([0.2 .7]);axis image
     colormap(ax3,1-gray);
@@ -275,11 +281,10 @@ for io=1:(nO);
     hold off
     if io==1; title('Etype std');   end
     
-    
     %title(sprintf('P_{1Dmarg}=[%3.2f %3.2f]',P0,1-P0))
     
 end
-fname=sprintf('mps_softwareX_NMG%d_NC%d_TS%d_SH%d_NH%d_soft',Oc{1}.n_multiple_grids,Oc{1}.n_cond,Oc{1}.template_size(1),Oc{1}.shuffle_simulation_grid,nhard);
+fname=sprintf('mps_softwareX_NMG%d_NC%d_TS%d_SH%d_NH%d',Oc{1}.n_multiple_grids,Oc{1}.n_cond,Oc{1}.template_size(1),Oc{1}.shuffle_simulation_grid,nhard);
 print_mul(fname)
 s=suptitle(fname);
 set(s,'interpreter','none')
@@ -287,7 +292,7 @@ print_mul([fname,'_title'])
 
 %%%%%%%%%
 
-%% plot cond  hard
+%% plot cond  hard and SOFT
 figure(5);clf;set_paper('portrait');
 nO=length(reals);
 for io=1:(nO);
@@ -340,7 +345,7 @@ for io=1:(nO);
     %title(sprintf('P_{1Dmarg}=[%3.2f %3.2f]',P0,1-P0))
     
 end
-fname=sprintf('mps_softwareX_NMG%d_NC%d_TS%d_SH%d_NH%d',Oc{1}.n_multiple_grids,Oc{1}.n_cond,Oc{1}.template_size(1),Oc{1}.shuffle_simulation_grid,nhard);
+fname=sprintf('mps_softwareX_NMG%d_NC%d_TS%d_SH%d_NH%d_soft',Oc{1}.n_multiple_grids,Oc{1}.n_cond,Oc{1}.template_size(1),Oc{1}.shuffle_simulation_grid,nhard);
 print_mul(fname)
 s=suptitle(fname);
 set(s,'interpreter','none')
