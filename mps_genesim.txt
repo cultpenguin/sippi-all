@@ -1,7 +1,7 @@
 Number of realizations # 1
 Random Seed (0 `random` seed) # 1
-Maximum number of counts for condtitional pdf # 100
-Max number of conditional point # 25
+Maximum number of counts for condtitional pdf # 1
+Max number of conditional point # 45
 Max number of iterations # 10000
 Simulation grid size X # 80
 Simulation grid size Y # 80
@@ -20,5 +20,5 @@ HardData filename  (same size as the simulation grid)# conditional.dat
 HardData seach radius (world units) # 1
 Softdata categories (separated by ;) # 0;1
 Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft.dat
-Number of threads (not currently used) # 4
+Number of threads (not currently used) # 1
 Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 1

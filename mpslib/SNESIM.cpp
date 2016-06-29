@@ -231,23 +231,32 @@ void MPS::SNESIM::_constructTemplateFaces(void) {
 * @param z coordinate Z of the current node
 */
 float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, const int& y, const int& z) {
+	// TMH: RENAME TO _cpdfFromConditionalCount
+	//      RENAME conditionalPoints to conditionalCount
+
 	//Fill probability from TI
 	float foundValue = std::numeric_limits<float>::quiet_NaN();
-	//Looping through all the conditional points to calculate the pdf (probability distribution function)
-	//Getting the sum of counter and sort the map using the counter
+
+	// Loop through all the found conditional data values, and find the number of occurences
+	// as the sum of the occurences of each conditional data value.
 	float totalCounter = 0;
 	for(std::map<float,int>::iterator iter = conditionalPoints.begin(); iter != conditionalPoints.end(); ++iter) {
 		totalCounter += iter->second;
-		//std::cout << "cpdf ti: " << iter->first << " " << iter->second << std::endl;
+		// std::cout << "cpdf ti1: " << iter->first << " " << iter->second << std::endl;
 	}
-	//std::cout << std::endl;
+	//std::cout << "totalCounter " << totalCounter << std::endl;
+
+	// obtain the conditional probability from the training image
+	// by dividing the number of counts for each condtional data value, with the
+	// number of count (totalCounter)
 	std::map<float, float> probabilitiesFromTI;
-	//Looping again in conditionalPoints, compute and add the probabilities from TI
 	for(std::map<float, int>::iterator iter = conditionalPoints.begin(); iter != conditionalPoints.end(); ++iter) {
 		probabilitiesFromTI.insert(std::pair<float, float>(iter->first, (float)(iter->second) / (float)totalCounter));
-		//std::cout << "cpdf ti: " << iter->first << " " << (float)(iter->second) / (float)totalCounter << std::endl;
+		// std::cout << "cpdf ti2: " << iter->first << " " << (float)(iter->second) / (float)totalCounter << std::endl;
 	}
 
+	// Perhaps some soft data needs to be combined with the
+	// conditional probability found from the previously simulated data.
 	std::multimap<float, float> probabilitiesCombined;
 
 	//Fill probability from Softdata
