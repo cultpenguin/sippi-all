@@ -340,6 +340,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	for(std::map<float,int>::iterator iter = conditionalCount.begin(); iter != conditionalCount.end(); ++iter) {
 		totalCounter += iter->second;
 	}
+	// std::cout << "totalCounter=" << totalCounter << std::endl;
 
 	//std::map<float, float> conditionalPdfFromTi;
 	//Looping again in conditionalCount, compute and add the probabilities from TI
