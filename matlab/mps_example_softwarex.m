@@ -262,7 +262,8 @@ for io=1:(nO);
 
     ax2=subplot(nO+3,nr_use,j+ir+1);
     imagesc(x,y,em);caxis([0 1]);axis image
-    colormap(ax2,1-gray);
+    %colormap(ax2,1-gray);
+    colormap(ax2,flipud(hot));
     set(gca,'FontSize',8)
         
     hold on
@@ -273,8 +274,9 @@ for io=1:(nO);
     if io==1; title('Etype mean');   end
     
     ax3=subplot(nO+3,nr_use,j+ir+2);
-    imagesc(x,y,sqrt(ev));caxis([0.2 .7]);axis image
+    imagesc(x,y,sqrt(ev));caxis([.2 .7]);axis image
     colormap(ax3,1-gray);
+    colormap(ax3,flipud(hot));
     set(gca,'FontSize',8)
     hold on
     plot(d_cond(:,1),d_cond(:,2),'ko','MarkerSize',5)
@@ -322,6 +324,7 @@ for io=1:(nO);
     ax2=subplot(nO+3,nr_use,j+ir+1);
     imagesc(x,y,em);caxis([0 1]);axis image
     colormap(ax2,1-gray);
+    colormap(ax2,flipud(hot));
     set(gca,'FontSize',8)
         
     hold on
@@ -335,6 +338,7 @@ for io=1:(nO);
     ax3=subplot(nO+3,nr_use,j+ir+2);
     imagesc(x,y,sqrt(ev));caxis([0.2 .7]);axis image
     colormap(ax3,1-gray);
+    colormap(ax3,flipud(hot));
     set(gca,'FontSize',8)
     hold on
     plot(d_cond(:,1),d_cond(:,2),'ko','MarkerSize',5)
