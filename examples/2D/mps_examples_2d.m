@@ -64,13 +64,13 @@ i_hard=randomsample(nxy,12);
 pos_hard(:,1)=xx(i_hard);
 pos_hard(:,2)=yy(i_hard);
 pos_hard(:,3)=O.z(1);
-val_hard(:,4)=m_ref(i_hard);
+val_hard(:,1)=m_ref(i_hard);
 write_eas('mps_2d_hard_data.dat',[pos_hard val_hard]);
 
 % soft data
 ind=unique(m_ref(:));
 clear p_soft;
-[h,hx]=hist(m_ref(:),ind)
+[h,hx]=hist(m_ref(:),ind);
 marg_1d=h./sum(h);
 for i=1:length(ind);
     p_soft(:,i)=zeros(nxy,1);

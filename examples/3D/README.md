@@ -38,7 +38,7 @@ Reference 'image' from which hard and soft data is created
 Hard data:
 ![Hard data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/3D/mps_3d_examples_hard_ti01.png)
 
-Examples of runnig simulation conditional to the hard data
+Examples of running simulation conditional to the hard data
 
 	../mps_snesim_tree mps_3d_snesim_hard.txt
 	../mps_snesim_list mps_3d_snesim_hard.txt
@@ -51,7 +51,7 @@ Examples of runnig simulation conditional to the hard data
 Soft data:
 ![Soft data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/3D/mps_3d_examples_hard_soft_ti01.png)
 
-Examples of runnig simulation conditional to the hard data
+Examples of running simulation conditional to the hard data
 
 	../mps_snesim_tree mps_3d_snesim_hard_soft.txt
 	../mps_snesim_list mps_3d_snesim_hard_soft.txt
