@@ -9,11 +9,11 @@ x=1:1:80;nx=length(x);
 y=1:1:40;ny=length(y);
 
 
-f_ti{1}='ti_cb_6x6_40_40_1.dat';
+f_ti{1}='ti_cb_6x6_120_120_1.dat';
 f_ti{2}='ti_strebelle_125_125_1.dat';
 f_ti{3}='ti_cb_101_101_4cat.dat';
 f_ti{4}='ti_cb_6x6_102_102_1.dat';
-i_ti=4;
+i_ti=1;
 
 
 % load TI
@@ -90,6 +90,7 @@ write_eas('mps_soft_data.dat',[xx(:) yy(:) yy(:).*0+O.z(1) p_soft]);
 %%
 % figures
 figure(1);
+subplot(2,2,1);
 imagesc(O.x,O.y,m_ref);
 xlabel('X')
 ylabel('Y')
@@ -98,9 +99,9 @@ axis image;
 ax=axis;
 colorbar
 set(gca,'ydir','reverse');
-print -dpng mps_examples_reference.png
 
-figure(2);
+
+subplot(2,2,2)
 scatter(pos_hard(:,1),pos_hard(:,2),40,val_hard,'filled');
 xlabel('X')
 ylabel('Y')
@@ -110,11 +111,9 @@ axis(ax);
 box on
 colorbar;
 set(gca,'ydir','reverse');
-print -dpng mps_examples_hard_data.png
 
-figure(3);
 for i=1:length(ind);
-    subplot(2,2,i);
+    subplot(2,2,i+2);
     scatter(xx(:),yy(:),40,p_soft(:,i),'filled');
     caxis([0 1])
     xlabel('X')
@@ -126,7 +125,7 @@ for i=1:length(ind);
     colorbar;
     set(gca,'ydir','reverse');
 end
-print -dpng mps_examples_soft_data.png
+print('-dpng',sprintf('mps_examples_hard_soft_ti%02d.png',i_ti))
 
 
 
