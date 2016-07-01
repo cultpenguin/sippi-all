@@ -49,7 +49,7 @@ Examples of runnig simulation conditional to the hard data
 
 # Condtional simulation - Soft data
 Soft data:
-![Soft data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/2D/mps_examples_hard_soft_ti01.png)
+![Soft data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/2D/mps_2d_examples_hard_soft_ti01.png)
 
 Examples of runnig simulation conditional to the hard data
 
