@@ -6,7 +6,6 @@ rng(1);
 clear all;close all
 
 nx=80;ny=50;
-%nx=40;ny=20;
 
 TI=read_eas_matrix(['..',filesep,'ti',filesep,'ti_strebelle_250_250_1.dat']);
 TI=TI(2:2:end,2:2:end);
@@ -14,24 +13,23 @@ TI=TI(2:2:end,2:2:end);
 SIM=zeros(ny,nx).*NaN; %  simulation grid
 
 % options for all
-nhard=6;20;15;5;1;6;30;
-nc=7; % TEMPLATE SIZE
-%nc=9; % TEMPLATE SIZE
+nhard=7;
+nc=7;
+
+%nhard=7;6;20;15;5;1;6;30;
+%nc=7; % TEMPLATE SIZE
+%nc=10; % TEMPLATE SIZE
 %nc=2;
-%nc=5;
+%nc=7;
+
 Oorg.n_multiple_grids=3; % --> !!
-
-%nc=5;Oorg.n_multiple_grids=0;; % --> !!
-%nc=2;Oorg.n_multiple_grids=3;; % --> !!
-%Oorg.shuffle_simulation_grid=1;
-Oorg.n_real=300;             %  optional number of realization
 Oorg.rseed=1;             %  optional number of realization
-
 Oorg.template_size=[nc nc 1]; % SNESIM TYPE COND
 Oorg.n_cond=nc^2; % ENESIM TYPE COND
-
-Oorg.n_real=300;             %  optional number of realization
+Oorg.n_real=600;             %  optional number of realization
 Oorg.shuffle_simulation_grid=1;
+
+%%
 
 x=0:1:(nx-1);
 y=0:1:(ny-1);
@@ -94,7 +92,7 @@ m_soft_conv=conv2(TI-.5,ones(n_s,n_s),'same')./n_s^2;
 m_soft_conv=m_soft_conv([1:ny]+n_shift,[1:nx]+n_shift);
 
 m_soft=0.*m_soft_conv;
-c_frac=linspace(0,.7,size(m_soft,2));
+c_frac=linspace(0,1,size(m_soft,2));
 for ix=1:size(m_soft,2);
     m_soft(:,ix)=0.5 + c_frac(ix)*m_soft_conv(:,ix);
 end
@@ -355,6 +353,8 @@ s=suptitle(fname);
 set(s,'interpreter','none')
 print_mul([fname,'_title'])
 
+save(fname)
+
 return
 
 %%
@@ -418,4 +418,4 @@ set(s,'interpreter','none')
 print_mul(fname)
 
 %%
-save(fname)
+  save(fname)
