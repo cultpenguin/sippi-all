@@ -148,15 +148,16 @@ O.method='mps_snesim_tree';
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
 
-% MPS_GENESIM_TREE / ENESIM1e+9 / DSIM
-O.n_max_ite=1e+9;
-O.n_max_cpdf_count=1e+9;
-O.parameter_filename='mps_3d_genesim_enesim_hard.txt';
-O.method='mps_genesim'; 
-O.n_real=n_real;            
-[reals,O]=mps_cpp(TI,SIM,O);
+% % MPS_GENESIM_TREE / ENESIM1e+9 / DSIM
+% Traditional ENESIM not feasible in 3D
+% O.n_max_ite=1e+9;
+% O.n_max_cpdf_count=1e+9;
+% O.parameter_filename='mps_3d_genesim_enesim_hard.txt';
+% O.method='mps_genesim'; 
+% O.n_real=n_real;            
+% [reals,O]=mps_cpp(TI,SIM,O);
 
-O.n_max_ite=1e+9;
+O.n_max_ite=1000;
 O.n_max_cpdf_count=10;
 O.parameter_filename='mps_3d_genesim_hard.txt';
 O.method='mps_genesim'; 
@@ -184,15 +185,15 @@ O.n_real=n_real;
 [reals,O]=mps_cpp(TI,SIM,O);
 
 
-% MPS_GENESIM_TREE / ENESIM1e+9 / DSIM
-O.n_max_ite=1e+9;
-O.n_max_cpdf_count=1e+9;
-O.parameter_filename='mps_3d_genesim_enesim_hard_soft.txt';
-O.method='mps_genesim'; 
-O.n_real=n_real;            
-[reals,O]=mps_cpp(TI,SIM,O);
+% % MPS_GENESIM_TREE / ENESIM1e+9 / DSIM
+% O.n_max_ite=1e+9;
+% O.n_max_cpdf_count=1e+9;
+% O.parameter_filename='mps_3d_genesim_enesim_hard_soft.txt';
+% O.method='mps_genesim'; 
+% O.n_real=n_real;            
+% [reals,O]=mps_cpp(TI,SIM,O);
 
-O.n_max_ite=1e+9;
+O.n_max_ite=1000;
 O.n_max_cpdf_count=10;
 O.parameter_filename='mps_3d_genesim_hard_soft.txt';
 O.method='mps_genesim'; 
