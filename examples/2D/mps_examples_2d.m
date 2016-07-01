@@ -87,8 +87,7 @@ write_eas('mps_2d_soft_data.dat',[xx(:) yy(:) yy(:).*0+O.z(1) p_soft]);
 
 %%
 % figures
-figure(1);
-subplot(2,2,1);
+figure(1);clf;
 imagesc(O.x,O.y,m_ref);
 xlabel('X')
 ylabel('Y')
@@ -97,9 +96,9 @@ axis image;
 ax=axis;
 colorbar
 set(gca,'ydir','reverse');
+print('-dpng',sprintf('mps_2d_examples_reference_ti%02d.png',i_ti))
 
-
-subplot(2,2,2)
+figure(2);
 scatter(pos_hard(:,1),pos_hard(:,2),40,val_hard,'filled');
 xlabel('X')
 ylabel('Y')
@@ -109,9 +108,11 @@ axis(ax);
 box on
 colorbar;
 set(gca,'ydir','reverse');
+print('-dpng',sprintf('mps_2d_examples_hard_ti%02d.png',i_ti))
 
+figure(3);
 for i=1:length(ind);
-    subplot(2,2,i+2);
+    subplot(1,2,i);
     scatter(xx(:),yy(:),40,p_soft(:,i),'filled');
     caxis([0 1])
     xlabel('X')
