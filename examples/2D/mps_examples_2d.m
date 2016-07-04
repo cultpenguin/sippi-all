@@ -191,4 +191,11 @@ O.method='mps_genesim';
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
 
+O.n_max_ite=1e+9;
+O.n_max_cpdf_count=1;
+O.parameter_filename='mps_genesim_2d_dsam_hard_soft.txt';
+O.method='mps_genesim'; 
+O.n_real=n_real;            
+[reals,O]=mps_cpp(TI,SIM,O);
+
 
