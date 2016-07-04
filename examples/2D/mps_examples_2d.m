@@ -26,7 +26,7 @@ O.n_cond=25;
 
 %% UNCONDITIONAL
 % MPS_SNESIM_TREE
-O.parameter_filename='mps_2d_snesim_unconditional.txt';
+O.parameter_filename='mps_snesim_2d_unconditional.txt';
 O.method='mps_snesim_tree'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
@@ -34,21 +34,21 @@ O.n_real=n_real;
 % MPS_GENESIM_TREE / ENESIM1e+9 / DSIM
 O.n_max_ite=1e+9;
 O.n_max_cpdf_count=1e+9;
-O.parameter_filename='mps_2d_genesim_enesim_unconditional.txt';
+O.parameter_filename='mps_genesim_2d_enesim_unconditional.txt';
 O.method='mps_genesim'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
 
 O.n_max_ite=1e+9;
 O.n_max_cpdf_count=10;
-O.parameter_filename='mps_2d_genesim_unconditional.txt';
+O.parameter_filename='mps_genesim_2d_unconditional.txt';
 O.method='mps_genesim'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
 
 O.n_max_ite=1e+9;
 O.n_max_cpdf_count=1;
-O.parameter_filename='mps_2d_genesim_dsam_unconditional.txt';
+O.parameter_filename='mps_genesim_2d_dsam_unconditional.txt';
 O.method='mps_genesim'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
@@ -135,7 +135,7 @@ print('-dpng',sprintf('mps_2d_examples_hard_soft_ti%02d.png',i_ti))
 O.hard_data_filename = 'mps_2d_hard_data.dat';
 
 % MPS_SNESIM_TREE
-O.parameter_filename='mps_2d_snesim_hard.txt';
+O.parameter_filename='mps_snesim_2d_hard.txt';
 O.method='mps_snesim_tree'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
@@ -143,21 +143,21 @@ O.n_real=n_real;
 % MPS_GENESIM_TREE / ENESIM1e+9 / DSIM
 O.n_max_ite=1e+9;
 O.n_max_cpdf_count=1e+9;
-O.parameter_filename='mps_2d_genesim_enesim_hard.txt';
+O.parameter_filename='mps_genesim_2d_enesim_hard.txt';
 O.method='mps_genesim'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
 
 O.n_max_ite=1e+9;
 O.n_max_cpdf_count=10;
-O.parameter_filename='mps_2d_genesim_hard.txt';
+O.parameter_filename='mps_genesim_2d_hard.txt';
 O.method='mps_genesim'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
 
 O.n_max_ite=1e+9;
 O.n_max_cpdf_count=1;
-O.parameter_filename='mps_2d_genesim_dsam_hard.txt';
+O.parameter_filename='mps_genesim_2d_dsam_hard.txt';
 O.method='mps_genesim'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
@@ -170,7 +170,7 @@ O.soft_data_filename = 'mps_2d_soft_data.dat';
 O.soft_data_categories='0;1;2;3';
 
 % MPS_SNESIM_TREE
-O.parameter_filename='mps_2d_snesim_hard_soft.txt';
+O.parameter_filename='mps_snesim_2d_hard_soft.txt';
 O.method='mps_snesim_tree'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
@@ -179,14 +179,14 @@ O.n_real=n_real;
 % MPS_GENESIM_TREE / ENESIM1e+9 / DSIM
 O.n_max_ite=1e+9;
 O.n_max_cpdf_count=1e+9;
-O.parameter_filename='mps_2d_genesim_enesim_hard_soft.txt';
+O.parameter_filename='mps_genesim_2d_enesim_hard_soft.txt';
 O.method='mps_genesim'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
 
 O.n_max_ite=1e+9;
 O.n_max_cpdf_count=10;
-O.parameter_filename='mps_2d_genesim_hard_soft.txt';
+O.parameter_filename='mps_genesim_2d_hard_soft.txt';
 O.method='mps_genesim'; 
 O.n_real=n_real;            
 [reals,O]=mps_cpp(TI,SIM,O);
