@@ -618,6 +618,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 		//Multi level grids
 		for (int level=_totalGridsLevel; level>=0; level--) {
+			_InitStartSimulationEachMultipleGrid(level);
+
 			//For each space level from coarse to fine
 			offset = int(std::pow(2, level));
 

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\ENESIM_GENERAL.cpp" />
     <ClCompile Include="..\mpslib\Coords3D.cpp" />
     <ClCompile Include="..\mpslib\Coords4D.cpp" />
     <ClCompile Include="..\mpslib\ENESIM.cpp" />
@@ -27,9 +28,11 @@
     <ClCompile Include="..\mpslib\SNESIM.cpp" />
     <ClCompile Include="..\mpslib\Utility.cpp" />
     <ClCompile Include="..\mps_snesim_tree.cpp" />
+    <ClCompile Include="..\SNESIMList.cpp" />
     <ClCompile Include="..\SNESIMTree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ENESIM_GENERAL.h" />
     <ClInclude Include="..\mpslib\Coords3D.h" />
     <ClInclude Include="..\mpslib\Coords4D.h" />
     <ClInclude Include="..\mpslib\ENESIM.h" />
@@ -37,6 +40,7 @@
     <ClInclude Include="..\mpslib\MPSAlgorithm.h" />
     <ClInclude Include="..\mpslib\SNESIM.h" />
     <ClInclude Include="..\mpslib\Utility.h" />
+    <ClInclude Include="..\SNESIMList.h" />
     <ClInclude Include="..\SNESIMTree.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

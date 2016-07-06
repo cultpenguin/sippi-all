@@ -54,118 +54,136 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 	_tiDimX = (int)_TI[0][0].size();
 	_tiDimY = (int)_TI[0].size();
 	_tiDimZ = (int)_TI.size();
-
-	//Building template structure
-	_constructTemplateFaces();
-
-	//Scanning the TI and build the search tree
-	//Building a multi spaces search tree
-	int offset = 1;
-
-	//Resize search tree by level for multigrid level
-	_searchTree.resize(_totalGridsLevel + 1);
+	
 	if (_debugMode > -1) {
 		std::cout << "TI size (X,Y,Z): " << _tiDimX << " " << _tiDimY << " " << _tiDimZ << std::endl;
 	}
+}
 
-	for (int level=_totalGridsLevel; level>=0; level--) {
-		//For each space level from coarse to fine
-		offset = int(std::pow(2, level));
-		if (_debugMode > -1) {
-		  std::cout << "level: " << level << " offset: " << offset << std::endl;
-		}
+/**
+* @brief Abstract function allow acces to the beginning of each simulation of each multiple grid
+* @param level the current grid level
+*/
+void MPS::SNESIMTree::_InitStartSimulationEachMultipleGrid(const int& level) {
+	int totalLevel = _totalGridsLevel;
+	int minTemplateX = 4 < _templateSizeX ? 4 : _templateSizeX;
+	int minTemplateY = 4 < _templateSizeY ? 4 : _templateSizeY;
+	int minTemplateZ = 4 < _templateSizeZ ? 4 : _templateSizeZ; //Initialize at minimum size, lowest best template is at 4 x 4 x 4
+	//  x
+	//x 0 x
+	//  x
+	int templateX = minTemplateX, templateY = minTemplateY, templateZ = minTemplateZ;
+	//Ajust the template size based on the current level, template get smaller when the level get lower
+	templateX = _templateSizeX - (totalLevel - level) * (ceil(_templateSizeX - minTemplateX) / totalLevel);
+	templateY = _templateSizeY - (totalLevel - level) * (ceil(_templateSizeY - minTemplateY) / totalLevel);
+	templateZ = _templateSizeZ - (totalLevel - level) * (ceil(_templateSizeZ - minTemplateZ) / totalLevel);
+	
+	//Building template structure
+	_constructTemplateFaces(templateX, templateY, templateZ);	
 
-		int tiX, tiY, tiZ;
-		int deltaX, deltaY, deltaZ;
-		int nodeCnt = 0;
-		bool foundExistingValue = false;
-		int foundIdx = 0;
-		int totalNodes = _tiDimX * _tiDimY * _tiDimZ;
-		int lastProgress = 0;
-		//Put the current node as the root node
-		std::vector<TreeNode>* currentTreeNode = &_searchTree[level];
+	//Scanning the TI and build the search tree
+	//Building the search tree
+	_searchTree.clear();	
 
-		for (int z=0; z<_tiDimZ; z+=1) {
-			for (int y=0; y<_tiDimY; y+=1) {
-				for (int x=0; x<_tiDimX; x+=1) {
-					//For each pixel
-					nodeCnt ++;
-					if (_debugMode > -1) {
-						//Doing the progression
-						//Print progression on screen
-						int progress = (int)((nodeCnt / (float)totalNodes) * 100);
-						if ((progress % 10) == 0 && progress != lastProgress) { //Report every 10%
-							lastProgress = progress;
-							std::cout << "Building search tree at level: " << level << " Progression (%): " << progress << std::endl;
-						}
+	int offset = int(std::pow(2, level));
+	if (_debugMode > -1) {
+		std::cout << "level: " << level << " offset: " << offset << std::endl;
+		std::cout << "original template size X: " << _templateSizeX << " adjusted template size X: " << templateX << std::endl;
+		std::cout << "original template size Y: " << _templateSizeY << " adjusted template size Y: " << templateY << std::endl;
+		std::cout << "original template size Z: " << _templateSizeZ << " adjusted template size Z: " << templateZ << std::endl;
+	}
+
+	int tiX, tiY, tiZ;
+	int deltaX, deltaY, deltaZ;
+	int nodeCnt = 0;
+	bool foundExistingValue = false;
+	int foundIdx = 0;
+	int totalNodes = _tiDimX * _tiDimY * _tiDimZ;
+	int lastProgress = 0;
+	//Put the current node as the root node
+	std::vector<TreeNode>* currentTreeNode = &_searchTree;
+
+	for (int z=0; z<_tiDimZ; z+=1) {
+		for (int y=0; y<_tiDimY; y+=1) {
+			for (int x=0; x<_tiDimX; x+=1) {
+				//For each pixel
+				nodeCnt ++;
+				if (_debugMode > -1) {
+					//Doing the progression
+					//Print progression on screen
+					int progress = (int)((nodeCnt / (float)totalNodes) * 100);
+					if ((progress % 10) == 0 && progress != lastProgress) { //Report every 10%
+						lastProgress = progress;
+						std::cout << "Building search tree at level: " << level << " Progression (%): " << progress << std::endl;
 					}
-					//Reset current node to root node
-					currentTreeNode = &_searchTree[level];
-					for (unsigned int i=0; i<_templateFaces.size(); i++) {
-						//Go deeper in the pattern template or to a higher level node
-						deltaX = offset * _templateFaces[i].getX();
-						deltaY = offset * _templateFaces[i].getY();
-						deltaZ = offset * _templateFaces[i].getZ();
-						tiX = x + deltaX;
-						tiY = y + deltaY;
-						tiZ = z + deltaZ;
+				}
+				//Reset current node to root node
+				currentTreeNode = &_searchTree;
+				for (unsigned int i=0; i<_templateFaces.size(); i++) {
+					//Go deeper in the pattern template or to a higher level node
+					deltaX = offset * _templateFaces[i].getX();
+					deltaY = offset * _templateFaces[i].getY();
+					deltaZ = offset * _templateFaces[i].getZ();
+					tiX = x + deltaX;
+					tiY = y + deltaY;
+					tiZ = z + deltaZ;
 
-						foundExistingValue = false;
-						foundIdx = 0;
-						//Checking of NaN value
-						if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || MPS::utility::is_nan(_TI[tiZ][tiY][tiX])) { //Out of bound or nan
-							break; //Ignore border stop here
-						} else {
-							//Searching the TI cell value inside the current node
-							for (unsigned int j=0; j<currentTreeNode->size(); j++) {
-								if(_TI[tiZ][tiY][tiX] == currentTreeNode->operator[](j).value) {
-									//Existing value so increase the counter
-									foundExistingValue = true;
-									currentTreeNode->operator[](j).counter = currentTreeNode->operator[](j).counter + 1;
-									foundIdx = j;
-									break;
-								}
+					foundExistingValue = false;
+					foundIdx = 0;
+					//Checking of NaN value
+					if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || MPS::utility::is_nan(_TI[tiZ][tiY][tiX])) { //Out of bound or nan
+						break; //Ignore border stop here
+					} else {
+						//Searching the TI cell value inside the current node
+						for (unsigned int j=0; j<currentTreeNode->size(); j++) {
+							if(_TI[tiZ][tiY][tiX] == currentTreeNode->operator[](j).value) {
+								//Existing value so increase the counter
+								foundExistingValue = true;
+								currentTreeNode->operator[](j).counter = currentTreeNode->operator[](j).counter + 1;
+								foundIdx = j;
+								break;
 							}
-
-							//If value is not found then add a new value in the node
-							if (!foundExistingValue) {
-								TreeNode aTreeNode;
-								aTreeNode.counter = 1;
-								aTreeNode.value = _TI[tiZ][tiY][tiX];
-								aTreeNode.level = i;
-								currentTreeNode->push_back(aTreeNode);
-								foundIdx = (int)currentTreeNode->size() - 1;
-							}
-							//Switching the current node to the children
-							currentTreeNode = &(currentTreeNode->operator[](foundIdx).children);
 						}
+
+						//If value is not found then add a new value in the node
+						if (!foundExistingValue) {
+							TreeNode aTreeNode;
+							aTreeNode.counter = 1;
+							aTreeNode.value = _TI[tiZ][tiY][tiX];
+							aTreeNode.level = i;
+							currentTreeNode->push_back(aTreeNode);
+							foundIdx = (int)currentTreeNode->size() - 1;
+						}
+						//Switching the current node to the children
+						currentTreeNode = &(currentTreeNode->operator[](foundIdx).children);
 					}
 				}
 			}
 		}
-		if (_debugMode > -1) {
-		  std::cout << "Finish building search tree" << std::endl;
-		}
-		//std::cout << "Total nodes: " << nodeCnt << std::endl;
-		//Check out dictionary
-		//std::cout << "Dictionary info: " << std::endl;
-		//std::cout << "Level: " << level << std::endl;
-		////Showing the search tree for debugging
-		//std::list<std::vector<TreeNode>*> nodesToCheck;
-		//nodesToCheck.push_back(&_searchTree[level]); //Put the root node in the list node to be checked
-		////Looping through all the node from top to bottom
-		//while(nodesToCheck.size() > 0) {
-		//	currentTreeNode = nodesToCheck.back();
-		//	nodesToCheck.pop_back();
-		//	//Showing the current node value and counter
-		//	for (int i=0; i<currentTreeNode->size(); i++) {
-		//		std::cout << currentTreeNode->operator[](i).level << " " << currentTreeNode->operator[](i).value << " " << currentTreeNode->operator[](i).counter << std::endl;
-		//		//Adding the children node to the list node to be checked
-		//		nodesToCheck.push_front(&(currentTreeNode->operator[](i).children));
-		//	}
-		//	//std::cout << "list size: " << nodesToCheck.size() << std::endl;
-		//}
 	}
+	if (_debugMode > -1) {
+		std::cout << "Finish building search tree" << std::endl;
+	}
+	//std::cout << "Total nodes: " << nodeCnt << std::endl;
+	//Check out dictionary
+	//std::cout << "Dictionary info: " << std::endl;
+	//std::cout << "Level: " << level << std::endl;
+	////Showing the search tree for debugging
+	//std::list<std::vector<TreeNode>*> nodesToCheck;
+	//nodesToCheck.push_back(&_searchTree[level]); //Put the root node in the list node to be checked
+	////Looping through all the node from top to bottom
+	//while(nodesToCheck.size() > 0) {
+	//	currentTreeNode = nodesToCheck.back();
+	//	nodesToCheck.pop_back();
+	//	//Showing the current node value and counter
+	//	for (int i=0; i<currentTreeNode->size(); i++) {
+	//		std::cout << currentTreeNode->operator[](i).level << " " << currentTreeNode->operator[](i).value << " " << currentTreeNode->operator[](i).counter << std::endl;
+	//		//Adding the children node to the list node to be checked
+	//		nodesToCheck.push_front(&(currentTreeNode->operator[](i).children));
+	//	}
+	//	//std::cout << "list size: " << nodesToCheck.size() << std::endl;
+	//}
+
 }
 
 /**
@@ -230,12 +248,12 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		int currentLevel = 0, maxLevel = 0;
 
 		//For all possible values of root tree
-		for (unsigned int j=0; j<_searchTree[level].size(); j++) {
+		for (unsigned int j=0; j<_searchTree.size(); j++) {
 			conditionPointsUsedCnt = 0;
 			maxLevel = 0;
-			sumCounters = _searchTree[level][j].counter;
+			sumCounters = _searchTree[j].counter;
 			nodesToCheck.clear();
-			nodesToCheck.push_back(&_searchTree[level][j].children); //Initialize at children in first level
+			nodesToCheck.push_back(&_searchTree[j].children); //Initialize at children in first level
 			//Looping through all the node from top to bottom
 			while(nodesToCheck.size() > 0) {
 				currentTreeNode = nodesToCheck.back();
@@ -270,11 +288,11 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 			//finish searching for a value, now do the sum
 			if (conditionPointsUsedCnt > maxConditionalPoints) {
 				conditionalPoints.clear();
-				conditionalPoints.insert ( std::pair<float, int>(_searchTree[level][j].value, sumCounters) );
+				conditionalPoints.insert ( std::pair<float, int>(_searchTree[j].value, sumCounters) );
 				maxConditionalPoints = conditionPointsUsedCnt;
 				//foundValue = _searchTree[level][j].value;
 			} else if(conditionPointsUsedCnt == maxConditionalPoints) {
-				conditionalPoints.insert ( std::pair<float, int>(_searchTree[level][j].value, sumCounters) );
+				conditionalPoints.insert ( std::pair<float, int>(_searchTree[j].value, sumCounters) );
 			}
 		}
 

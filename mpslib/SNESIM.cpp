@@ -163,12 +163,15 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 
 /**
 * @brief Construct templatefaces and sort them around template center
+* @param sizeX template size X
+* @param sizeX template size Y
+* @param sizeX template size Z
 */
-void MPS::SNESIM::_constructTemplateFaces(void) {
-	int templateCenterX = (int)floor(_templateSizeX / 2);
-	int templateCenterY = (int)floor(_templateSizeY / 2);
-	int templateCenterZ = (int)floor(_templateSizeZ / 2);
-	int totalTemplateIndices = _templateSizeX * _templateSizeY * _templateSizeZ;
+void MPS::SNESIM::_constructTemplateFaces(const int& sizeX, const int& sizeY, const int& sizeZ) {
+	int templateCenterX = (int)floor(sizeX / 2);
+	int templateCenterY = (int)floor(sizeY / 2);
+	int templateCenterZ = (int)floor(sizeZ / 2);
+	int totalTemplateIndices = sizeX * sizeY * sizeZ;
 	int totalTemplates = 0;
 	//std::cout << "template center (x, y, z): " << templateCenterX << " " << templateCenterY << " " << templateCenterZ << std::endl;
 
@@ -176,10 +179,10 @@ void MPS::SNESIM::_constructTemplateFaces(void) {
 	std::vector<int> templatePath;
 	templatePath.resize(totalTemplateIndices);
 	//Initialize a sequential order
-	_initilizePath(_templateSizeX, _templateSizeY, _templateSizeZ, templatePath);
+	_initilizePath(sizeX, sizeY, sizeZ, templatePath);
 
 	//Sort template path with the distance to the template center
-	std::sort(templatePath.begin(), templatePath.end(), TemplateSorter(_templateSizeX, _templateSizeY, _templateSizeZ));
+	std::sort(templatePath.begin(), templatePath.end(), TemplateSorter(sizeX, sizeY, sizeZ));
 
 	//Loop through all template indices
 	//initialize faces
@@ -190,7 +193,7 @@ void MPS::SNESIM::_constructTemplateFaces(void) {
 	int templateIdxX, templateIdxY, templateIdxZ;
 	for (int i=0; i<totalTemplateIndices; i++) {
 		//std::cout << templatePath[i] << " ";
-		MPS::utility::oneDTo3D(templatePath[i], _templateSizeX, _templateSizeY, templateIdxX, templateIdxY, templateIdxZ);
+		MPS::utility::oneDTo3D(templatePath[i], sizeX, sizeY, templateIdxX, templateIdxY, templateIdxZ);
 		offsetX = templateIdxX - templateCenterX;
 		offsetY = templateIdxY - templateCenterY;
 		offsetZ = templateIdxZ - templateCenterZ;

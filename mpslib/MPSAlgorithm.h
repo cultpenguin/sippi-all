@@ -377,6 +377,12 @@ protected:
 	*/
 	void _circularSearch(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const std::vector<std::vector<std::vector<float>>>& grid, const int& maxNeighboursLimit, const float& maxRadiusLimit, std::vector<MPS::Coords3D>& L, std::vector<float>& V);
 
+	/**
+	* @brief Abstract function allow acces to the beginning of each simulation of each multiple grid
+	* @param level the current grid level
+	*/
+	virtual void _InitStartSimulationEachMultipleGrid(const int& level) = 0; 
+
 public:
 	/**
 	* @brief Constructors

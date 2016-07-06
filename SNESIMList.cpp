@@ -56,7 +56,7 @@ void MPS::SNESIMList::initialize(const std::string& configurationFile) {
 	_tiDimZ = (int)_TI.size();
 
 	//Building template structure
-	_constructTemplateFaces();
+	_constructTemplateFaces(_templateSizeX, _templateSizeY, _templateSizeZ);
 
 	//Scanning the TI and build the search dictionary
 	//Building a multi spaces search dictionary

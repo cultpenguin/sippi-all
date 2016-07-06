@@ -67,8 +67,11 @@ protected:
 
 	/**
 	* @brief Construct templatefaces and sort them around template center
+	* @param sizeX template size X
+	* @param sizeX template size Y
+	* @param sizeX template size Z
 	*/
-	void _constructTemplateFaces(void);
+	void _constructTemplateFaces(const int& sizeX, const int& sizeY, const int& sizeZ);
 
 	/**
 	* @brief Getting a node value by calculating the cummulatie probability distribution function
