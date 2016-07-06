@@ -7,21 +7,22 @@ MPSLIB=mpslib/mpslib.a
 # CPPFLAGS = -g -O3 -std=c++11
 LDLIBS =  -lstdc++ -lpthread
 
-all: $(MPSLIB) mps_genesim mps_snesim_list mps_snesim_tree
+all: mps_genesim mps_snesim_list mps_snesim_tree
 
-$(MPSLIB):
-	cd mpslib; make; cd ..
+.PHONY: mpslib
+mpslib:
+	make -C mpslib
 
-mps_genesim: 
-	$(CC) $(CPPFLAGS) mps_genesim.cpp ENESIM_GENERAL.cpp mpslib/mpslib.a -o $@ -I mpslib/ $(LDLIBS)
-	
-mps_snesim_tree: 
-	$(CC) $(CPPFLAGS) mps_snesim_tree.cpp SNESIMTree.cpp mpslib/mpslib.a -o $@ -I mpslib/ $(LDLIBS)
+mps_genesim: mpslib
+	$(CC) $(CPPFLAGS) mps_genesim.cpp ENESIM_GENERAL.cpp $(MPSLIB) -o $@ -I mpslib/ $(LDLIBS)
 
-mps_snesim_list: 
-	$(CC) $(CPPFLAGS) mps_snesim_list.cpp SNESIMList.cpp mpslib/mpslib.a -o $@ -I mpslib/ $(LDLIBS)
+mps_snesim_tree: mpslib
+	$(CC) $(CPPFLAGS) mps_snesim_tree.cpp SNESIMTree.cpp $(MPSLIB) -o $@ -I mpslib/ $(LDLIBS)
 
+mps_snesim_list: mpslib
+	$(CC) $(CPPFLAGS) mps_snesim_list.cpp SNESIMList.cpp $(MPSLIB) -o $@ -I mpslib/ $(LDLIBS)
+
+
+.PHONY: clean
 clean:
 	rm -f *.o mps *.exe mps_genesim mps_snesim_tree mps_snesim_list mpslib/*.o $(MPSLIB)
-
-

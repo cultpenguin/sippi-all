@@ -1,10 +1,10 @@
 Number of realizations # 1
 Random Seed (0 `random` seed) # 1
-Maximum number of counts for condtitional pdf # 100
-Max number of conditional point # 25
+Maximum number of counts for condtitional pdf # 1
+Max number of conditional point # 45
 Max number of iterations # 10000
-Simulation grid size X # 260
-Simulation grid size Y # 280
+Simulation grid size X # 80
+Simulation grid size Y # 80
 Simulation grid size Z # 1
 Simulation grid world/origin X # 0
 Simulation grid world/origin Y # 0
@@ -12,13 +12,13 @@ Simulation grid world/origin Z # 0
 Simulation grid grid cell size X # 1
 Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
-Training image file (spaces not allowed) # TI/mps_ti.dat
+Training image file (spaces not allowed) # ti/ti_cb_4x4_40_40_1.dat
 Output folder (spaces in name not allowed) # .
-Shuffle Simulation Grid path (1 : random, 0 : sequential) # 0
-Shuffle Training Image path (1 : random, 0 : sequential) # 0
+Shuffle Simulation Grid path (1 : random, 0 : sequential) # 1
+Shuffle Training Image path (1 : random, 0 : sequential) # 1
 HardData filename  (same size as the simulation grid)# conditional.dat
 HardData seach radius (world units) # 1
 Softdata categories (separated by ;) # 0;1
 Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft.dat
 Number of threads (not currently used) # 1
-Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # -1
+Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 1

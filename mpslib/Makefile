@@ -18,4 +18,4 @@ mpslib.a : $(SRCS:.cpp=.o)
 
 clean:
 	rm -f *.o *.a
-		
+

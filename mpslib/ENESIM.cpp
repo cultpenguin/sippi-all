@@ -47,6 +47,15 @@ MPS::ENESIM::~ENESIM(void) {
 * @param fileName configuration filename
 */
 void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
+
+	// Check that parameter file exist
+	if  (!(MPS::io::file_exist(fileName))) {
+		std::cout << "Paremeter file '" << fileName << "' does not exist -> quitting" << std::endl;
+		exit(0);
+		return;
+	}
+
+
 	std::ifstream file(fileName);
 	std::string str;
 	std::stringstream ss;
@@ -331,6 +340,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	for(std::map<float,int>::iterator iter = conditionalCount.begin(); iter != conditionalCount.end(); ++iter) {
 		totalCounter += iter->second;
 	}
+	// std::cout << "totalCounter=" << totalCounter << std::endl;
 
 	//std::map<float, float> conditionalPdfFromTi;
 	//Looping again in conditionalCount, compute and add the probabilities from TI

@@ -49,8 +49,19 @@ end
 %%
 for i=1:actual_threads;
     outdir{i}=sprintf('mps_%02d',i);   
-    if ~exist(outdir{i},'dir')
-        mkdir(outdir{i});
+%     if exist(outdir{i},'dir')
+%         % remove directory if it exist
+%         [status,message]=rmdir(outdir{i},'s');
+%         if status==0;
+%             disp(sprintf('%s: %s',mfilename,message));
+%         end
+%     end
+     if ~exist(outdir{i},'dir')
+        % create an emprt directory
+        [status,message]=mkdir(outdir{i});
+        if status==0;
+            disp(sprintf('%s: %s',mfilename,message));
+        end
     end
     Othread{i}=O;
     %Othread{i}.output_folder=[outdir{i},filesep,'.'];
@@ -69,7 +80,7 @@ cwd=pwd;
 parfor i=1:actual_threads;
     cd(cwd);
     cd(outdir{i});
-    disp(pwd);
+    disp(sprintf('%s: running thread #%d in %s',mfilename,i,outdir{i}));
     [r{i},Othread{i}]=mps_cpp(TI,SIM,Othread{i});
 end
 %%

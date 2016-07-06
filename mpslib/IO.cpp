@@ -26,6 +26,21 @@
 
 namespace MPS {
 	namespace io {
+
+
+		/**
+		* @brief check if file exists
+		*
+		* @param fileName source's file name
+		*
+		* @return true if filename exists
+		*/
+		bool file_exist(const std::string& fileName)
+		{
+    	std::ifstream infile(fileName);
+    	return infile.good();
+		}
+
 		/**
 		* @brief Read a GSLIB file and put data inside a training image, multiple channel supported
 		*
@@ -346,6 +361,7 @@ namespace MPS {
 					return false;
 				}
 
+
 				std::string str;
 				//TITLE
 				getline(file, str);
@@ -362,6 +378,7 @@ namespace MPS {
 				//cout << str << endl;
 				std::stringstream ss(str);
 				std::string s;
+
 
 				//Data
 				//Initialize TI dimensions, data cell is initialize to nan
@@ -395,7 +412,17 @@ namespace MPS {
 						idxX = (int)((coordX - minWorldX) / stepX);
 						idxY = (int)((coordY - minWorldY) / stepY);
 						idxZ = (int)((coordZ - minWorldZ) / stepZ);
-						if(dataValue != noDataValue) data[idxZ][idxY][idxX] = dataValue;
+
+
+
+						//_sgDimX
+						if(dataValue != noDataValue) {
+							if ((idxX>-1)&(idxY>-1)&(idxZ>-1)&(idxX<dataSizeX)&(idxY<dataSizeY)&(idxZ<dataSizeZ)) {
+								data[idxZ][idxY][idxX] = dataValue;
+							} else {
+								std::cout << "Hard data, "<< fileName << ": Data outside simualtion grid ix,iy,iz=" << idxX << " "<< idxY << " "<< idxZ  << std::endl;
+							}
+						}
 					} else { //Single column file
 						MPS::utility::oneDTo3D(dataCnt++, dataSizeX, dataSizeY, idxX, idxY, idxZ);
 						dataValue = lineData[0];
@@ -487,7 +514,11 @@ namespace MPS {
 						idxY = (int)((coordY - minWorldY) / stepY);
 						idxZ = (int)((coordZ - minWorldZ) / stepZ);
 						for (unsigned int nbCats=0; nbCats<categories.size(); nbCats++) {
-							data[nbCats][idxZ][idxY][idxX] = lineData[nbCats + 3];
+							if ((idxX>-1)&(idxY>-1)&(idxZ>-1)&(idxX<dataSizeX)&(idxY<dataSizeY)&(idxZ<dataSizeZ)) {
+							  data[nbCats][idxZ][idxY][idxX] = lineData[nbCats + 3];
+						  } else {
+								std::cout << "Soft data, "<< fileName << ": Data outside simualtion grid ix,iy,iz=" << idxX << " "<< idxY << " "<< idxZ  << std::endl;
+							}
 						}
 					} else { //Single column file
 						MPS::utility::oneDTo3D(dataCnt++, dataSizeX, dataSizeY, idxX, idxY, idxZ);
