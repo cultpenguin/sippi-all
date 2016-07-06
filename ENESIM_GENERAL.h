@@ -40,6 +40,12 @@ protected:
 	*/
 	virtual float _simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level);
 
+	/**
+	* @brief Abstract function allow acces to the beginning of each simulation of each multiple grid
+	* @param level the current grid level
+	*/
+	virtual void _InitStartSimulationEachMultipleGrid(const int& level);
+
 public:
 	/**
 	* @brief Constructors from a configuration file

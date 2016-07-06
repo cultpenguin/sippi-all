@@ -110,3 +110,11 @@ float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const
 	}
 
 }
+
+/**
+* @brief Abstract function allow acces to the beginning of each simulation of each multiple grid
+* @param level the current grid level
+*/
+void MPS::ENESIM_GENERAL::_InitStartSimulationEachMultipleGrid(const int& level) {
+	//Empty for now
+}
