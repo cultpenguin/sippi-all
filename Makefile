@@ -1,10 +1,13 @@
+# COMPILER
 CC = g++
-# CPPFLAGS = -g -O3 -std=c++11
-CPPFLAGS = -g -static -O3 -std=c++11 -Wl,--no-as-needed ## Should fix threading problem on ubuntu
-MPSLIB=mpslib/mpslib.a
-# CPPFLAGS = -g -static -O3 -std=c++11 -Wl,--no-as-needed ## Should fix threading problem on ubuntu
-# CPPFLAGS = -g -static -O3 -std=c++11
-# CPPFLAGS = -g -O3 -std=c++11
+
+# COMPILER FLAGS (run ./configure.sh to set next line - especially on OSX)
+CPPFLAGS = -static -O3 -std=c++11 -Wl,--no-as-needed
+
+# NAME OF LIBRARY
+MPSLIB = mpslib/mpslib.a
+
+# LINK LIBRARIES
 LDLIBS =  -lstdc++ -lpthread
 
 all: mps_genesim mps_snesim_list mps_snesim_tree
