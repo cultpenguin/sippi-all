@@ -38,7 +38,14 @@ The MPSlib codes are written in standard [C++11](https://www.wikiwand.com/en/C%2
 MPSlib has been developed using the GNU C++ compiler (tested on Windows, Linux and OSX), and Visual Studio C++.
 
 ## Linux (GCC version 4.8.3)
-On Ubuntu Linux 14.04, the following compiler flags are used:
+In general MPSLIB can be compiled using GCC using
+
+	sh ./configure
+	make
+	
+The 'configure.sh' script requires 'sed' and 'uname'. If these ar not available the only difference for different architectures should be related to static linking, which is not available on GCC/OSX. This can be manually adjusted in the CPPFLAGS variable in the Makefile. 
+
+## For Ubuntu Linux 16.04,
 
 CPPFLAGS = -g -static -O3 -std=c++11 -Wl,--no-as-needed
 
