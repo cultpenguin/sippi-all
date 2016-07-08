@@ -40,7 +40,7 @@ MPSlib has been developed using the GNU C++ compiler (tested on Windows, Linux a
 ## Linux (GCC version 4.8.3)
 In general MPSLIB can be compiled using GCC using
 
-	sh ./configure
+	sh ./configure.sh
 	make
 	
 The 'configure.sh' script requires 'sed' and 'uname'. If these ar not available the only difference for different architectures should be related to static linking, which is not available on GCC/OSX. This can be manually adjusted in the CPPFLAGS variable in the Makefile. 
