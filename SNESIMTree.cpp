@@ -66,14 +66,14 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 */
 void MPS::SNESIMTree::_InitStartSimulationEachMultipleGrid(const int& level) {
 	int totalLevel = _totalGridsLevel;
-	////Adaptive template size, reserve for later
-	//int minTemplateX = 4 < _templateSizeX ? 4 : _templateSizeX;
-	//int minTemplateY = 4 < _templateSizeY ? 4 : _templateSizeY;
-	//int minTemplateZ = 4 < _templateSizeZ ? 4 : _templateSizeZ; //Initialize at minimum size, lowest best template is at 4 x 4 x 4
-	//Using the original template size
-	int minTemplateX = _templateSizeX;
-	int minTemplateY = _templateSizeY;
-	int minTemplateZ = _templateSizeZ; 
+	//Adaptive template size, reserve for later
+	int minTemplateX = 4 < _templateSizeX ? 4 : _templateSizeX;
+	int minTemplateY = 4 < _templateSizeY ? 4 : _templateSizeY;
+	int minTemplateZ = 4 < _templateSizeZ ? 4 : _templateSizeZ; //Initialize at minimum size, lowest best template is at 4 x 4 x 4
+	////Using the original template size
+	//int minTemplateX = _templateSizeX;
+	//int minTemplateY = _templateSizeY;
+	//int minTemplateZ = _templateSizeZ; 
 	//  x
 	//x 0 x
 	//  x
