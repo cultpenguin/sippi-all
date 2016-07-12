@@ -3,7 +3,7 @@ MPSlib provides a set of algorithms for simulation of models based on a multiple
 statistical model inferred from a training image.
 
 The goal of developing these codes has been to produce a set of algorithms, based
-on sequential simulation, for simulation of multiple point statistical random models,
+on sequential simulation, for simulation of multiple point statistical models.
 The code should be easy to compile and extend, and should be allowed for both
 commercial and non-commercial use.
 
