@@ -5,7 +5,10 @@ if [ "$ARCH" = "Darwin" ]; then
     # NO STATIC BUILDING ON OSX
     echo "Static building not allowed on OSX"
     # CPPFLAGS = "CPPFLAGS = -g -O3 -std=c++11 -Wl,--no-as-needed"
-    CPPFLAGS="CPPFLAGS = -O3 -std=c++11 -Wl,--no-as-needed"
+    CPPFLAGS="CPPFLAGS = -O3 -std=c++11 "
+
+    # update line 5 in Makefile with proper compiler flags
+    sed -i "" "5s/.*/$CPPFLAGS/" Makefile
 else
     # USE STATIC BUILDING
     echo "STATIC BUILDING"
@@ -15,8 +18,9 @@ else
     # CPPFLAGS = -g -static -O3 -std=c++11 -Wl,--no-as-needed 
     # CPPFLAGS="CPPFLAGS = static -O3 -std=c++11"
     # CPPFLAGS="CPPFLAGS = -O3 -std=c++11"
-fi
-echo $CPPFLAGS
 
-# update line 5 in Makefile with proper compiler flags
-sed -i "5s/.*/$CPPFLAGS/" Makefile
+    # update line 5 in Makefile with proper compiler flags
+    sed -i "5s/.*/$CPPFLAGS/" Makefile
+fi
+# echo $CPPFLAGS
+
