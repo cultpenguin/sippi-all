@@ -29,3 +29,7 @@ mps_snesim_list: mpslib
 .PHONY: clean
 clean:
 	rm -f *.o mps *.exe mps_genesim mps_snesim_tree mps_snesim_list mpslib/*.o $(MPSLIB)
+
+.PHONY: cleano
+cleano:
+	rm -f *.o mpslib/*.o $(MPSLIB)
