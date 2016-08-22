@@ -93,15 +93,13 @@ void MPS::ENESIM_GENERAL::startSimulation(void) {
 */
 float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level) {
 	_MetropolisSoftData=0;
-	/*
-	// Soft data Metropokis integration not tested yet
-		if (_nMaxCountCpdf==1) {
+	// Soft data Metropolis integration not tested yet
+	if (_nMaxCountCpdf==1) {
 			_MetropolisSoftData=1;
-		}
-	*/
+	}
 	if ( _MetropolisSoftData == 1) {
 		// conidition to soft data using Metropolis style acceptance
-		// Usefull when _nMaxCountCpdf=1, or is very small;
+		// Usefull when _nMaxCountCpdf=1, or very small;
 		return _getRealizationFromCpdfTiEnesimMetropolis(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 	} else {
 	       	// condition to soft data using p_cond = p_cond_ti * p_cond_soft.

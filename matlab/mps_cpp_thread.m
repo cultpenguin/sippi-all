@@ -22,6 +22,8 @@ reals=[];
 if ~isfield(O,'n_real');
     O.n_real=1;
 end
+if ~isfield(O,'rseed');O.rseed=1;end
+
 
 %% try to hety 
 try

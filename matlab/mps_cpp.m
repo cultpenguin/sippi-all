@@ -40,6 +40,7 @@ if nargin<3, O.null='';end
 
 %% DEFAULT VALUES
 if ~isfield(O,'debug');O.debug=-1;end
+if ~isfield(O,'rseed');O.rseed=1;end
 if ~isfield(O,'output_folder');O.output_folder='.';end
 
 %% write ti
