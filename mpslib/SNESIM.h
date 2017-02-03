@@ -68,8 +68,8 @@ protected:
 	/**
 	* @brief Construct templatefaces and sort them around template center
 	* @param sizeX template size X
-	* @param sizeX template size Y
-	* @param sizeX template size Z
+	* @param sizeY template size Y
+	* @param sizeZ template size Z
 	*/
 	void _constructTemplateFaces(const int& sizeX, const int& sizeY, const int& sizeZ);
 
@@ -111,9 +111,6 @@ protected:
 	int _templateSizeX_base;
 	int _templateSizeY_base;
 	int _templateSizeZ_base;
-
-
-
 
 	/**
 	* @brief Min node count allowed

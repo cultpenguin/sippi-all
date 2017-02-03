@@ -283,6 +283,16 @@ protected:
 	*/
 	bool _readLineConfiguration(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str);
 	/**
+	* @brief Read a line of configuration file and put the result inside a vector data
+	* @param file filestream
+	* @param ss string stream
+	* @param data output data
+	* @param s string represents each data
+	* @param str string represents the line
+	* @return true if the line contains data
+	*/
+	bool _readLineConfiguration_alt(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str);
+	/**
 	* @brief Read different data (TI, hard and softdata from files)
 	*/
 	void _readDataFromFiles(void);
@@ -382,7 +392,7 @@ protected:
 	* @brief Abstract function allow acces to the beginning of each simulation of each multiple grid
 	* @param level the current grid level
 	*/
-	virtual void _InitStartSimulationEachMultipleGrid(const int& level) = 0; 
+	virtual void _InitStartSimulationEachMultipleGrid(const int& level) = 0;
 
 public:
 	/**

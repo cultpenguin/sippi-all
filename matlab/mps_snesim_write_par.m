@@ -56,8 +56,14 @@ fprintf(fid,'Number of mulitple grids (start from 0) # %d\n',O.n_multiple_grids)
 fprintf(fid,'Min Node count (0 if not set any limit)# %d\n',O.n_min_node_count);
 fprintf(fid,'Maximum number condtitional data (0: all) # %d\n',O.n_cond);
 for i=1:3;
-  fprintf(fid,'Search template size %s # %d\n',char(87+i),O.template_size(i));
-end
+    if prod(size(O.template_size))==6;
+        % VARYING TEMPLATE
+        fprintf(fid,'Search template size %s # %d %d\n',char(87+i),O.template_size(i,:));
+    else
+        % CONSTANT TEMPLATE
+        fprintf(fid,'Search template size %s # %d\n',char(87+i),O.template_size(i));
+    end
+    end
 % SIMULATION GRID SUZE
 for i=1:3;
   fprintf(fid,'Simulation grid size %s # %d\n',char(87+i),O.simulation_grid_size(i));

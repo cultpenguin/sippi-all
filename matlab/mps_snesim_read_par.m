@@ -15,7 +15,7 @@ O.n_real=str2num(l);
 
 % random seed
 l=line_strip_char(fgetl(fid),'#');
-O.seed=str2num(l);
+O.rseed=str2num(l);
 
 % # multiple grids
 l=line_strip_char(fgetl(fid),'#');
@@ -30,7 +30,7 @@ O.n_cond=str2num(l);
 
 for i=1:3
   l=line_strip_char(fgetl(fid),'#');
-  O.template_size(i)=str2num(l);
+  O.template_size(i,:)=str2num(l);
 end
 
 % SIMULATION GRID SIZE
