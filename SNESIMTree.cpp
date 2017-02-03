@@ -54,7 +54,7 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 	_tiDimX = (int)_TI[0][0].size();
 	_tiDimY = (int)_TI[0].size();
 	_tiDimZ = (int)_TI.size();
-	
+
 	if (_debugMode > -1) {
 		std::cout << "TI size (X,Y,Z): " << _tiDimX << " " << _tiDimY << " " << _tiDimZ << std::endl;
 	}
@@ -67,31 +67,38 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 void MPS::SNESIMTree::_InitStartSimulationEachMultipleGrid(const int& level) {
 	int totalLevel = _totalGridsLevel;
 	//Adaptive template size, reserve for later
-	int minTemplateX = 4 < _templateSizeX ? 4 : _templateSizeX;
-	int minTemplateY = 4 < _templateSizeY ? 4 : _templateSizeY;
-	int minTemplateZ = 4 < _templateSizeZ ? 4 : _templateSizeZ; //Initialize at minimum size, lowest best template is at 4 x 4 x 4
+	//int minTemplateX = 4 < _templateSizeX ? 4 : _templateSizeX;
+	//nt minTemplateY = 4 < _templateSizeY ? 4 : _templateSizeY;
+	//int minTemplateZ = 4 < _templateSizeZ ? 4 : _templateSizeZ; //Initialize at minimum size, lowest best template is at 4 x 4 x 4
 	////Using the original template size
-	//int minTemplateX = _templateSizeX;
-	//int minTemplateY = _templateSizeY;
-	//int minTemplateZ = _templateSizeZ; 
+	int minTemplateX = _templateSizeX;
+	int minTemplateY = _templateSizeY;
+	int minTemplateZ = _templateSizeZ;
 	//  x
 	//x 0 x
 	//  x
 	int templateX = minTemplateX, templateY = minTemplateY, templateZ = minTemplateZ;
 	//Ajust the template size based on the current level, template get smaller when the level get lower
-	templateX = _templateSizeX - (totalLevel - level) * (ceil(_templateSizeX - minTemplateX) / totalLevel);
-	templateY = _templateSizeY - (totalLevel - level) * (ceil(_templateSizeY - minTemplateY) / totalLevel);
-	templateZ = _templateSizeZ - (totalLevel - level) * (ceil(_templateSizeZ - minTemplateZ) / totalLevel);
-	
+	if (level == 0) {
+		templateX = minTemplateX;
+		templateY = minTemplateY;
+		templateZ = minTemplateZ;
+			} else {
+		templateX = _templateSizeX - (totalLevel - level) * (ceil(_templateSizeX - minTemplateX) / totalLevel);
+		templateY = _templateSizeY - (totalLevel - level) * (ceil(_templateSizeY - minTemplateY) / totalLevel);
+		templateZ = _templateSizeZ - (totalLevel - level) * (ceil(_templateSizeZ - minTemplateZ) / totalLevel);
+	}
+
 	//Building template structure
-	_constructTemplateFaces(templateX, templateY, templateZ);	
+	_constructTemplateFaces(templateX, templateY, templateZ);
 
 	//Scanning the TI and build the search tree
 	//Building the search tree
-	_searchTree.clear();	
+	_searchTree.clear();
 
 	int offset = int(std::pow(2, level));
 	if (_debugMode > -1) {
+		std::cout << "totalLevel: " << totalLevel << " offset: " << offset << std::endl;
 		std::cout << "level: " << level << " offset: " << offset << std::endl;
 		std::cout << "original template size X: " << _templateSizeX << " adjusted template size X: " << templateX << std::endl;
 		std::cout << "original template size Y: " << _templateSizeY << " adjusted template size Y: " << templateY << std::endl;
