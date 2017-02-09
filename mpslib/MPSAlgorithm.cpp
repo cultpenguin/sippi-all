@@ -413,8 +413,62 @@ bool MPS::MPSAlgorithm::_readLineConfiguration(std::ifstream& file, std::strings
 			data.push_back(s);
 		}
 	}
+
 	return (data.size() > 1);
 }
+
+
+/**
+* @brief Read a line of configuration file and put the result inside a vector data
+* @param file filestream
+* @param ss string stream
+* @param data output data
+* @param s string represents each data
+* @param str string represents the line
+* @return true if the line contains data
+*/
+bool MPS::MPSAlgorithm::_readLineConfiguration_alt(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str) {
+
+  std::string s2;
+	ss.clear();
+	data.clear();
+	getline(file, str);
+	ss << str;
+	int count=0;
+	while (getline(ss, s, '#')) {
+    count++;
+
+    if (count==1) {
+			// BEFORE #
+			//std::cout << "  count=" << count << std::endl;
+			s.erase(std::remove_if(s.begin(), s.end(), [](char x){return std::isspace(x);}), s.end()); //Removing spaces
+			if(!s.empty()) {
+					data.push_back(s);
+			}
+
+		} else {
+			// AFTER #: SPLIT AT #
+			std::stringstream sss;
+			sss << s;
+			//std::cout << "s=" << s << std::endl << std::endl;
+			int count2=0;
+			while (getline(sss, s2, ' ')) {
+				count2++;
+				if (count2>1) {
+					//std::cout << "count2=" << count2 << " s2=" << s2 << std::endl;
+					data.push_back(s2);
+				}
+			}
+		}
+
+	}
+
+	//for (unsigned int j=0; j<data.size(); j++) {
+	//	std::cout << "data[" << j << "]=" <<  data[j] << std::endl;
+	//}
+	return (data.size() > 1);
+}
+
 
 
 /**
@@ -559,7 +613,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 * Virtual function implemented from MPSAlgorithm
 */
 void MPS::MPSAlgorithm::startSimulation(void) {
-	
+
 	// Write license information to screen
 	if (_debugMode>-2) {
 		std::cout << "__________________________________________________________________________________" << std::endl;

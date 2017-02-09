@@ -155,8 +155,7 @@ for i=1:O.n_real
   try
       D=read_eas_matrix(fname);
   catch
-      disp(sprintf('%s: COULD NOT READ %s',mfileanme,fname))
-      keyboard
+      disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
   end
   %try
   %    D=read_eas(fname);
