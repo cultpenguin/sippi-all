@@ -691,14 +691,13 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					for (int x=0; x<_sgDimX; x+=offset) {
 						MPS::utility::treeDto1D(x, y, z, _sgDimX, _sgDimY, sg1DIdx);
 						_simulationPath.push_back(sg1DIdx);
-						//The relocation process happens if the current simulation grid value is still NaN
-						//Moving hard data to grid node only on coarsed level
-						if(level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);
-						else if(level == 0 && !_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
-							//Level = 0
-							//Fille the simulation node with the value from hard data grid
+						//Fill the simulation node with the value from hard data grid
+						if(!_hdg.empty() && MPS::utility::is_nan(_sg[z][y][x])) {
 							_sg[z][y][x] = _hdg[z][y][x];
 						}
+						//The relocation process happens if the current simulation grid value is still NaN
+						//Moving hard data to grid node only on coarsed level
+						if(level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);						
 						//Progression
 						if (_debugMode > -1 && !_hdg.empty()) {
 							nodeCnt ++;
@@ -773,7 +772,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 						nodeEstimatedSeconds = (int)((elapsedNodeSecs/(float)(progressionCnt)) * (float)(totalNodes - progressionCnt));
 						MPS::utility::secondsToHrMnSec(nodeEstimatedSeconds, hours, minutes, seconds);
 						if (progress > 0) //Ignore first time that cant provide any time estimation
-							std::cout << "Level: " << level << " Progression (%): " << progress << " finish in: " << hours << " h " << minutes << " mn " << seconds << " sec" << std::endl;
+							std::cout << "Realization: " << n + 1 << "/" << _realizationNumbers << " Level: " << level << " Progression (%): " << progress << " finish in: " << hours << " h " << minutes << " mn " << seconds << " sec" << std::endl;
 					}
 				}
 			}

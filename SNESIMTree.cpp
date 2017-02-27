@@ -144,7 +144,8 @@ void MPS::SNESIMTree::_InitStartSimulationEachMultipleGrid(const int& level) {
 					foundExistingValue = false;
 					foundIdx = 0;
 					//Checking of NaN value
-					if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || MPS::utility::is_nan(_TI[tiZ][tiY][tiX])) { //Out of bound or nan
+					//if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || MPS::utility::is_nan(_TI[tiZ][tiY][tiX])) { //Out of bound or nan
+					if ((tiX < 0 || tiX >= _tiDimX) || (tiY < 0 || tiY >= _tiDimY) || (tiZ < 0 || tiZ >= _tiDimZ) || MPS::utility::is_nan(_TI[z][y][x])) { //Out of bound or nan
 						break; //Ignore border stop here
 					} else {
 						//Searching the TI cell value inside the current node
