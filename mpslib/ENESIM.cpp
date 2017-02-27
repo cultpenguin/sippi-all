@@ -178,10 +178,12 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	// map containing the count of conditional data values
 	std::map<float, int> conditionalCount;
 
+	float LC_dist_threshold=1;
+	int distance_measure=1;
+
 	int CpdfCount = 0;
 	float valueFromTI;
 	float LC_dist_min = RAND_MAX;
-	float LC_dist_threshold=1;
 	int TI_idxX, TI_idxY, TI_idxZ;
 
 
@@ -248,8 +250,14 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 				V_ti = _TI[TI_z][TI_y][TI_x];
 
 				if (V_ti!=V[i]) {
-					// Unless we have a perfect match, a penalty distance of 1 is added.
-					LC_dist=LC_dist+1;
+
+					if (distance_measure==1) {
+						// Discrete measure: no matching picel means added distance of 1
+						LC_dist=LC_dist+1;
+					} else if (distance_measure==2){
+						LC_dist = (V_ti-V[i])*(V_ti-V[i]);
+					}
+
 				}
 			} else {
 				// ARE OUT OF BOUNDS
