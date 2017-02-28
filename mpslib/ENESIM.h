@@ -47,6 +47,15 @@ protected:
 	int _MetropolisSoftData; // = 0;
 	//_MetropolisSoftData = 1;
 
+	/**
+	* @brief Distance threshold to accept a matching template
+	*/
+	float _LC_dist_threshold=0.01;//0.01;
+
+	/**
+	* @brief Distance measure comparing a template in TI and simulation grid
+	*/
+	int _distance_measure=1; // IXEL distance
 
 
 	/**
@@ -94,7 +103,7 @@ protected:
 	* @return simulated value
 	*/
 	float _getRealizationFromCpdfTiEnesimMetropolis(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
-	
+
 public:
 	/**
 	* @brief Constructors default and empty parameters

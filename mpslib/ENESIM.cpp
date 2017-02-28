@@ -178,8 +178,13 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	// map containing the count of conditional data values
 	std::map<float, int> conditionalCount;
 
-	float LC_dist_threshold=1;
-	int distance_measure=1;
+
+	// NEXT FEW LINES SHOULD BE READ FROM CONFIGURATION FILES!!
+	_LC_dist_threshold=100;//0.01;
+	_distance_measure=2;
+
+	_LC_dist_threshold=1;//0.01;
+	_distance_measure=1;
 
 	int CpdfCount = 0;
 	float valueFromTI;
@@ -216,7 +221,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	float V_center_ti; // value of the central node in the TI
 	V_center_ti=-1;
 
-
+  LC_dist_min = RAND_MAX;
 	float L_dist;  // sum of realtive distance
 	float LC_dist; // distance of L,V to value in TI
 	for (unsigned int i_ti_path=0; i_ti_path<_tiPath.size(); i_ti_path++) {
@@ -249,34 +254,50 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 			if((TI_x >= 0 && TI_x < _tiDimX) && (TI_y >= 0 && TI_y < _tiDimY) && (TI_z >= 0 && TI_z < _tiDimZ)) {
 				V_ti = _TI[TI_z][TI_y][TI_x];
 
-				if (V_ti!=V[i]) {
-
-					if (distance_measure==1) {
-						// Discrete measure: no matching picel means added distance of 1
+				if (_distance_measure==1) {
+					// Discrete measure: no matching picel means added distance of 1
+					if (V_ti!=V[i]) {
+						// add a distance of 1, if case of no matching pixels
 						LC_dist=LC_dist+1;
-					} else if (distance_measure==2){
-						LC_dist = (V_ti-V[i])*(V_ti-V[i]);
 					}
-
+				}	else if (_distance_measure==2){
+					LC_dist = LC_dist + (V_ti-V[i])*(V_ti-V[i]);
 				}
+
 			} else {
 				// ARE OUT OF BOUNDS
-				LC_dist = LC_dist+1;
+				if (_distance_measure==1) {
+					LC_dist = LC_dist+1;
+				} else if (_distance_measure==2) {
+					LC_dist = 100000;
+				}
 			}
 		}
+
+		if (_distance_measure==2) {
+			LC_dist=sqrt(LC_dist);
+		}
+
 
 		// WHAT IS THE VALUE OF AT THE CENTER NOTE IN THE TT RIGHT NOW?
 
 		// Check if current L,T in TI match conditional observations better
-		if (LC_dist<LC_dist_min) {
+		if (LC_dist<=LC_dist_min) {
+
+
+			if (_debugMode > 2) {
+				std::cout << _distance_measure;
+				std::cout << " - i_ti_path=" << i_ti_path << ", LC_dist_min=" << LC_dist_min << "   LC_dist=" << LC_dist << std::endl;
+			}
+
 			// We have a new MIN distance
 			LC_dist_min=LC_dist;
 			valueFromTI = V_center_ti;
-
 		}
 
+
 		// Add a count to the Cpdf if the current node match L,V according to some threshold..
-		if (LC_dist<LC_dist_threshold) {
+		if (LC_dist<=_LC_dist_threshold) {
 			CpdfCount++;
 
 			// Update conditionalCount Counter (from which the local cPdf can be computed)
