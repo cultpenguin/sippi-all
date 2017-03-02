@@ -77,6 +77,15 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	// Maximum iterations
 	_readLineConfiguration(file, ss, data, s, str);
 	_maxIterations = stoi(data[1]);
+	// Distance Measure and minimum distance
+	_readLineConfiguration_mul(file, ss, data, s, str);
+	_distance_measure = stoi(data[1]);
+	// optional. Template size x - base when n_mulgrid=0
+	if (data.size()>2) {
+		_LC_dist_threshold = stof(data[2]);
+	} else {
+		_LC_dist_threshold = 0;
+	}
 	// Simulation Grid size X
 	_readLineConfiguration(file, ss, data, s, str);
 	_sgDimX = stoi(data[1]);
@@ -180,12 +189,13 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 
 	// NEXT FEW LINES SHOULD BE READ FROM CONFIGURATION FILES!!
+	/*
 	_LC_dist_threshold=100;//0.01;
 	_distance_measure=2;
 
 	_LC_dist_threshold=1;//0.01;
 	_distance_measure=1;
-
+	*/
 	int CpdfCount = 0;
 	float valueFromTI;
 	float LC_dist_min = RAND_MAX;

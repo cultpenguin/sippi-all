@@ -291,7 +291,7 @@ protected:
 	* @param str string represents the line
 	* @return true if the line contains data
 	*/
-	bool _readLineConfiguration_alt(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str);
+	bool _readLineConfiguration_mul(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str);
 	/**
 	* @brief Read different data (TI, hard and softdata from files)
 	*/

@@ -72,7 +72,7 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	_readLineConfiguration(file, ss, data, s, str);
 	_maxCondData = stoi(data[1]);
 	// Template size x
-	_readLineConfiguration_alt(file, ss, data, s, str);
+	_readLineConfiguration_mul(file, ss, data, s, str);
 	_templateSizeX = stoi(data[1]);
 	// optional. Template size x - base when n_mulgrid=0
 	if (data.size()>2) {
@@ -81,7 +81,7 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 		_templateSizeX_base = _templateSizeX;
 	}
   // Template size y
-	_readLineConfiguration_alt(file, ss, data, s, str);
+	_readLineConfiguration_mul(file, ss, data, s, str);
 	_templateSizeY = stoi(data[1]);
 	// optional. Template size y - base when n_mulgrid=0
 	if (data.size()>2) {
@@ -90,7 +90,7 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 		_templateSizeY_base = _templateSizeY;
 	}
   // Template size z
-	_readLineConfiguration_alt(file, ss, data, s, str);
+	_readLineConfiguration_mul(file, ss, data, s, str);
 	_templateSizeZ = stoi(data[1]);
 	// optional. Template size z - base when n_mulgrid=0
 	if (data.size()>2) {

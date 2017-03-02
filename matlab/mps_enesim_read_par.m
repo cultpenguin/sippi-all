@@ -27,7 +27,19 @@ O.n_cond=str2num(l);
 
 % # max number of neighbors
 l=line_strip_char(fgetl(fid),'#');
-O.n_max_ite=str2num(l);
+dd=str2num(l);;
+O.distance_measure=dd(1);
+if length(dd)>1
+    O.distance_min=dd(2);
+else
+    O.distance_min=0;
+end
+
+
+
+% Distance measure [1:disc, 2:cont], minimum distance 
+fprintf(fid,'Distance measure [1:disc, 2:cont], minimum distance # %d %f\n',O.distance_measure,O.distance_min);
+
 
 
 % SIMULATION GRID SIZE

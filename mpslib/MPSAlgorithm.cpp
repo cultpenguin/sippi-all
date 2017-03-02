@@ -427,7 +427,7 @@ bool MPS::MPSAlgorithm::_readLineConfiguration(std::ifstream& file, std::strings
 * @param str string represents the line
 * @return true if the line contains data
 */
-bool MPS::MPSAlgorithm::_readLineConfiguration_alt(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str) {
+bool MPS::MPSAlgorithm::_readLineConfiguration_mul(std::ifstream& file, std::stringstream& ss, std::vector<std::string>& data, std::string& s, std::string& str) {
 
   std::string s2;
 	ss.clear();
@@ -697,7 +697,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 						}
 						//The relocation process happens if the current simulation grid value is still NaN
 						//Moving hard data to grid node only on coarsed level
-						if(level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);						
+						if(level != 0) _fillSGfromHD(x, y, z, level, allocatedNodesFromHardData, nodeToPutBack);
 						//Progression
 						if (_debugMode > -1 && !_hdg.empty()) {
 							nodeCnt ++;

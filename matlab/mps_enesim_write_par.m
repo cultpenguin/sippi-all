@@ -38,6 +38,10 @@ if ~isfield(O,'soft_data_filename');O.soft_data_filename='soft.dat';end
 if ~isfield(O,'n_threads');O.n_threads=1;end
 if ~isfield(O,'debug');O.debug=-1;end
  
+if ~isfield(O,'distance_measure');O.distance_measure=1;end
+if ~isfield(O,'distance_min');O.distance_min=0;end
+
+
 % multiple grids are not used by enesim
 %if (O.n_multiple_grids~=0);
     %disp(sprintf('%s: Setting nmulgrids to ZERO to avoid relocation',mfilename));
@@ -53,6 +57,10 @@ fprintf(fid,'Maximum number of counts for conditional pdf # %d\n',O.n_max_cpdf_c
 % LIMIT NEIGHBORHOOD
 fprintf(fid,'Max number of conditional point # %d\n',O.n_cond);
 fprintf(fid,'Max number of iterations # %d\n',O.n_max_ite);
+%
+%Distance measure [1:disc, 2:cont], minimum distance # 1 0
+fprintf(fid,'Distance measure [1:disc, 2:cont], minimum distance # %d %f\n',O.distance_measure,O.distance_min);
+
 % SIMULATION GRID SUZE
 for i=1:3;
   fprintf(fid,'Simulation grid size %s # %d\n',char(87+i),O.simulation_grid_size(i));
