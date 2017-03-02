@@ -157,13 +157,6 @@ for i=1:O.n_real
   catch
       disp(sprintf('%s: COULD NOT READ %s',mfilename,fname))
   end
-  %try
-  %    D=read_eas(fname);
-  %catch
-  %    disp(sprintf('%s: problems reading output file (%s) - waiting a bit an retrying',mfilename,fname));
-  %    pause(5);
-  %    D=read_eas(fname);
-  %end
   
   if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
     % 1D
@@ -177,45 +170,27 @@ for i=1:O.n_real
     reals(:,:,:,i)=D;
   end
   
-%=======
-%    fname=sprintf('%s%s%s%s_sg_%d.gslib',O.output_folder,filesep,f,e,i-1);
-%    D=read_eas_matrix(fname);
-%    %try
-%    %    D=read_eas(fname);
-%    %catch
-%    %    disp(sprintf('%s: problems reading output file (%s) - waiting a bit an retrying',mfilename,fname));
-%    %    pause(5);
-%    %    D=read_eas(fname);
-%    %end
-%    
-%    if (O.simulation_grid_size(2)==1)&(O.simulation_grid_size(3)==1)
-%        % 1D
-%        reals=D;
-%    elseif (O.simulation_grid_size(3)==1)
-%        % 2D
-%        %reals(:,:,i)=reshape(D,O.simulation_grid_size(1),O.simulation_grid_size(2))';
-%        reals(:,:,i)=D;
-%    else
-%        % 3D
-%        reals(:,:,:,i)=D;
-%    end
-%    
-%>>>>>>> dd4ccdbd4fd7c15d90ad106cb4677dbe3aad0218
 end
 
 %% READ TEMPORARY GRID VALUES
 if (O.debug>1)
     for i=1:O.n_real
-        fname_tg1=sprintf('%s%s%s%s_temp1_%d.gslib',O.output_folder,filesep,f,e,i-1);
-        if exist(fname_tg1,'file')
-            O.TG1=read_eas_matrix(fname_tg1);
+        for j=1:5;
+            fname=sprintf('%s%s%s%s_temp%d_%d.gslib',O.output_folder,filesep,f,e,j,i-1);
+            if exist(fname,'file')
+                O.(sprintf('TG%d',j))=read_eas_matrix(fname);
+            end
         end
-        fname_tg2=sprintf('%s%s%s%s_temp2_%d.gslib',O.output_folder,filesep,f,e,i-1);
-        if exist(fname_tg2,'file')
-            O.TG2=read_eas_matrix(fname_tg2);
-        end
-        
     end
+    
+    
+    fname=sprintf('%s%s%s%s_path_%d.gslib',O.output_folder,filesep,f,e,i-1);
+    if exist(fname,'file')
+        O.(sprintf('I_PATH'))=read_eas_matrix(fname);
+    end
+            
+            
+    
     
 end
 
