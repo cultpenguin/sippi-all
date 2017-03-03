@@ -120,6 +120,10 @@ protected:
 	*/
 	std::vector<std::vector<std::vector<float>>> _tg2;
 	/**
+	* @brief Temporary grid 3 - meaning define by type of sim-algorithm (same size as simulation grid)
+	*/
+	std::vector<std::vector<std::vector<float>>> _tg3;
+	/**
 	* @brief hard data search radius for multiple grids
 	*/
 	float _hdSearchRadius;

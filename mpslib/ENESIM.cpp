@@ -199,6 +199,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	int CpdfCount = 0;
 	float valueFromTI;
 	float LC_dist_min = RAND_MAX;
+	float TI_x_min, TI_y_min, TI_z_min;
 	int TI_idxX, TI_idxY, TI_idxZ;
 
 
@@ -303,6 +304,10 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 			// We have a new MIN distance
 			LC_dist_min=LC_dist;
 			valueFromTI = V_center_ti;
+			// keep track of the locaton in TI used for match
+			TI_x_min = TI_x;
+			TI_y_min = TI_y;
+			TI_z_min = TI_z;
 		}
 
 
@@ -355,6 +360,8 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	if (_debugMode>1) {
 		_tg1[sgIdxZ][sgIdxY][sgIdxX] = LC_dist_min;
 		_tg2[sgIdxZ][sgIdxY][sgIdxX] = CpdfCount;
+		_tg3[sgIdxZ][sgIdxY][sgIdxX] = _tiDimZ*TI_z_min + _tiDimY*TI_y_min + TI_x_min;
+		//TI_x_min
 	}
 
 
