@@ -44,8 +44,8 @@ protected:
 	/**
 	* @brief Select whether to use Metropolis style soft data conditioning
 	*/
-	int _MetropolisSoftData; // = 0;
-	//_MetropolisSoftData = 1;
+	int _RejectionSoftData; // = 0;
+	//_RejectionSoftData = 1;
 
 	/**
 	* @brief Distance threshold to accept a matching template
@@ -102,7 +102,7 @@ protected:
 	* @param iterationCnt Iterations counter
 	* @return simulated value
 	*/
-	float _getRealizationFromCpdfTiEnesimMetropolis(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
+	float _getRealizationFromCpdfTiEnesimRejection(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
 
 public:
 	/**

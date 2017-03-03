@@ -12,6 +12,15 @@
 %   %O.method='mps_genesim'; %
 %   O.n_real=1;             %  optional number of realization
 %   [reals,O]=mps_cpp(TI,SIM,O);
+% 
+% % Hard data
+%   % set as d_hard parameter:
+%   O.d_hard [x y z d_hard]
+%   % set as non_nan_numbers in SIM (only applies if O.d_hard is not set)
+%
+% % Soft data
+%   % set as d_soft parameter:
+%   O.d_soft [x y z prob_0 prob_1 ...]
 %
 % See also: mps_snesim_read_par, mps_snesim_write_par, mps_enesim_read_par,
 % mps_enesim_write_par
@@ -71,11 +80,25 @@ end
 
 %%
 % WRITE HARD DATA IF SET AS VARIABLE
+if ~isfield(O,'hard_data_filename');
+    O.hard_data_filename='d_hard.dat';
+end
 if isfield(O,'d_hard');
-    if ~isfield(O,'d_hard');
-        O.hard_data_filename='d_hard.dat';
-    end
     write_eas(O.hard_data_filename,O.d_hard);
+else
+    % TEST FOR NON-NAN NUMBERS IN SIM-grid
+    if  O.simulation_grid_size(3)==1;
+        x=[0:1:O.simulation_grid_size(1)-1]*O.grid_cell_size(1)+O.origin(1);
+        y=[0:1:O.simulation_grid_size(2)-1]*O.grid_cell_size(2)+O.origin(2);
+        z=[0:1:O.simulation_grid_size(3)-1]*O.grid_cell_size(3)+O.origin(3);
+        [xx,yy,zz]=meshgrid(x,y,z);
+        i_hard=find(~isnan(SIM));
+        if ~isempty(i_hard)
+            O.d_hard=[xx(i_hard) yy(i_hard) zz(i_hard) SIM(i_hard)];
+            write_eas(O.hard_data_filename,O.d_hard);
+        end
+        
+    end
 end
 
 
@@ -99,16 +122,16 @@ if strfind(O.method,'snesim');
     if strcmp(O.method,'mps_snesim');
         O.method='mps_snesim_tree';
     end
-    if ~isfield(O,'parameter_filename');O.parameter_filename='snesim.txt';end
+    if ~isfield(O,'parameter_filename');O.parameter_filename='mps_snesim.txt';end
     O=mps_snesim_write_par(O);
 elseif (strcmp(O.method,'mps_genesim'))||(strcmp(O.method,'mps_enesim_general'))
     O.method='mps_genesim';
-    if ~isfield(O,'parameter_filename');O.parameter_filename='genesim.txt';end
+    if ~isfield(O,'parameter_filename');O.parameter_filename='mps_genesim.txt';end
     O=mps_enesim_write_par(O);
 elseif strcmp(O.method,'mps_dsam');
     O.method='mps_genesim';
     O.n_max_cpdf_count=1;
-    if ~isfield(O,'parameter_filename');O.parameter_filename='dsam.txt';end
+    if ~isfield(O,'parameter_filename');O.parameter_filename='ds.txt';end
     O=mps_enesim_write_par(O);
 elseif strcmp(O.method,'mps_enesim');
     O.method='mps_genesim';

@@ -32,7 +32,7 @@ MPS::ENESIM::ENESIM(void) : MPS::MPSAlgorithm(){
 	// Multiple grids are not used in ENESIM type algorithms
 	_totalGridsLevel=0;
 	_nMaxCountCpdf=1;
-	_MetropolisSoftData=0;
+	_RejectionSoftData=0;
 }
 
 /**
@@ -480,7 +480,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesim(const int& sgIdxX, const int&
 * @param iterationCnt Iterations counter
 * @return simulated value
 */
-float MPS::ENESIM::_getRealizationFromCpdfTiEnesimMetropolis(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
+float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejection(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt) {
 
 	std::map<float, float> conditionalPdfFromTi;
 	// Check if any SoftData are available?

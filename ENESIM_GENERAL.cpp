@@ -97,14 +97,14 @@ void MPS::ENESIM_GENERAL::startSimulation(void) {
 */
 float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level) {
 	// By default do not use rejection sampler to account for soft data
-	_MetropolisSoftData=0;
+	_RejectionSoftData=0;
 	if (_nMaxCountCpdf==1) {
-			_MetropolisSoftData=1;
+			_RejectionSoftData=1;
 	}
-	if ( _MetropolisSoftData == 1) {
+	if ( _RejectionSoftData == 1) {
 		// conidition to soft data using Metropolis style acceptance
 		// Usefull when _nMaxCountCpdf=1, or very small;
-		return _getRealizationFromCpdfTiEnesimMetropolis(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
+		return _getRealizationFromCpdfTiEnesimRejection(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 	} else {
 	       	// condition to soft data using p_cond = p_cond_ti * p_cond_soft.
 		// Only usefull when _nMaxCountCpdf>>1;
