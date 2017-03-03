@@ -232,10 +232,13 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	float V_center_ti; // value of the central node in the TI
 	V_center_ti=-1;
 
+ 	int node1DIdx; // Integer to hold 1d index from 3D point
+
   LC_dist_min = RAND_MAX;
 	float L_dist;  // sum of realtive distance
 	float LC_dist; // distance of L,V to value in TI
-	for (unsigned int i_ti_path=0; i_ti_path<_tiPath.size(); i_ti_path++) {
+	unsigned int i_ti_path;
+	for (i_ti_path=0; i_ti_path<_tiPath.size(); i_ti_path++) {
 		MPS::utility::oneDTo3D(_tiPath[i_ti_path], _tiDimX, _tiDimY, TI_idxX, TI_idxY, TI_idxZ);
 
 		if (_debugMode > 3) {
@@ -254,35 +257,43 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 		matchedCnt = 0;
 
 		LC_dist=0;
-		for (unsigned int i=0; i<L.size(); i++) {
-			//For each pixel relatively to the current pixel based on vector L
-			TI_x = TI_idxX + L[i].getX();
-			TI_y = TI_idxY + L[i].getY();
-			TI_z = TI_idxZ + L[i].getZ();
-			L_dist = abs(L[i].getX()) + abs(L[i].getY()) + abs(L[i].getZ());
+		if (L.size()>0) {
+			for (unsigned int i=0; i<L.size(); i++) {
+				//For each pixel relatively to the current pixel based on vector L
+				TI_x = TI_idxX + L[i].getX();
+				TI_y = TI_idxY + L[i].getY();
+				TI_z = TI_idxZ + L[i].getZ();
+				L_dist = abs(L[i].getX()) + abs(L[i].getY()) + abs(L[i].getZ());
 
-			// CHECK IF WE ARE INSIDE BOUNDS!!
-			if((TI_x >= 0 && TI_x < _tiDimX) && (TI_y >= 0 && TI_y < _tiDimY) && (TI_z >= 0 && TI_z < _tiDimZ)) {
-				V_ti = _TI[TI_z][TI_y][TI_x];
+				// CHECK IF WE ARE INSIDE BOUNDS!!
+				if((TI_x >= 0 && TI_x < _tiDimX) && (TI_y >= 0 && TI_y < _tiDimY) && (TI_z >= 0 && TI_z < _tiDimZ)) {
+					V_ti = _TI[TI_z][TI_y][TI_x];
 
-				if (_distance_measure==1) {
-					// Discrete measure: no matching picel means added distance of 1
-					if (V_ti!=V[i]) {
-						// add a distance of 1, if case of no matching pixels
-						LC_dist=LC_dist+1;
+					if (_distance_measure==1) {
+						// Discrete measure: no matching picel means added distance of 1
+						if (V_ti!=V[i]) {
+							// add a distance of 1, if case of no matching pixels
+							LC_dist=LC_dist+1;
+						}
+					}	else if (_distance_measure==2){
+						LC_dist = LC_dist + (V_ti-V[i])*(V_ti-V[i]);
 					}
-				}	else if (_distance_measure==2){
-					LC_dist = LC_dist + (V_ti-V[i])*(V_ti-V[i]);
-				}
 
-			} else {
-				// ARE OUT OF BOUNDS
-				if (_distance_measure==1) {
-					LC_dist = LC_dist+1;
-				} else if (_distance_measure==2) {
-					LC_dist = 100000;
+				} else {
+					// ARE OUT OF BOUNDS
+					if (_distance_measure==1) {
+						LC_dist = LC_dist+1;
+					} else if (_distance_measure==2) {
+						LC_dist = 100000;
+					}
 				}
 			}
+		} else {
+			// NO CONDITIONAL DATA
+			TI_x_min = TI_idxX;
+			TI_y_min = TI_idxY;
+			TI_z_min = TI_idxZ;
+			L_dist = 0;
 		}
 
 		if (_distance_measure==2) {
@@ -294,20 +305,17 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 		// Check if current L,T in TI match conditional observations better
 		if (LC_dist<=LC_dist_min) {
-
-
 			if (_debugMode > 2) {
 				std::cout << _distance_measure;
 				std::cout << " - i_ti_path=" << i_ti_path << ", LC_dist_min=" << LC_dist_min << "   LC_dist=" << LC_dist << std::endl;
 			}
-
 			// We have a new MIN distance
 			LC_dist_min=LC_dist;
 			valueFromTI = V_center_ti;
 			// keep track of the locaton in TI used for match
-			TI_x_min = TI_x;
-			TI_y_min = TI_y;
-			TI_z_min = TI_z;
+			TI_x_min = TI_idxX;
+			TI_y_min = TI_idxY;
+			TI_z_min = TI_idxZ;
 		}
 
 
@@ -331,7 +339,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 		}
 
 		if (maxCpdfCount <= CpdfCount ) {
-			if (_debugMode > 1) {
+			if (_debugMode > 2) {
 				std::cout << "MaxCpdfCount Reached i_ti_path=" << i_ti_path << " - CpdfCount=" << CpdfCount << std::endl;
 			}
 			break;
@@ -360,7 +368,11 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	if (_debugMode>1) {
 		_tg1[sgIdxZ][sgIdxY][sgIdxX] = LC_dist_min;
 		_tg2[sgIdxZ][sgIdxY][sgIdxX] = CpdfCount;
-		_tg3[sgIdxZ][sgIdxY][sgIdxX] = _tiDimZ*TI_z_min + _tiDimY*TI_y_min + TI_x_min;
+		_tg3[sgIdxZ][sgIdxY][sgIdxX] = _tiDimZ*(TI_z_min-1) + _tiDimY*(TI_y_min-1) + TI_x_min;
+		MPS::utility::treeDto1D(TI_x_min, TI_y_min, TI_z_min, _tiDimX, _tiDimY, node1DIdx);
+		_tg3[sgIdxZ][sgIdxY][sgIdxX] = node1DIdx;
+		_tg4[sgIdxZ][sgIdxY][sgIdxX] = i_ti_path;
+
 		//TI_x_min
 	}
 

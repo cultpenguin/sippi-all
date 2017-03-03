@@ -659,6 +659,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			_initializeSG(_tg1, _sgDimX, _sgDimY, _sgDimZ);
 			_initializeSG(_tg2, _sgDimX, _sgDimY, _sgDimZ);
 			_initializeSG(_tg3, _sgDimX, _sgDimY, _sgDimZ);
+			_initializeSG(_tg4, _sgDimX, _sgDimY, _sgDimZ);
 		}
 
 		/*if(!_hdg.empty()) {
@@ -827,9 +828,10 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 		if (_debugMode>1) {
 			//Write temporary grids to  file
-			MPS::io::writeToGSLIBFile(outputFilename + "_temp1_" + std::to_string(n) + ".gslib", _tg1, _sgDimX, _sgDimY, _sgDimZ);
-			MPS::io::writeToGSLIBFile(outputFilename + "_temp2_" + std::to_string(n) + ".gslib", _tg2, _sgDimX, _sgDimY, _sgDimZ);
-			MPS::io::writeToGSLIBFile(outputFilename + "_temp3_" + std::to_string(n) + ".gslib", _tg3, _sgDimX, _sgDimY, _sgDimZ);
+			MPS::io::writeToGSLIBFile(outputFilename + "_tg1_" + std::to_string(n) + ".gslib", _tg1, _sgDimX, _sgDimY, _sgDimZ);
+			MPS::io::writeToGSLIBFile(outputFilename + "_tg2_" + std::to_string(n) + ".gslib", _tg2, _sgDimX, _sgDimY, _sgDimZ);
+			MPS::io::writeToGSLIBFile(outputFilename + "_tg3_" + std::to_string(n) + ".gslib", _tg3, _sgDimX, _sgDimY, _sgDimZ);
+			MPS::io::writeToGSLIBFile(outputFilename + "_tg4_" + std::to_string(n) + ".gslib", _tg4, _sgDimX, _sgDimY, _sgDimZ);
 		}
 
 

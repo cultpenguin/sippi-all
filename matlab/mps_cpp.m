@@ -199,7 +199,7 @@ end
 if (O.debug>1)
     for i=1:O.n_real
         for j=1:5;
-            fname=sprintf('%s%s%s%s_temp%d_%d.gslib',O.output_folder,filesep,f,e,j,i-1);
+            fname=sprintf('%s%s%s%s_tg%d_%d.gslib',O.output_folder,filesep,f,e,j,i-1);
             if exist(fname,'file')
                 O.(sprintf('TG%d',j))=read_eas_matrix(fname);
             end
@@ -211,9 +211,6 @@ if (O.debug>1)
     if exist(fname,'file')
         O.(sprintf('I_PATH'))=read_eas_matrix(fname);
     end
-            
-            
-    
     
 end
 
@@ -258,7 +255,10 @@ O.y=[0:1:(O.simulation_grid_size(2)-1)].*O.grid_cell_size(2)+O.origin(2);
 O.z=[0:1:(O.simulation_grid_size(3)-1)].*O.grid_cell_size(3)+O.origin(3);
 
 %%
-mps_cpp_clean(O);
+if ~isfield(O,'clean'), O.clean=1; end
+if (O.clean)
+    mps_cpp_clean(O);
+end
 
 
 
