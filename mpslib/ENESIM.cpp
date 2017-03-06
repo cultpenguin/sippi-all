@@ -188,17 +188,12 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	std::map<float, int> conditionalCount;
 
 
-	// NEXT FEW LINES SHOULD BE READ FROM CONFIGURATION FILES!!
-	/*
-	_LC_dist_threshold=100;//0.01;
-	_distance_measure=2;
-
-	_LC_dist_threshold=1;//0.01;
-	_distance_measure=1;
-	*/
+	float h_dist; // distance to conditional event
+	float h_dist_cum; // cumulative distance to conditional event
+	float h_power=0; // distance weight
 	int CpdfCount = 0;
 	float valueFromTI;
-	float LC_dist_min = RAND_MAX;
+	float LC_dist_min;
 	float TI_x_min, TI_y_min, TI_z_min;
 	int TI_idxX, TI_idxY, TI_idxZ;
 
@@ -234,8 +229,8 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
  	int node1DIdx; // Integer to hold 1d index from 3D point
 
-  LC_dist_min = RAND_MAX;
-	float L_dist;  // sum of realtive distance
+  LC_dist_min = 1e+9;
+	//float L_dist;  // sum of realtive distance
 	float LC_dist; // distance of L,V to value in TI
 	unsigned int i_ti_path;
 	for (i_ti_path=0; i_ti_path<_tiPath.size(); i_ti_path++) {
@@ -249,23 +244,29 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 			std::cout << "  " << TI_idxZ << std::endl;
 		}
 
+		// Get the centered value in the TI
 		V_center_ti = _TI[TI_idxZ][TI_idxY][TI_idxX];
 
-		// FIND OUT IF WE HAVE A MATCH AT THE CURRENT LOCATION!
+		// Compute the distance between the conditional event, and the
+		// same event ceneterd at the current location in the TI
 		int TI_x, TI_y, TI_z;
 		int matchedCnt = 0; //, previousMatchedCnt = 0;
 		matchedCnt = 0;
 
 		LC_dist=0;
+		h_dist_cum=0;
 		if (L.size()>0) {
 			for (unsigned int i=0; i<L.size(); i++) {
 				//For each pixel relatively to the current pixel based on vector L
 				TI_x = TI_idxX + L[i].getX();
 				TI_y = TI_idxY + L[i].getY();
 				TI_z = TI_idxZ + L[i].getZ();
-				L_dist = abs(L[i].getX()) + abs(L[i].getY()) + abs(L[i].getZ());
+				h_dist = pow(sqrt(TI_x*TI_x + TI_y*TI_y + TI_z*TI_z),-1*h_power) ;
+				h_dist_cum = h_dist_cum + h_dist;
 
-				// CHECK IF WE ARE INSIDE BOUNDS!!
+				// L_dist = abs(L[i].getX()) + abs(L[i].getY()) + abs(L[i].getZ());
+
+				// CHECK IF WE ARE INSIDE TI BOUNDS!!
 				if((TI_x >= 0 && TI_x < _tiDimX) && (TI_y >= 0 && TI_y < _tiDimY) && (TI_z >= 0 && TI_z < _tiDimZ)) {
 					V_ti = _TI[TI_z][TI_y][TI_x];
 
@@ -273,15 +274,16 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 						// Discrete measure: no matching picel means added distance of 1
 						if (V_ti!=V[i]) {
 							// add a distance of 1, if case of no matching pixels
-							LC_dist=LC_dist+1;
+							LC_dist=LC_dist+1*h_dist;
 						}
 					}	else if (_distance_measure==2){
-						LC_dist = LC_dist + (V_ti-V[i])*(V_ti-V[i]);
+						LC_dist = LC_dist + ((V_ti-V[i])*(V_ti-V[i]))*h_dist;
 					}
 
 				} else {
-					// ARE OUT OF BOUNDS
+					// ARE OUT OF BOUNDS -- consider again
 					if (_distance_measure==1) {
+						// If conditinal point is outside TI, then treat it as a non-matching event
 						LC_dist = LC_dist+1;
 					} else if (_distance_measure==2) {
 						LC_dist = 100000;
@@ -290,27 +292,27 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 			}
 		} else {
 			// NO CONDITIONAL DATA
+			// std::cout << "No conditional data" << std::endl;
 			TI_x_min = TI_idxX;
 			TI_y_min = TI_idxY;
 			TI_z_min = TI_idxZ;
-			L_dist = 0;
+			LC_dist=0;
+			//L_dist = 0;
 		}
 
 		if (_distance_measure==2) {
 			LC_dist=sqrt(LC_dist);
 		}
+		//LC_dist=LC_dist/h_dist_cum;
 
-
-		// WHAT IS THE VALUE OF AT THE CENTER NOTE IN THE TT RIGHT NOW?
 
 		// Check if current L,T in TI match conditional observations better
 		if (LC_dist<=LC_dist_min) {
+			LC_dist_min=LC_dist;
 			if (_debugMode > 2) {
-				std::cout << _distance_measure;
 				std::cout << " - i_ti_path=" << i_ti_path << ", LC_dist_min=" << LC_dist_min << "   LC_dist=" << LC_dist << std::endl;
 			}
 			// We have a new MIN distance
-			LC_dist_min=LC_dist;
 			valueFromTI = V_center_ti;
 			// keep track of the locaton in TI used for match
 			TI_x_min = TI_idxX;
@@ -318,6 +320,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 			TI_z_min = TI_idxZ;
 		}
 
+		// std::cout << LC_dist <<" "<< LC_dist_min << " valueFromTI="<< valueFromTI <<std::endl;
 
 		// Add a count to the Cpdf if the current node match L,V according to some threshold..
 		if (LC_dist<=_LC_dist_threshold) {
@@ -334,8 +337,11 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 			}
 
 			if (_debugMode > 2) {
-				std::cout << "Perfect Match  i_ti_path=" << i_ti_path << ", V_center_ti=" << V_center_ti << std::endl;
+				std::cout << "Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << V_center_ti << std::endl;
 			}
+			// MAKE SURE TO RESET LC_dist_min
+			LC_dist_min = RAND_MAX;
+
 		}
 
 		if (maxCpdfCount <= CpdfCount ) {
@@ -355,26 +361,35 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 			break;
 		}
 
-		if (_debugMode > 3) {
-			int a;
-			std::cin >> a;
-		}
 
 
 	} // END SCAN OF TI FOR CPDF
+  //std::cout << sgIdxX << "," << sgIdxY << "  :h_dist_cum = " << h_dist_cum << "  LC_dist = "<< LC_dist << std::endl;
+
+	if (_debugMode > 12) {
+
+		std::cout << "CpdfCount = " << CpdfCount << std::endl;
+		std::cout << "LC_dist = " << LC_dist << std::endl;
+		std::cout << "LC_dist_min = " << LC_dist_min << std::endl;
+
+		int a;
+		std::cin >> a;
+	}
+
+
 
 
 	// assign minimum distance tp temporary grid 1
 	if (_debugMode>1) {
-		_tg1[sgIdxZ][sgIdxY][sgIdxX] = LC_dist_min;
+		_tg1[sgIdxZ][sgIdxY][sgIdxX] = LC_dist;
 		_tg2[sgIdxZ][sgIdxY][sgIdxX] = CpdfCount;
-		_tg3[sgIdxZ][sgIdxY][sgIdxX] = _tiDimZ*(TI_z_min-1) + _tiDimY*(TI_y_min-1) + TI_x_min;
 		MPS::utility::treeDto1D(TI_x_min, TI_y_min, TI_z_min, _tiDimX, _tiDimY, node1DIdx);
 		_tg3[sgIdxZ][sgIdxY][sgIdxX] = node1DIdx;
 		_tg4[sgIdxZ][sgIdxY][sgIdxX] = i_ti_path;
 
 		//TI_x_min
 	}
+
 
 
 	// CHECK THAT conditionalCount HAS AT LEAST ONE COUNT
