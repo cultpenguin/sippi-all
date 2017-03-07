@@ -40,6 +40,7 @@ if ~isfield(O,'debug');O.debug=-1;end
  
 if ~isfield(O,'distance_measure');O.distance_measure=1;end
 if ~isfield(O,'distance_min');O.distance_min=0;end
+if ~isfield(O,'distance_pow');O.distance_pow=0;end
 
 
 % multiple grids are not used by enesim
@@ -59,7 +60,7 @@ fprintf(fid,'Max number of conditional point # %d\n',O.n_cond);
 fprintf(fid,'Max number of iterations # %d\n',O.n_max_ite);
 %
 %Distance measure [1:disc, 2:cont], minimum distance # 1 0
-fprintf(fid,'Distance measure [1:disc, 2:cont], minimum distance # %d %f\n',O.distance_measure,O.distance_min);
+fprintf(fid,'Distance measure [1:disc, 2:cont], minimum distance, distance power # %d %f %f\n',O.distance_measure,O.distance_min,O.distance_pow);
 
 % SIMULATION GRID SUZE
 for i=1:3;

@@ -35,11 +35,12 @@ else
     O.distance_min=0;
 end
 
-
-
-% Distance measure [1:disc, 2:cont], minimum distance 
-fprintf(fid,'Distance measure [1:disc, 2:cont], minimum distance # %d %f\n',O.distance_measure,O.distance_min);
-
+% DISTANCE MEASURE
+l=line_strip_char(fgetl(fid),'#');
+dd=str2num(l);;
+O.distance_measure=dd(1);
+if length(dd)>1, O.distance_min=dd(2);end
+if length(dd)>2, O.distance_pow=dd(3);end
 
 
 % SIMULATION GRID SIZE

@@ -39,7 +39,7 @@ protected:
 	/**
 	* @brief maximum number of counts setting up conditional pdf
 	*/
-	int _nMaxCountCpdf;
+	int _nMaxCountCpdf=1;
 
 	/**
 	* @brief Select whether to use Metropolis style soft data conditioning
@@ -48,14 +48,21 @@ protected:
 	//_RejectionSoftData = 1;
 
 	/**
-	* @brief Distance threshold to accept a matching template
-	*/
-	float _LC_dist_threshold=0.01;//0.01;
-
-	/**
 	* @brief Distance measure comparing a template in TI and simulation grid
 	*/
-	int _distance_measure=1; // IXEL distance
+	int _distance_measure=1; // PIXEL distance
+	// int _distance_measure=1; // EUCLIDEANS
+
+	/**
+	* @brief Distance threshold to accept a matching template
+	*/
+	float _distance_threshold=0.01;//0.01;
+
+	/**
+	* @brief Distance power order
+	*/
+	float _distance_power_order=0; // power order
+
 
 
 	/**
@@ -109,10 +116,11 @@ protected:
 	* @param TIi_dxX coordinate X of the current node in TI
 	* @param TIi_dxY coordinate Y of the current node in TI
 	* @param TIi_dxZ coordinate Z of the current node in TI
+	* @param L_dist : Precomputed distance
 	* @return distance
 	*/
+	float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ,  std::vector<float>& L_dist);
 	float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ);
-	//int TI_idxX, TI_idxY, TI_idxZ;
 
 public:
 	/**

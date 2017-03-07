@@ -69,7 +69,8 @@ void MPS::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
 		std::cout << "Number of threads: " << _numberOfThreads << std::endl;
 		std::cout << "Conditional points: " << _maxNeighbours << std::endl;
 		std::cout << "Max iterations: " << _maxIterations << std::endl;
-		std::cout << "Distance measure: " << _distance_measure << " (minimum distance  " << _LC_dist_threshold << ")" << std::endl;
+		std::cout << "Distance measure: " << _distance_measure << ", threshold:" << _distance_threshold ;
+		std::cout << ", power order: " << _distance_power_order  << std::endl;
 		std::cout << "SG: " << _sgDimX << " " << _sgDimY << " " << _sgDimZ << std::endl;
 		std::cout << "TI: " << _tiFilename << " " << _tiDimX << " " << _tiDimY << " " << _tiDimZ << " " << _TI[0][0][0]<< std::endl;
 	}
@@ -82,9 +83,7 @@ void MPS::ENESIM_GENERAL::initialize(const std::string& configurationFile) {
 void MPS::ENESIM_GENERAL::startSimulation(void) {
 	//Call parent function
 	MPS::MPSAlgorithm::startSimulation();
-	if(_debugMode > -1 ) {
-		std::cout << "Distance measure: " << _distance_measure << " (minimum distance  " << _LC_dist_threshold << ")" << std::endl;
-	}
+
 }
 
 /**
@@ -111,17 +110,7 @@ float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const
 		return _getRealizationFromCpdfTiEnesim(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 	}
 
-	if(_debugMode > -1 ) {
-		std::cout << "Number of threads: " << _numberOfThreads << std::endl;
-		std::cout << "Conditional points: " << _maxNeighbours << std::endl;
-		std::cout << "Max iterations: " << _maxIterations << std::endl;
-		std::cout << "Distance measure: " << _distance_measure << " (minimum distance  " << _LC_dist_threshold << ")" << std::endl;
-		std::cout << "SG: " << _sgDimX << " " << _sgDimY << " " << _sgDimZ << std::endl;
-		std::cout << "TI: " << _tiFilename << " " << _tiDimX << " " << _tiDimY << " " << _tiDimZ << " " << _TI[0][0][0]<< std::endl;
-	}
-
-
-
+	
 }
 
 /**

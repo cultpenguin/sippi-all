@@ -31,8 +31,6 @@
 MPS::ENESIM::ENESIM(void) : MPS::MPSAlgorithm(){
 	// Multiple grids are not used in ENESIM type algorithms
 	_totalGridsLevel=0;
-	_nMaxCountCpdf=1;
-	_RejectionSoftData=0;
 }
 
 /**
@@ -82,10 +80,16 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	_distance_measure = stoi(data[1]);
 	// optional. Template size x - base when n_mulgrid=0
 	if (data.size()>2) {
-		_LC_dist_threshold = stof(data[2]);
+		_distance_threshold = stof(data[2]);
 	} else {
-		_LC_dist_threshold = 0;
+		_distance_threshold = 0;
 	}
+	if (data.size()>3) {
+		_distance_power_order = stof(data[3]);
+	} else {
+		_distance_power_order = 0;
+	}
+
 	// Simulation Grid size X
 	_readLineConfiguration(file, ss, data, s, str);
 	_sgDimX = stoi(data[1]);
@@ -207,6 +211,21 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, -1, L, V);
 
 
+	// Compute realtive distance for each conditional data
+	std::vector<float> L_dist(L.size());
+	for (unsigned int i=0; i<L.size(); i++) {
+		if (_distance_power_order!=0) {
+			//h_dist = sqrt(L[i].getX()*L[i].getX() + L[i].getY()*L[i].getY() + L[i].getZ()*L[i].getZ());
+			L_dist[i] = sqrt(L[i].getX()*L[i].getX() + L[i].getY()*L[i].getY() + L[i].getZ()*L[i].getZ());
+			L_dist[i]  = pow(L_dist[i],-1*_distance_power_order) ;
+		} else {
+			L_dist[i]=1;
+		}
+	}
+ 	//for(float n : L_dist) {
+//        std::cout << n << '\n';
+//			}
+
 	// The training image path is shifted such that a random start location is chosen
 	int ti_shift;
 	ti_shift = (std::rand() % (int)(_tiDimX*_tiDimY*_tiDimZ));
@@ -246,45 +265,45 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 		V_center_ti = _TI[TI_idxZ][TI_idxY][TI_idxX];
 
 		// Get the distance between the conditional data in TI and SIM grid
-		LC_dist = _computeDistanceLV_TI(L, V, TI_idxX, TI_idxY, TI_idxZ);
+		LC_dist = _computeDistanceLV_TI(L, V, TI_idxX, TI_idxY, TI_idxZ, L_dist);
+		//LC_dist = _computeDistanceLV_TI(L, V, TI_idxX, TI_idxY, TI_idxZ);
+
+		if (_debugMode > 2) {
+			std::cout << " - i_ti_path=" << i_ti_path << ", LC_dist_min=" << LC_dist_min << "   LC_dist=" << LC_dist << std::endl;
+		}
 
 
 		// Check if current L,T in TI match conditional observations better
-		if (LC_dist<=LC_dist_min) {
+		if (LC_dist<LC_dist_min) {
 			LC_dist_min=LC_dist;
-			if (_debugMode > 2) {
-				std::cout << " - i_ti_path=" << i_ti_path << ", LC_dist_min=" << LC_dist_min << "   LC_dist=" << LC_dist << std::endl;
-			}
 			// We have a new MIN distance
 			valueFromTI = V_center_ti;
 			// keep track of the locaton in TI used for match
 			TI_x_min = TI_idxX;
 			TI_y_min = TI_idxY;
 			TI_z_min = TI_idxZ;
-		}
 
-
-		// Add a count to the Cpdf if the current node match L,V according to some threshold..
-		if (LC_dist<=_LC_dist_threshold) {
-			CpdfCount++;
-
-			// Update conditionalCount Counter (from which the local cPdf can be computed)
-			if (conditionalCount.find(V_center_ti) == conditionalCount.end()) {
-				// Then we've encountered the word for a first time.
-				// Is this slow?
-				conditionalCount[V_center_ti] = 1; // Initialize it to	 1.
-			} else {
-				// Then we've already seen it before..
-				conditionalCount[V_center_ti]++; // Just increment it.
+			// Add a count to the Cpdf if the current node match L,V according to some threshold..
+			if (LC_dist<=_distance_threshold) {
+				CpdfCount++;
+				// Update conditionalCount Counter (from which the local cPdf can be computed)
+				if (conditionalCount.find(valueFromTI) == conditionalCount.end()) {
+					// Then we've encountered the word for a first time.
+					// Is this slow?
+					conditionalCount[valueFromTI] = 1; // Initialize it to	 1.
+				} else {
+					// Then we've already seen it before..
+					conditionalCount[valueFromTI]++; // Just increment it.
+				}
+				if (_debugMode > 2) {
+					std::cout << "Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << valueFromTI << std::endl;
+				}
+				// MAKE SURE TO RESET LC_dist_min
+				LC_dist_min = RAND_MAX;
 			}
 
-			if (_debugMode > 2) {
-				std::cout << "Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << V_center_ti << std::endl;
-			}
-			// MAKE SURE TO RESET LC_dist_min
-			LC_dist_min = RAND_MAX;
-
 		}
+
 
 		if (maxCpdfCount <= CpdfCount ) {
 			if (_debugMode > 2) {
@@ -307,17 +326,6 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 	} // END SCAN OF TI FOR CPDF
   //std::cout << sgIdxX << "," << sgIdxY << "  :h_dist_cum = " << h_dist_cum << "  LC_dist = "<< LC_dist << std::endl;
-
-	if (_debugMode > 12) {
-
-		std::cout << "CpdfCount = " << CpdfCount << std::endl;
-		std::cout << "LC_dist = " << LC_dist << std::endl;
-		std::cout << "LC_dist_min = " << LC_dist_min << std::endl;
-
-		int a;
-		std::cin >> a;
-	}
-
 
 
 
@@ -364,6 +372,22 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	}
 	// Now the conditional PDF from the TI is available as conditionalPdfFromTi;
 
+
+
+
+		if (_debugMode > 2) {
+			std::cout << "i_ti_path=" << i_ti_path;
+			std::cout << " X="<< sgIdxX << " Y="<< sgIdxY << " Z="<< sgIdxZ << std::endl;
+			std::cout << "CpdfCount = " << CpdfCount;
+			std::cout << " valueFromTI = " << valueFromTI;
+			std::cout << " LC_dist = " << LC_dist;
+			std::cout << " LC_dist_min = " << LC_dist_min << std::endl;
+
+			//int a;	std::cin >> a;
+		}
+
+
+
 	return true;
 }
 
@@ -373,13 +397,13 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 * @param TIi_dxX coordinate X of the current node in TI
 * @param TIi_dxY coordinate Y of the current node in TI
 * @param TIi_dxZ coordinate Z of the current node in TI
+* @param Precompute Distance!
 * @return distance
 */
 
-float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ) {
+float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ, std::vector<float>& L_dist) {
 
 	float h_dist;
-	float h_power=0;
 	float h_dist_cum;
 	float LC_dist;
 	float V_ti;
@@ -388,32 +412,17 @@ float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vec
 	LC_dist=0;
 	h_dist_cum=0;
 
-
-	if (_distance_measure==1) {
-
-	} else if (_distance_measure==1) {
-
-	}
-
-
 	if (L.size()>0) {
 		for (unsigned int i=0; i<L.size(); i++) {
 			//For each pixel relatively to the current pixel based on vector L
 			TI_x = TI_idxX + L[i].getX();
 			TI_y = TI_idxY + L[i].getY();
 			TI_z = TI_idxZ + L[i].getZ();
-			if (h_power!=0) {
-				h_dist = pow(sqrt(TI_x*TI_x + TI_y*TI_y + TI_z*TI_z),-1*h_power) ;
-				if (h_dist<1) {
-					h_dist=1;
-				}
-			} else {
-				h_dist=1;
-			}
+
+		  h_dist = L_dist[i];
 			h_dist_cum = h_dist_cum + h_dist;
 
-
-			// Check if the relative position of the conditioning point
+			// Check wgether the current conditional point
 			// is located within the training image limits
 			if((TI_x >= 0 && TI_x < _tiDimX) && (TI_y >= 0 && TI_y < _tiDimY) && (TI_z >= 0 && TI_z < _tiDimZ)) {
 				V_ti = _TI[TI_z][TI_y][TI_x];
@@ -437,16 +446,81 @@ float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vec
 				}
 			}
 		}
+		if (_distance_measure==1) {
+			// Normaize LC_dist
+			LC_dist = LC_dist / h_dist_cum;
+		}
 	} else {
+		// No conditional points --> distance zero
 		LC_dist=0;
 	}
 
-	// Normaize LC_dist
-	if (_distance_measure==1) {
-			LC_dist = LC_dist / h_dist_cum;
-	}
 	return LC_dist;
 }
+
+float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ) {
+
+	float h_dist;
+	float h_dist_cum;
+	float LC_dist;
+	float V_ti;
+	int TI_x, TI_y, TI_z;
+
+	LC_dist=0;
+	h_dist_cum=0;
+
+	if (L.size()>0) {
+		for (unsigned int i=0; i<L.size(); i++) {
+			//For each pixel relatively to the current pixel based on vector L
+			TI_x = TI_idxX + L[i].getX();
+			TI_y = TI_idxY + L[i].getY();
+			TI_z = TI_idxZ + L[i].getZ();
+			if (_distance_power_order!=0) {
+				h_dist = sqrt(L[i].getX()*L[i].getX() + L[i].getY()*L[i].getY() + L[i].getZ()*L[i].getZ());
+				h_dist = pow(h_dist,-1*_distance_power_order) ;
+			} else {
+				h_dist=1;
+			}
+			h_dist_cum = h_dist_cum + h_dist;
+
+			// Check wgether the current conditional point
+			// is located within the training image limits
+			if((TI_x >= 0 && TI_x < _tiDimX) && (TI_y >= 0 && TI_y < _tiDimY) && (TI_z >= 0 && TI_z < _tiDimZ)) {
+				V_ti = _TI[TI_z][TI_y][TI_x];
+
+				if (_distance_measure==1) {
+					// Discrete measure: no matching picel means added distance of 1
+					if (V_ti!=V[i]) {
+						// add a distance of 1, if case of no matching pixels
+						LC_dist=LC_dist+1*h_dist;
+					}
+				}	else if (_distance_measure==2){
+					LC_dist = LC_dist + ((V_ti-V[i])*(V_ti-V[i]))*h_dist;
+				}
+			} else {
+				// The conditioning location of the point to compare to is located outside
+				// the traning image, and will be treated not a match
+				if (_distance_measure==1) {
+					LC_dist = LC_dist+1*h_dist;
+				} else if (_distance_measure==2) {
+					LC_dist = 1000000*h_dist;
+				}
+			}
+		}
+		if (_distance_measure==1) {
+			// Normaize LC_dist
+			LC_dist = LC_dist / h_dist_cum;
+		}
+	} else {
+		// No conditional points --> distance zero
+		LC_dist=0;
+	}
+
+	return LC_dist;
+}
+
+
+
 
 
 /**
