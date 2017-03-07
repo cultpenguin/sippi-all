@@ -1,5 +1,5 @@
 Number of realizations # 1
-Random Seed (0 `random` seed) # 13
+Random Seed (0 `random` seed) # 33
 Number of mulitple grids (start from 0) # 5
 Min Node count (0 if not set any limit)# 0
 Maximum number condtitional data (0: all) # 100

@@ -18,7 +18,6 @@ O.n_multiple_grids=5;
 O.n_cond=100;
 
 
-
     
 maxt=9;
 mint=3;
@@ -42,8 +41,10 @@ for j=1:nSIM
         else
             T=[maxt maxt-2*(j-1) ; maxt maxt-2*(j-1) ; 1 1 ];
             O.rseed=i;        
-        end
+        end               
         O.template_size=T;
+        O.parameter_filename=sprintf('mps_snesim_template_%d_%d.txt',T(1),T(2));
+        
         [reals,O]=mps_cpp(TI,SIM,O);
         if i==1;
             time0=O.time;
@@ -73,7 +74,6 @@ end
 set_paper('landscape','a3')
 tit=sprintf('T0=%5.1fs NMulGrid=%d',time0,O.n_multiple_grids);
 suptitle(tit)
-
 print_mul([mfilename,'_',tit])
 
 

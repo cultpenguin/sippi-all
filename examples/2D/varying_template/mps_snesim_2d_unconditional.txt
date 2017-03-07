@@ -1,13 +1,13 @@
-Number of realizations # 1
-Random Seed (0 `random` seed) # 13
-Number of mulitple grids (start from 0) # 5
+Number of realizations # 4
+Random Seed (0 `random` seed) # 0
+Number of mulitple grids (start from 0) # 3
 Min Node count (0 if not set any limit)# 0
-Maximum number condtitional data (0: all) # 100
-Search template size X # 7
-Search template size Y # 7
+Maximum number condtitional data (0: all) # 25
+Search template size X # 5
+Search template size Y # 5
 Search template size Z # 1
-Simulation grid size X # 130
-Simulation grid size Y # 120
+Simulation grid size X # 80
+Simulation grid size Y # 40
 Simulation grid size Z # 1
 Simulation grid world/origin X # 0
 Simulation grid world/origin Y # 0
