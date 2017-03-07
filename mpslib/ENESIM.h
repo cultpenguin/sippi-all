@@ -104,6 +104,16 @@ protected:
 	*/
 	float _getRealizationFromCpdfTiEnesimRejection(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
 
+	/**
+	* @brief Compute distance between conditional data in TI and template L
+	* @param TIi_dxX coordinate X of the current node in TI
+	* @param TIi_dxY coordinate Y of the current node in TI
+	* @param TIi_dxZ coordinate Z of the current node in TI
+	* @return distance
+	*/
+	float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ);
+	//int TI_idxX, TI_idxY, TI_idxZ;
+
 public:
 	/**
 	* @brief Constructors default and empty parameters

@@ -197,8 +197,6 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	float TI_x_min, TI_y_min, TI_z_min;
 	int TI_idxX, TI_idxY, TI_idxZ;
 
-
-
 	//Do simulation only for NaN value
 
 	//Seaching for neighbours to get vector V and L
@@ -247,63 +245,8 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 		// Get the centered value in the TI
 		V_center_ti = _TI[TI_idxZ][TI_idxY][TI_idxX];
 
-		// Compute the distance between the conditional event, and the
-		// same event ceneterd at the current location in the TI
-		int TI_x, TI_y, TI_z;
-		int matchedCnt = 0; //, previousMatchedCnt = 0;
-		matchedCnt = 0;
-
-		LC_dist=0;
-		h_dist_cum=0;
-		if (L.size()>0) {
-			for (unsigned int i=0; i<L.size(); i++) {
-				//For each pixel relatively to the current pixel based on vector L
-				TI_x = TI_idxX + L[i].getX();
-				TI_y = TI_idxY + L[i].getY();
-				TI_z = TI_idxZ + L[i].getZ();
-				h_dist = pow(sqrt(TI_x*TI_x + TI_y*TI_y + TI_z*TI_z),-1*h_power) ;
-				h_dist_cum = h_dist_cum + h_dist;
-
-				// L_dist = abs(L[i].getX()) + abs(L[i].getY()) + abs(L[i].getZ());
-
-				// CHECK IF WE ARE INSIDE TI BOUNDS!!
-				if((TI_x >= 0 && TI_x < _tiDimX) && (TI_y >= 0 && TI_y < _tiDimY) && (TI_z >= 0 && TI_z < _tiDimZ)) {
-					V_ti = _TI[TI_z][TI_y][TI_x];
-
-					if (_distance_measure==1) {
-						// Discrete measure: no matching picel means added distance of 1
-						if (V_ti!=V[i]) {
-							// add a distance of 1, if case of no matching pixels
-							LC_dist=LC_dist+1*h_dist;
-						}
-					}	else if (_distance_measure==2){
-						LC_dist = LC_dist + ((V_ti-V[i])*(V_ti-V[i]))*h_dist;
-					}
-
-				} else {
-					// ARE OUT OF BOUNDS -- consider again
-					if (_distance_measure==1) {
-						// If conditinal point is outside TI, then treat it as a non-matching event
-						LC_dist = LC_dist+1;
-					} else if (_distance_measure==2) {
-						LC_dist = 100000;
-					}
-				}
-			}
-		} else {
-			// NO CONDITIONAL DATA
-			// std::cout << "No conditional data" << std::endl;
-			TI_x_min = TI_idxX;
-			TI_y_min = TI_idxY;
-			TI_z_min = TI_idxZ;
-			LC_dist=0;
-			//L_dist = 0;
-		}
-
-		if (_distance_measure==2) {
-			LC_dist=sqrt(LC_dist);
-		}
-		//LC_dist=LC_dist/h_dist_cum;
+		// Get the distance between the conditional data in TI and SIM grid
+		LC_dist = _computeDistanceLV_TI(L, V, TI_idxX, TI_idxY, TI_idxZ);
 
 
 		// Check if current L,T in TI match conditional observations better
@@ -320,7 +263,6 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 			TI_z_min = TI_idxZ;
 		}
 
-		// std::cout << LC_dist <<" "<< LC_dist_min << " valueFromTI="<< valueFromTI <<std::endl;
 
 		// Add a count to the Cpdf if the current node match L,V according to some threshold..
 		if (LC_dist<=_LC_dist_threshold) {
@@ -424,6 +366,88 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 	return true;
 }
+
+
+/**
+* @brief Compute distance between conditional data in TI and template L
+* @param TIi_dxX coordinate X of the current node in TI
+* @param TIi_dxY coordinate Y of the current node in TI
+* @param TIi_dxZ coordinate Z of the current node in TI
+* @return distance
+*/
+
+float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ) {
+
+	float h_dist;
+	float h_power=0;
+	float h_dist_cum;
+	float LC_dist;
+	float V_ti;
+	int TI_x, TI_y, TI_z;
+
+	LC_dist=0;
+	h_dist_cum=0;
+
+
+	if (_distance_measure==1) {
+
+	} else if (_distance_measure==1) {
+
+	}
+
+
+	if (L.size()>0) {
+		for (unsigned int i=0; i<L.size(); i++) {
+			//For each pixel relatively to the current pixel based on vector L
+			TI_x = TI_idxX + L[i].getX();
+			TI_y = TI_idxY + L[i].getY();
+			TI_z = TI_idxZ + L[i].getZ();
+			if (h_power!=0) {
+				h_dist = pow(sqrt(TI_x*TI_x + TI_y*TI_y + TI_z*TI_z),-1*h_power) ;
+				if (h_dist<1) {
+					h_dist=1;
+				}
+			} else {
+				h_dist=1;
+			}
+			h_dist_cum = h_dist_cum + h_dist;
+
+
+			// Check if the relative position of the conditioning point
+			// is located within the training image limits
+			if((TI_x >= 0 && TI_x < _tiDimX) && (TI_y >= 0 && TI_y < _tiDimY) && (TI_z >= 0 && TI_z < _tiDimZ)) {
+				V_ti = _TI[TI_z][TI_y][TI_x];
+
+				if (_distance_measure==1) {
+					// Discrete measure: no matching picel means added distance of 1
+					if (V_ti!=V[i]) {
+						// add a distance of 1, if case of no matching pixels
+						LC_dist=LC_dist+1*h_dist;
+					}
+				}	else if (_distance_measure==2){
+					LC_dist = LC_dist + ((V_ti-V[i])*(V_ti-V[i]))*h_dist;
+				}
+			} else {
+				// The conditioning location of the point to compare to is located outside
+				// the traning image, and will be treated not a match
+				if (_distance_measure==1) {
+					LC_dist = LC_dist+1*h_dist;
+				} else if (_distance_measure==2) {
+					LC_dist = 1000000*h_dist;
+				}
+			}
+		}
+	} else {
+		LC_dist=0;
+	}
+
+	// Normaize LC_dist
+	if (_distance_measure==1) {
+			LC_dist = LC_dist / h_dist_cum;
+	}
+	return LC_dist;
+}
+
 
 /**
 * @brief Compbine two PDFs assuming independence
