@@ -63,6 +63,11 @@ protected:
 	*/
 	float _distance_power_order=0; // power order
 
+	/**
+	* @brief Maximum Search Radius
+	*/
+	float _maxSearchRadius=1e+9; // power order
+
 
 
 	/**

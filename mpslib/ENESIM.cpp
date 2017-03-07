@@ -89,7 +89,9 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	} else {
 		_distance_power_order = 0;
 	}
-
+// Maximum search Radius
+	_readLineConfiguration(file, ss, data, s, str);
+	_maxSearchRadius = stof(data[1]);
 	// Simulation Grid size X
 	_readLineConfiguration(file, ss, data, s, str);
 	_sgDimX = stoi(data[1]);
@@ -208,7 +210,8 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 	std::vector<MPS::Coords3D> L;
 	std::vector<float> V;
-	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, -1, L, V);
+//	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, -1, L, V);
+	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L, V);
 
 
 	// Compute realtive distance for each conditional data
@@ -397,10 +400,9 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 * @param TIi_dxX coordinate X of the current node in TI
 * @param TIi_dxY coordinate Y of the current node in TI
 * @param TIi_dxZ coordinate Z of the current node in TI
-* @param Precompute Distance!
+* @param L_dist Precompute Distance!
 * @return distance
 */
-
 float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ, std::vector<float>& L_dist) {
 
 	float h_dist;
@@ -458,6 +460,14 @@ float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vec
 	return LC_dist;
 }
 
+/**
+* @brief Compute distance between conditional data in TI and template L.
+* @brief Much slower than using Precomputed distance
+* @param TIi_dxX coordinate X of the current node in TI
+* @param TIi_dxY coordinate Y of the current node in TI
+* @param TIi_dxZ coordinate Z of the current node in TI
+* @return distance
+*/
 float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ) {
 
 	float h_dist;

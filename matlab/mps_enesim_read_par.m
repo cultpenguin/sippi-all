@@ -35,6 +35,11 @@ else
     O.distance_min=0;
 end
 
+% Maximum Search Radius
+l=line_strip_char(fgetl(fid),'#');
+dd=str2num(l);;
+O.max_search_radius=dd(1);
+
 % DISTANCE MEASURE
 l=line_strip_char(fgetl(fid),'#');
 dd=str2num(l);;

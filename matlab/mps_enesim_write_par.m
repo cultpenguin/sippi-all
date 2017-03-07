@@ -42,6 +42,7 @@ if ~isfield(O,'distance_measure');O.distance_measure=1;end
 if ~isfield(O,'distance_min');O.distance_min=0;end
 if ~isfield(O,'distance_pow');O.distance_pow=0;end
 
+if ~isfield(O,'max_search_radius');O.max_search_radius=1e+6;end
 
 % multiple grids are not used by enesim
 %if (O.n_multiple_grids~=0);
@@ -61,6 +62,9 @@ fprintf(fid,'Max number of iterations # %d\n',O.n_max_ite);
 %
 %Distance measure [1:disc, 2:cont], minimum distance # 1 0
 fprintf(fid,'Distance measure [1:disc, 2:cont], minimum distance, distance power # %d %f %f\n',O.distance_measure,O.distance_min,O.distance_pow);
+
+% maximum search radius
+fprintf(fid,'Maximum search radius # %f\n',O.max_search_radius);
 
 % SIMULATION GRID SUZE
 for i=1:3;
