@@ -660,6 +660,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			_initializeSG(_tg2, _sgDimX, _sgDimY, _sgDimZ);
 			_initializeSG(_tg3, _sgDimX, _sgDimY, _sgDimZ);
 			_initializeSG(_tg4, _sgDimX, _sgDimY, _sgDimZ);
+			_initializeSG(_tg5, _sgDimX, _sgDimY, _sgDimZ);
 		}
 
 		/*if(!_hdg.empty()) {
@@ -758,6 +759,10 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				//Get node coordinates
 				MPS::utility::oneDTo3D(_simulationPath[ii], _sgDimX, _sgDimY, SG_idxX, SG_idxY, SG_idxZ);
 
+				if (_debugMode > 2) {
+				std::cout << "i="<< ii <<"/"<< _simulationPath.size()<< std::endl;
+			}
+
 				//Performing simulation for non NaN value ...
 				if (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX]))
 					_sg[SG_idxZ][SG_idxY][SG_idxX] = _simulate(SG_idxX, SG_idxY, SG_idxZ, level);
@@ -832,6 +837,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			MPS::io::writeToGSLIBFile(outputFilename + "_tg2_" + std::to_string(n) + ".gslib", _tg2, _sgDimX, _sgDimY, _sgDimZ);
 			MPS::io::writeToGSLIBFile(outputFilename + "_tg3_" + std::to_string(n) + ".gslib", _tg3, _sgDimX, _sgDimY, _sgDimZ);
 			MPS::io::writeToGSLIBFile(outputFilename + "_tg4_" + std::to_string(n) + ".gslib", _tg4, _sgDimX, _sgDimY, _sgDimZ);
+			MPS::io::writeToGSLIBFile(outputFilename + "_tg5_" + std::to_string(n) + ".gslib", _tg5, _sgDimX, _sgDimY, _sgDimZ);
 		}
 
 
@@ -990,7 +996,7 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 		//Get a random search direction
 		randomDirection = rand() % 6;
 		if (_debugMode > 2) {
-			std::cout << "Random search directtion = " << randomDirection << std::endl;
+			std::cout << "_circularSearch: Random search direction = " << randomDirection << std::endl;
 		}
 		switch (randomDirection) {
 		case 0 : //X Y Z

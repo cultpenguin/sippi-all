@@ -239,7 +239,7 @@ if (O.debug>1)
             end
             [ix,iy]=ind2sub([O.simulation_grid_size(2),O.simulation_grid_size(1)],PP(:)+1);
             for j=1:length(ix);
-                O.path_index(iy(j),ix(j),i)=j;
+                O.I_PATH(iy(j),ix(j),i)=j;
             end
         else
             % 3D

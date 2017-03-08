@@ -1,9 +1,8 @@
 
-function [O]=mps_snesim_enesim_par(filename);
+function [O]=mps_enesim_read_par(filename);
 if nargin==0
-    filename='mps_snesim_tree.txt';
+    filename='mps_genesim.txt';
 end
-
 
 O.filename_parameter=filename;
 
