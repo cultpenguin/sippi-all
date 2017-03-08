@@ -984,9 +984,9 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 	int randomDirection;
 
 	for(int i=1; i<maxDim; i++) {
-  		//maximum neighbor count check
-		//if (foundCnt > maxNeighboursLimit) break;
-		if (L.size() > maxNeighboursLimit) break;
+  	//maximum neighbor count check
+		if (foundCnt > maxNeighboursLimit) break;
+		//if (L.size() > maxNeighboursLimit) break;
 
 		//maximum search radius check
 		if (i > maxRadiusLimit && maxRadiusLimit != -1) break;
