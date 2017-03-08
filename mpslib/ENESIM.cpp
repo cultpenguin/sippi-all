@@ -211,14 +211,16 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 	std::vector<MPS::Coords3D> L;
 	std::vector<float> V;
-	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, -1, L, V);
-	//_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L, V);
+	//_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, -1, L, V);
+	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L, V);
 
 
 	if (_debugMode>2) {
 		std::cout << "_getCpdfTiEnesim: -- ENESIM TOP --"<< std::endl;
 		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY <<  "," << sgIdxZ <<")" << std::endl;
 		std::cout << "nLxyz=" << L.size() << "(of max "<< _maxNeighbours << ")" << std::endl;
+		std::cout << "circularSearch: _maxNeighbours=" << _maxNeighbours << " _maxSearchRadius=" << _maxSearchRadius << std::endl;
+
 	}
 
 	// Compute realtive distance for each conditional data
