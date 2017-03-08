@@ -984,8 +984,9 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 	int randomDirection;
 
 	for(int i=1; i<maxDim; i++) {
-		//maximum neighbor count check
-		if (foundCnt > maxNeighboursLimit) break;
+  		//maximum neighbor count check
+		//if (foundCnt > maxNeighboursLimit) break;
+		if (L.size() > maxNeighboursLimit) break;
 
 		//maximum search radius check
 		if (i > maxRadiusLimit && maxRadiusLimit != -1) break;
@@ -996,7 +997,9 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 		//Get a random search direction
 		randomDirection = rand() % 6;
 		if (_debugMode > 2) {
-			std::cout << "_circularSearch: Random search direction = " << randomDirection << std::endl;
+			std::cout << "_circularSearch: i=" << i << ", maxDim=" << maxDim << ", Random search direction = " << randomDirection;
+			std::cout << ", foundCnt=" << foundCnt << ", maxNeighboursLimit=" << maxNeighboursLimit;
+			std::cout << ", L.size=" << L.size() << std::endl;
 		}
 		switch (randomDirection) {
 		case 0 : //X Y Z
