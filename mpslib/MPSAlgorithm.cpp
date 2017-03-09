@@ -994,15 +994,15 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 		//Initialize offset
 		xOffset = yOffset = zOffset = i;
 
-		//Get a random search direction
-		randomDirection = rand() % 6;
-		if (_debugMode > 2) {
-			std::cout << "_circularSearch: i=" << i << ", maxDim=" << maxDim << ", Random search direction = " << randomDirection;
-			std::cout << ", foundCnt=" << foundCnt << ", maxNeighboursLimit=" << maxNeighboursLimit;
-			std::cout << ", L.size=" << L.size() << std::endl;
-		}
-		switch (randomDirection) {
-		case 0 : //X Y Z
+		// //Get a random search direction
+		// randomDirection = rand() % 6;
+		// if (_debugMode > 2) {
+			// std::cout << "_circularSearch: i=" << i << ", maxDim=" << maxDim << ", Random search direction = " << randomDirection;
+			// std::cout << ", foundCnt=" << foundCnt << ", maxNeighboursLimit=" << maxNeighboursLimit;
+			// std::cout << ", L.size=" << L.size() << std::endl;
+		// }
+		// switch (randomDirection) {
+		// case 0 : //X Y Z
 				//direction +X
 				idxX = sgIdxX + xOffset;
 				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
@@ -1026,127 +1026,127 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 				//direction -Z
 				idxZ = sgIdxZ - zOffset;
 				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
-		case 1 : //X Z Y
-				//direction +X
-				idxX = sgIdxX + xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		// case 1 : //X Z Y
+				// //direction +X
+				// idxX = sgIdxX + xOffset;
+				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -X
-				idxX = sgIdxX - xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -X
+				// idxX = sgIdxX - xOffset;
+				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +Z
-				idxZ = sgIdxZ + zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction +Z
+				// idxZ = sgIdxZ + zOffset;
+				// _searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Z
-				idxZ = sgIdxZ - zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -Z
+				// idxZ = sgIdxZ - zOffset;
+				// _searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +Y
-				idxY = sgIdxY + yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction +Y
+				// idxY = sgIdxY + yOffset;
+				// _searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Y
-				idxY = sgIdxY - yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
-		case 2 : //Y X Z
-				//direction +Y
-				idxY = sgIdxY + yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -Y
+				// idxY = sgIdxY - yOffset;
+				// _searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		// case 2 : //Y X Z
+				// //direction +Y
+				// idxY = sgIdxY + yOffset;
+				// _searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Y
-				idxY = sgIdxY - yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -Y
+				// idxY = sgIdxY - yOffset;
+				// _searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +X
-				idxX = sgIdxX + xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction +X
+				// idxX = sgIdxX + xOffset;
+				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -X
-				idxX = sgIdxX - xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -X
+				// idxX = sgIdxX - xOffset;
+				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +Z
-				idxZ = sgIdxZ + zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction +Z
+				// idxZ = sgIdxZ + zOffset;
+				// _searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Z
-				idxZ = sgIdxZ - zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
-		case 3 : //Y Z X
-				//direction +Y
-				idxY = sgIdxY + yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -Z
+				// idxZ = sgIdxZ - zOffset;
+				// _searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		// case 3 : //Y Z X
+				// //direction +Y
+				// idxY = sgIdxY + yOffset;
+				// _searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Y
-				idxY = sgIdxY - yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -Y
+				// idxY = sgIdxY - yOffset;
+				// _searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +Z
-				idxZ = sgIdxZ + zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction +Z
+				// idxZ = sgIdxZ + zOffset;
+				// _searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Z
-				idxZ = sgIdxZ - zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -Z
+				// idxZ = sgIdxZ - zOffset;
+				// _searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +X
-				idxX = sgIdxX + xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction +X
+				// idxX = sgIdxX + xOffset;
+				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -X
-				idxX = sgIdxX - xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
-		case 4 : //Z X Y
-				//direction +Z
-				idxZ = sgIdxZ + zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -X
+				// idxX = sgIdxX - xOffset;
+				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		// case 4 : //Z X Y
+				// //direction +Z
+				// idxZ = sgIdxZ + zOffset;
+				// _searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Z
-				idxZ = sgIdxZ - zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -Z
+				// idxZ = sgIdxZ - zOffset;
+				// _searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +X
-				idxX = sgIdxX + xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction +X
+				// idxX = sgIdxX + xOffset;
+				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -X
-				idxX = sgIdxX - xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -X
+				// idxX = sgIdxX - xOffset;
+				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +Y
-				idxY = sgIdxY + yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction +Y
+				// idxY = sgIdxY + yOffset;
+				// _searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Y
-				idxY = sgIdxY - yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
-		default : //Z Y X
-				//direction +Z
-				idxZ = sgIdxZ + zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -Y
+				// idxY = sgIdxY - yOffset;
+				// _searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		// default : //Z Y X
+				// //direction +Z
+				// idxZ = sgIdxZ + zOffset;
+				// _searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Z
-				idxZ = sgIdxZ - zOffset;
-				_searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -Z
+				// idxZ = sgIdxZ - zOffset;
+				// _searchDataInDirection(grid, 2, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +Y
-				idxY = sgIdxY + yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction +Y
+				// idxY = sgIdxY + yOffset;
+				// _searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -Y
-				idxY = sgIdxY - yOffset;
-				_searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction -Y
+				// idxY = sgIdxY - yOffset;
+				// _searchDataInDirection(grid, 1, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction +X
-				idxX = sgIdxX + xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+				// //direction +X
+				// idxX = sgIdxX + xOffset;
+				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
 
-				//direction -X
-				idxX = sgIdxX - xOffset;
-				_searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
-		}
+				// //direction -X
+				// idxX = sgIdxX - xOffset;
+				// _searchDataInDirection(grid, 0, idxX, idxY, idxZ, foundCnt, maxNeighboursLimit, xOffset, yOffset, zOffset, sgIdxX, sgIdxY, sgIdxZ, L, V);
+		// }
 	}
 	//cout << "After searching: " << L.size() << " " << V.size() << endl;
 }
