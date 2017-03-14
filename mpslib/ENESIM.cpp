@@ -335,7 +335,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 		// Stop looking if we have reached the maximum number of allowed iterations in TI
 		if (i_ti_path>_maxIterations) {
 			if (_debugMode > 1) {
-				std::cout << "Max Ite Reached i_ti_path=" << i_ti_path << " - nmax_ite=" << _maxIterations;
+				std::cout << "Max Ite Reached i_ti_path=" << i_ti_path << " - nmax_ite=" << _maxIterations << std::endl;
 			}
 			break;
 		}
@@ -354,6 +354,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 		MPS::utility::treeDto1D(TI_x_min, TI_y_min, TI_z_min, _tiDimX, _tiDimY, node1DIdx);
 		_tg3[sgIdxZ][sgIdxY][sgIdxX] = node1DIdx;
 		_tg4[sgIdxZ][sgIdxY][sgIdxX] = _tiPath[i_ti_path]; // POSITION ON TI
+		_tg4[sgIdxZ][sgIdxY][sgIdxX] = i_ti_path;
 		_tg5[sgIdxZ][sgIdxY][sgIdxX] = L.size(); // number of used conditional points
 	}
 
