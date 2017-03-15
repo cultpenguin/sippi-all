@@ -88,7 +88,7 @@ void MPS::ENESIM_GENERAL::startSimulation(void) {
 
 /**
 * @brief MPS dsim simulation algorithm main function
-* @param sgIdxX index X of a node inside the simulation grind
+* @param sgIdxX index X ojf a node inside the simulation grind
 * @param sgIdxY index Y of a node inside the simulation grind
 * @param sgIdxZ index Z of a node inside the simulation grind
 * @param level multigrid level
@@ -101,8 +101,8 @@ float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const
 			_RejectionSoftData=1;
 	}
 	if ( _RejectionSoftData == 1) {
-		// conidition to soft data using Metropolis style acceptance
-		// Usefull when _nMaxCountCpdf=1, or very small;
+		// condition to soft data using Metropolis style acceptance
+		// Useful when _nMaxCountCpdf=1, or very small;
 		return _getRealizationFromCpdfTiEnesimRejection(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 	} else {
 	       	// condition to soft data using p_cond = p_cond_ti * p_cond_soft.
@@ -110,7 +110,7 @@ float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const
 		return _getRealizationFromCpdfTiEnesim(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
 	}
 
-	
+
 }
 
 /**
