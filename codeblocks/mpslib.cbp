@@ -7,8 +7,8 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="mps_genesim">
-				<Option output="../../mps_genesim" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="../../" />
+				<Option output="../mps_genesim" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
 				<Option object_output="obj/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -20,8 +20,8 @@
 				</Linker>
 			</Target>
 			<Target title="mps_snesim_tree">
-				<Option output="../../mps_snesim_tree" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="../../" />
+				<Option output="../mps_snesim_tree" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
 				<Option object_output="obj/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -33,8 +33,8 @@
 				</Linker>
 			</Target>
 			<Target title="mps_snesim_list">
-				<Option output="../../mps_snesim_list" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="../../" />
+				<Option output="../mps_snesim_list" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
 				<Option object_output="obj/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -46,8 +46,8 @@
 				</Linker>
 			</Target>
 			<Target title="DEV genesim">
-				<Option output="../../mps_genesim_DEV" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="../../" />
+				<Option output="../mps_genesim_DEV" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
 				<Option object_output="obj/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -62,8 +62,8 @@
 				</Linker>
 			</Target>
 			<Target title="DEV snesim_tree">
-				<Option output="../../mps_snesim_tree_DEV" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="../../" />
+				<Option output="../mps_snesim_tree_DEV" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
 				<Option object_output="obj/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -78,8 +78,8 @@
 				</Linker>
 			</Target>
 			<Target title="DEV snesim_list">
-				<Option output="../../mps_snesim_list_DEV" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="../../" />
+				<Option output="../mps_snesim_list_DEV" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../" />
 				<Option object_output="obj/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
