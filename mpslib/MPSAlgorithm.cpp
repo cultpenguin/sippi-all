@@ -981,7 +981,7 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 	}
 
 	//random direction
-	int randomDirection;
+	//int randomDirection;
 
 	for(int i=1; i<maxDim; i++) {
   	//maximum neighbor count check

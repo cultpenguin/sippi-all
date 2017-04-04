@@ -311,7 +311,9 @@ float MPS::SNESIMTree::_simulate(const int& sgIdxX, const int& sgIdxY, const int
 		}
 
 		if (_debugMode>1) {
-    	_tg1[sgIdxZ][sgIdxY][sgIdxX] =  conditionPointsUsedCnt;
+            _tg1[sgIdxZ][sgIdxY][sgIdxX] =  conditionPointsUsedCnt;
+            _tg2[sgIdxZ][sgIdxY][sgIdxX] =  maxLevel;
+            _tg3[sgIdxZ][sgIdxY][sgIdxX] =  sumCounters;
 		}
 		//Get the value from cpdf
 		foundValue = _cpdf(conditionalPoints, sgIdxX, sgIdxY, sgIdxZ);

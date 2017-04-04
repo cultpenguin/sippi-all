@@ -219,7 +219,7 @@ protected:
 	/**
 	* @brief Maximum number of iterations
 	*/
-	int _maxIterations;
+	unsigned int _maxIterations;
 	/**
 	* @brief Dimension X of the training image
 	*/

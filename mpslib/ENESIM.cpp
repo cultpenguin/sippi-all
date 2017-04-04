@@ -194,9 +194,9 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 	std::map<float, int> conditionalCount;
 
 
-	float h_dist; // distance to conditional event
-	float h_dist_cum; // cumulative distance to conditional event
-	float h_power=0; // distance weight
+	//float h_dist; // distance to conditional event
+	//float h_dist_cum; // cumulative distance to conditional event
+	//float h_power=0; // distance weight
 	int CpdfCount = 0;
 	float valueFromTI;
 	float LC_dist_min;
@@ -256,8 +256,8 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 	// Set number of count in Cpdf to zero
 	CpdfCount = 0;
-	float V_ti; // template Value in TI
-	V_ti=-1;
+	//float V_ti; // template Value in TI
+	//V_ti=-1;
 	float V_center_ti; // value of the central node in the TI
 	V_center_ti=-1;
 
@@ -347,13 +347,13 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 
 
-	// assign minimum distance tp temporary grid 1
+	// assign minimum distance to temporary grid 1
 	if (_debugMode>1) {
 		_tg1[sgIdxZ][sgIdxY][sgIdxX] = LC_dist_current;
 		_tg2[sgIdxZ][sgIdxY][sgIdxX] = CpdfCount;
 		MPS::utility::treeDto1D(TI_x_min, TI_y_min, TI_z_min, _tiDimX, _tiDimY, node1DIdx);
 		_tg3[sgIdxZ][sgIdxY][sgIdxX] = node1DIdx;
-		_tg4[sgIdxZ][sgIdxY][sgIdxX] = _tiPath[i_ti_path]; // POSITION ON TI
+		//_tg4[sgIdxZ][sgIdxY][sgIdxX] = _tiPath[i_ti_path]; // POSITION ON TI
 		_tg4[sgIdxZ][sgIdxY][sgIdxX] = i_ti_path;
 		_tg5[sgIdxZ][sgIdxY][sgIdxX] = L.size(); // number of used conditional points
 	}
@@ -418,14 +418,14 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 */
 float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ, std::vector<float>& L_dist) {
 
-	float h_dist;
-	float h_dist_cum;
+	float h_dist=0;
+	float h_dist_cum=0;
 	float LC_dist;
 	float V_ti;
 	int TI_x, TI_y, TI_z;
 
 	LC_dist=0;
-	h_dist_cum=0;
+	//h_dist_cum=0;
 
 	if (L.size()>0) {
 		for (unsigned int i=0; i<L.size(); i++) {
