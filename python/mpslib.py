@@ -1,6 +1,12 @@
 '''
 mpslib.py: a Python interface to MPSlib
 
+Example:
+    As simple example:
+
+        $ python3 mpslib_example.py
+
+===========
 ** Variables
 par: dictionary with simulation paramers
 
@@ -26,6 +32,7 @@ import os;
 import sys;
 import numpy as np;
 import subprocess;
+import eas; # read and write EAS formatted files
  
 # Some defaults
 verbose_level=1; # controls the amount of output from mpslib.py
@@ -40,6 +47,8 @@ iswin=0;
 if (os.name == 'nt'):
     iswin=1;
 
+sim=[];    
+    
 
 '''
     mpslib.run;
@@ -47,7 +56,8 @@ if (os.name == 'nt'):
 '''
 def run():
     global par;
-
+    global sim;
+    
     # check that parameter file is setup, and add deafult parameter values if not set
     parfile_def();
     
@@ -68,6 +78,12 @@ def run():
     
                              
     # read on simulated data
+    sim=[];
+    for i in range(0, par['n_real']):
+        filename = '%s_sg_%d.gslib' % (par['ti_filename'],i);
+        # print ('mpslib: Reading: %s' % (filename) );
+        eas_dict = eas.read(filename);
+        sim.append(eas_dict['Dmat']);
               
     
     return stdout;
@@ -193,8 +209,7 @@ def parfile_def():
         parfile_def_genesim()
     else:
         parfile_def_snesim()
-    
-    
+     
 
 def parfile_def_general():
     global par;
