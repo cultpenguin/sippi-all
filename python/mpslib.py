@@ -305,7 +305,7 @@ else:
 # get/set the parameter filename
 if (len(sys.argv)>2):
     print(len(sys.argv))
-    par['parameter_filenmame'] = sys.argv[2];
+    par['parameter_filename'] = sys.argv[2];
 else: 
     par['parameter_filename'] = 'mps.par';
         
