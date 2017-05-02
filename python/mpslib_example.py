@@ -1,40 +1,44 @@
 # mpslib_example.py
 # example of using mpslib.py
 import mpslib as mps;
-#import matplotlib.pylab as plt;
+# import mpslib_tmh as mps_tmh;
 import matplotlib.pyplot as plt;
-import eas;
-
+import importlib
+importlib.reload(mps)
 #plt.ion();
-#%% 
-mps.par['method'] = 'mps_snesim_tree'; # default
-#mps.par['method'] = 'mps_snesim_list'; # 
-#mps.par['method'] = 'mps_genesim'; # 
-#mps.par['n_max_ite']=1000;
-
-# optionally set some options
-mps.par['parameter_filename']='snesim.par';
-mps.par['simulation_grid_size']=mps.np.array([70,44,1]);
-mps.par['n_real']=9;
-out = mps.run();
 
 #%%
-for i in range(0, mps.par['n_real']):
+
+mpsobj = mps.mpslib(method='mps_snesim_tree',hard_data_fnam = 'mps_2d_hard_data.dat',
+                    n_real = 2, verbose_level=1)
+
+mpsobj.par['n_max_cpdf_count'] = 1
+mpsobj.par['n_max_ite'] = 1000000000
+mpsobj.parameter_filename = 'mps_snesim.txt'
+
+#mpsobj.par_write()
+mpsobj.run_model()
+
+plt.set_cmap('hot')
+fig1 = plt.figure(1)
+for i in range(0, mpsobj.par['n_real']):
     plt.subplot(3,3,i+1)
-    plt.imshow(mps.sim[i])
-    
-plt.show(block=False);
+    plt.imshow(mpsobj.sim[i])
 
-#%%
-#file_eas='ti.dat_sg_1.gslib';
-#D = eas.read(file_eas)
+fig1.suptitle(mpsobj.method, fontsize=16)
+plt.show();
+
+
 
 
 #%% RUN GENESIM
-mps.par['method'] = 'mps_genesim'; # default
-mps.par['parameter_filename']='genesim.par';
-mps.par['n_cond']=25;
-out = mps.run();
+Og = mps.mpslib(method='mps_genesim')
+#Og.par['method'] = 'mps_genesim'; # When changing method, 'par' should be re-initialized..
+Og.par['n_real']=4;
+Og.par['n_cond']=81;
+Og.parameter_filename = 'mps_genesim.txt'
+#Og.par_write()
+Og.run_model();
 
 
 #%%
@@ -46,13 +50,13 @@ plt.rc('font', **font)
 
 fig = plt.figure(2)
 plt.set_cmap('gray')
-fig.suptitle("Title for whole figure", fontsize=16)
+fig.suptitle(Og.method, fontsize=16)
     
 
-for i in range(0, mps.par['n_real']):
+for i in range(0, Og.par['n_real']):
     ax = plt.subplot(3,3,i+1)
     ax.set_title('Realization #%d' % i)
-    ax.imshow(mps.sim[i],interpolation='none')
+    ax.imshow(Og.sim[i],interpolation='none')
         
 plt.savefig('test.png', dpi=600)
 plt.show();

@@ -1,22 +1,31 @@
 # mpslib_example.py
 # example of using mpslib.py
-import mpslib as mps;
-import numpy as np;
+#import mpslib as mps;
+#import numpy as np;
 import eas;
 import matplotlib.pyplot as plt;
 
-#%%
-mps.par['method'] = 'mps_genesim'; # 
 
-# optionally set some options
-#mps.par['parameter_filename']='snesim.par';
-mps.par['simulation_grid_size']=mps.np.array([39,39,1]);
-mps.par['n_real']=5;
-out = mps.run();
+#%% read and plot 2d scatter data
+import importlib
+importlib.reload(eas)
+file_eas='prediction.dat';
+Oeas = eas.read(file_eas) 
+
+i_show=5;
+cm = plt.cm.get_cmap('RdYlBu')
+sc=plt.scatter(Oeas['D'][:,0],Oeas['D'][:,1],s=8*Oeas['D'][:,i_show],c=Oeas['D'][:,i_show], cmap=cm)
+plt.xlabel(Oeas['header'][0])
+plt.ylabel(Oeas['header'][1])
+plt.title(Oeas['header'][i_show])
+plt.colorbar(sc);
+plt.show();
 
 
-#%%
+#%% read and plot 2D matrix
+
 file_eas='ti.dat_sg_0.gslib';
-eas = eas.read(file_eas)
+O = eas.read(file_eas) 
+plt.imshow(O['Dmat'])
+plt.title(O['title']+" - "+O['header'][0])
 
-plt.imshow(eas['Dmat'])

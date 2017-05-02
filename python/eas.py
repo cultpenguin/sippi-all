@@ -7,12 +7,19 @@ Created on Thu Apr 27 16:06:14 2017
 """
 import numpy as np
 
+debug_level=0;
+
 def read(filename='eas.dat'):
     
     file = open(filename,"r") ;
+    if (debug_level>0):
+        print("eas: file ->%20s" % filename);        
     
     eas={};
     eas['title'] = (file.readline()).strip('\n');    
+    
+    if (debug_level>0):
+        print("eas: title->%20s" % eas['title']);        
     
     dim_arr=eas['title'].split()
     if len(dim_arr)==3:
@@ -23,41 +30,34 @@ def read(filename='eas.dat'):
     
     eas['n_cols'] = np.int(file.readline());    
     
-    eas['list'] = [];
+    eas['header'] = [];
     for i in range(0, eas['n_cols']):
-        print (i)
+        # print (i)
         h_val = (file.readline()).strip('\n');
-        eas['list'].append(h_val);
-    
-        
-    D_temp = file.read().splitlines();   
-    eas['D']=np.zeros( (len(D_temp),1) );
-    for i in range(0, len(D_temp)):
-        eas['D'][i] = np.float(D_temp[i]);
-        
-    eas['Dmat']=eas['D'].reshape((eas['dim']['ny'],eas['dim']['nx']));   
-#   
+        eas['header'].append(h_val);
 
- # READ THE REAST OF THE DATA
-#    data = [];
-#    line="-"; 
-#    i=0;
-#    while line!="":
-#        i=i+1;
-#        cur_line = (file.readline()).strip('');
-#        cur_line.strip('\n');
-#        print ("%d +  -- " % i)
-#        #print (eas['line'])
-#        #data.append(1);  
-#        
-#        #= np.genfromtxt(file.readline());    
-#    #header['label'] = file.readline();    
-#    #header['line4'] = file.readline();    
-#         
-#    
-#    
+        if (debug_level>1):
+            print("eas: header(%2d)-> %s" % (i,eas['header'][i] ) );        
+
+    file.close();    
+
+
+    try:
+        eas['D'] = np.genfromtxt(filename, skip_header=2+eas['n_cols']);    
+        if (debug_level>1):
+            print("eas: Read data from %s" % filename );        
+    except:
+        print("eas: COULD NOT READ DATA FROM %s" % filename );        
+        
     
-    file.close();
+    
+    # If dimensions are given in title, then convert to 2D/3D array
+    if "dim" in eas:
+        eas['Dmat']=eas['D'].reshape((eas['dim']['ny'],eas['dim']['nx']));   
+        if (debug_level>0):
+            print("eas: converted data in matrixes (Dmat)");        
+
     
     return eas;
+    
 
