@@ -4,6 +4,29 @@
 Created on Thu Apr 27 16:06:14 2017
 
 @author: tmeha
+
+Examples
+
+import eas;
+import matplotlib.pyplot as plt;
+
+# Get the JURA data
+import urllib.request
+urllib.request.urlretrieve('https://github.com/cultpenguin/mGstat/raw/master/examples/data/jura/prediction.dat', 'prediction.dat')
+
+# Read the JURA data
+file_eas='prediction.dat';
+Oeas = eas.read(file_eas) 
+
+i_show=5;
+cm = plt.cm.get_cmap('RdYlBu')
+sc=plt.scatter(Oeas['D'][:,0],Oeas['D'][:,1],s=8*Oeas['D'][:,i_show],c=Oeas['D'][:,i_show], cmap=cm)
+plt.xlabel(Oeas['header'][0])
+plt.ylabel(Oeas['header'][1])
+plt.title(Oeas['header'][i_show])
+plt.colorbar(sc);
+plt.show();
+
 """
 import numpy as np
 

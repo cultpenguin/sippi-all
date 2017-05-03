@@ -6,6 +6,11 @@ import eas;
 import matplotlib.pyplot as plt;
 
 
+#%% Download JURA data
+import urllib.request
+urllib.request.urlretrieve('https://github.com/cultpenguin/mGstat/raw/master/examples/data/jura/prediction.dat', 'prediction.dat')
+
+
 #%% read and plot 2d scatter data
 import importlib
 importlib.reload(eas)
