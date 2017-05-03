@@ -37,9 +37,11 @@ O1.run()
 
 
 #%% RUN GENESIM
-O2 = mps.mpslib(method='mps_genesim')
+O2 = mps.mpslib(method='mps_genesim',  verbose_level=1)
 O2.par['n_real']=4;
-O2.par['n_cond']=81;
+O2.par['n_max_ite']=1000;
+O2.par['n_cond']=31;
+O2.par['shuffle_simulation_grid']=1;
 O2.parameter_filename = 'mps_genesim.txt'
 O2.run();
 
