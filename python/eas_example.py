@@ -2,7 +2,7 @@
 # example of using mpslib.py
 #import mpslib as mps;
 #import numpy as np;
-import eas;
+import matplotlib.eas as eas;
 import matplotlib.pyplot as plt;
 
 
