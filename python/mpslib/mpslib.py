@@ -2,6 +2,7 @@ import numpy as np
 import os
 import subprocess
 import eas
+import time
 
 class mpslib:
 
@@ -215,8 +216,12 @@ class mpslib:
         if (self.verbose_level > 0):
             print ("mpslib: trying to run  " + cmd + " " + self.parameter_filename);
         
+        t_start = time.time();    
         stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE);
-                             
+        self.execution_time = time.time() - t_start;    
+        if (self.verbose_level > 0):
+            print ("mpslib: finished in  %3.1f seconds (%3.1g minutes) " % (self.execution_time,self.execution_time/60));
+                     
         # read on simulated da
         self.sim=[];
         for i in range(0, self.par['n_real']):

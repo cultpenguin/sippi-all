@@ -37,3 +37,4 @@ O = eas.read(file_eas)
 plt.imshow(O['Dmat'],interpolation='none')
 plt.title(O['title']+" - "+O['header'][0])
 
+
