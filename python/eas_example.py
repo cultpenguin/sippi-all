@@ -2,7 +2,10 @@
 # example of using mpslib.py
 #import mpslib as mps;
 #import numpy as np;
-import matplotlib.eas as eas;
+import sys
+sys.path.append('mpslib')
+
+import eas;
 import matplotlib.pyplot as plt;
 
 
@@ -29,8 +32,8 @@ plt.show();
 
 #%% read and plot 2D matrix
 
-file_eas='ti.dat_sg_0.gslib';
+file_eas='ti.dat';
 O = eas.read(file_eas) 
-plt.imshow(O['Dmat'])
+plt.imshow(O['Dmat'],interpolation='none')
 plt.title(O['title']+" - "+O['header'][0])
 

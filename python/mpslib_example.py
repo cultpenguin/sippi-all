@@ -11,41 +11,40 @@ import mpslib as mps;
 import matplotlib.pyplot as plt;
 #plt.ion();
 
-#%%
+#%% MPS_SNESIM_TREE
 
-mpsobj = mps.mpslib(method='mps_snesim_tree',hard_data_fnam = 'mps_2d_hard_data.dat',
+O1 = mps.mpslib(method='mps_snesim_tree',hard_data_fnam = 'mps_2d_hard_data.dat',
                     n_real = 2, verbose_level=1)
-
-mpsobj.par['n_max_cpdf_count'] = 1
-mpsobj.par['n_max_ite'] = 1000000000
-mpsobj.parameter_filename = 'mps_snesim.txt'
-
-#mpsobj.par_write()
-mpsobj.run_model()
+O1.parameter_filename = 'mps_snesim.txt'
+O1.run()
 
 plt.set_cmap('hot')
 fig1 = plt.figure(1)
-for i in range(0, mpsobj.par['n_real']):
+for i in range(0, O1.par['n_real']):
     plt.subplot(3,3,i+1)
-    plt.imshow(mpsobj.sim[i], interpolation='none')
+    plt.imshow(O1.sim[i], interpolation='none')
 
-fig1.suptitle(mpsobj.method, fontsize=16)
+fig1.suptitle(O1.method, fontsize=16)
+plt.savefig(O1.method+'.png', dpi=600)
 plt.show();
 
+
+#%% Use the same modeling parameters, but change simulation methods
+O1.change_method('mps_genesim')
+O1.change_method('mps_snesim_list')
+O1.run()
 
 
 
 #%% RUN GENESIM
-Og = mps.mpslib(method='mps_genesim')
-#Og.par['method'] = 'mps_genesim'; # When changing method, 'par' should be re-initialized..
-Og.par['n_real']=4;
-Og.par['n_cond']=81;
-Og.parameter_filename = 'mps_genesim.txt'
-#Og.par_write()
-Og.run_model();
+O2 = mps.mpslib(method='mps_genesim')
+O2.par['n_real']=4;
+O2.par['n_cond']=81;
+O2.parameter_filename = 'mps_genesim.txt'
+O2.run();
 
 
-#%%
+#%% PLOT GENESIM REALIZATIONS
 font = {'family' : 'Ubuntu',
         'weight' : 'bold',
         'size'   : 8}
@@ -54,13 +53,13 @@ plt.rc('font', **font)
 
 fig = plt.figure(2)
 plt.set_cmap('gray')
-fig.suptitle(Og.method, fontsize=16)
+fig.suptitle(O2.method, fontsize=16)
     
 
-for i in range(0, Og.par['n_real']):
+for i in range(0, O2.par['n_real']):
     ax = plt.subplot(3,3,i+1)
     ax.set_title('Realization #%d' % i)
-    ax.imshow(Og.sim[i],interpolation='none')
+    ax.imshow(O2.sim[i],interpolation='none')
         
-plt.savefig('test.png', dpi=600)
+plt.savefig(O2.method+'.png', dpi=600)
 plt.show();

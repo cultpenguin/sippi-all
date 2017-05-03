@@ -1,47 +1,7 @@
 import numpy as np
 import os
 import subprocess
-import pandas as pd
 import eas
-
-def is_exe(fpath):
-    return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-def which(program):
-    fpath, fname = os.path.split(program)
-    if fpath:
-        if is_exe(program):
-            return program
-    else:
-        # test for exe in current working directory
-        if is_exe(program):
-            return program
-        # test for exe in path statement
-        for path in os.environ["PATH"].split(os.pathsep):
-            path = path.strip('"')
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return exe_file
-    return None
-
-def read_int(fname, cols = None):
-    f = open(fname, mode='r')
-
-    gridinf = f.readline()
-    grid_size = [int(i) for i in gridinf.split()]
-
-    nreal = int(f.readline())
-    grid_names = []
-
-    for ii in np.arange(nreal):
-        grid_names.append(f.readline())
-
-    f.close()
-
-    intarrPD = pd.read_csv(fname,skiprows=nreal+2, delim_whitespace = True, header=None, usecols=cols)
-    intarr = intarrPD.values.astype(int)
-
-    return intarr
 
 class mpslib:
 
@@ -98,15 +58,43 @@ class mpslib:
             self.par['n_cond'] = n_cond
             #self.exe = 'mps_mps_snesim_tree'
 
-
         # Check if on windows
         self.iswin=0;
         if (os.name == 'nt'):
             self.iswin=1;
 
 
-    def run(self):
-        pass
+    #% Check parameter file setting using  GENESIM
+    def parfile_check_genesim(self):
+        
+        self.par.setdefault('n_cond', 25)
+        self.par.setdefault('n_max_ite', 10000)
+        self.par.setdefault('n_max_cpdf_count', 10)
+        self.par.setdefault('distance_measure', 1)
+        self.par.setdefault('distance_min', 0)
+        self.par.setdefault('distance_pow', 0)
+        self.par.setdefault('max_search_radius', 1000000)
+        
+        
+        
+    #% Check parameter file setting using  SNESIM
+    def parfile_check_snesim(self):
+           
+        self.par.setdefault('template_size', np.array([5, 5, 1]))
+        self.par.setdefault('n_multiple_grids', 3)
+        self.par.setdefault('n_min_node_count',0)
+        self.par.setdefault('n_cond', -1)
+    
+    # Change simulation method        
+    def change_method(self,method='mps_genesim'):  
+        print(self.method)
+        if method == 'mps_genesim':
+            self.parfile_check_genesim();
+            self.method=method;
+        if method[0:10] == 'mps_snesim':
+            self.parfile_check_snesim();
+            self.method=method;
+
 
     def par_write(self):
         if self.method == 'mps_genesim':
@@ -208,7 +196,7 @@ class mpslib:
         
        
 
-    def run_model(self, normal_msg='Elapsed time (sec)', silent=False):
+    def run(self, normal_msg='Elapsed time (sec)', silent=False):
         """
         """
         import os
@@ -228,8 +216,6 @@ class mpslib:
             print ("mpslib: trying to run  " + cmd + " " + self.parameter_filename);
         
         stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE);
-    
-                             
                              
         # read on simulated da
         self.sim=[];
@@ -239,66 +225,13 @@ class mpslib:
             if (self.verbose_level > 0):
                 print ('mpslib: Reading: %s' % (filename) );
             self.sim.append(OUT['Dmat']);
-              
     
         return stdout;
 
         
 
-        '''
-        success = False
-        exe = which(self.method)
-        exe_name = self.method
 
-        if exe is None:
-            import platform
-            if platform.system() in 'Windows':
-                if not exe_name.lower().endswith('.exe'):
-                    exe = which(exe_name + '.exe')
-        if exe is None:
-            s = 'The program {} does not exist or is not executable.'.format(exe_name)
-            raise Exception(s)
-        else:
-            if not silent:
-                s = 'Using the following executable to run the model: {}'.format(exe)
-                print(s)
-
-        if not os.path.isfile(os.path.join(self.par_fnam)):
-            s = 'The the mpslib input file does not exists: {}'.format(self.dainame)
-            raise Exception(s)
-
-        proc = subprocess.Popen(exe + ' ' + self.par_fnam, stdout=subprocess.PIPE)
-        # proc = subprocess.Popen([self.daisyexe, self.dainame], stdout=subprocess.PIPE)
-
-        while success == False:
-            line = proc.stdout.readline()
-            c = line.decode('utf-8', errors='ignore')
-            if c != '':
-                if normal_msg.lower() in c.lower():
-                    success = True
-                c = c.rstrip('\r\n')
-                if not silent:
-                    print('{}'.format(c))
-            else:
-                break
-
-        return success
-        '''
-
-    def read_sim(self):
-        base_nam = self.ti_fnam+'_sg_'
-
-        first = True
-        for ii in np.arange(self.nreal):
-            arr_tmp = read_int(base_nam+str(ii)+'.gslib')
-            if first:
-                arr_all = arr_tmp
-                first = False
-            else:
-                arr_all = np.hstack((arr_all, arr_tmp))
-
-        self.simulations = arr_all
-
+'''
     def to_file(self):
         nreal = self.nreal
         outname = self.ti_fnam + '_all.gslib'
@@ -321,4 +254,4 @@ class mpslib:
                 f.write('\n')
         f.close()
 
-
+'''
