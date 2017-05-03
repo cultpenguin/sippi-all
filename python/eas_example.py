@@ -4,8 +4,8 @@
 #import numpy as np;
 import sys
 sys.path.append('mpslib')
-
-import eas;
+import mpslib.eas as eas
+#import eas;
 import matplotlib.pyplot as plt;
 
 
@@ -15,8 +15,8 @@ urllib.request.urlretrieve('https://github.com/cultpenguin/mGstat/raw/master/exa
 
 
 #%% read and plot 2d scatter data
-import importlib
-importlib.reload(eas)
+#import importlib
+#importlib.reload(eas)
 file_eas='prediction.dat';
 Oeas = eas.read(file_eas) 
 
@@ -36,4 +36,4 @@ file_eas='ti.dat';
 O = eas.read(file_eas) 
 plt.imshow(O['Dmat'],interpolation='none')
 plt.title(O['title']+" - "+O['header'][0])
-
+plt.show()
