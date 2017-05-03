@@ -5,7 +5,7 @@ import mpslib as mps;
 import matplotlib.pyplot as plt;
 import importlib
 importlib.reload(mps)
-plt.ion();
+#plt.ion();
 
 #%%
 
@@ -60,4 +60,3 @@ for i in range(0, Og.par['n_real']):
         
 plt.savefig('test.png', dpi=600)
 plt.show();
-plt.pause(10);
