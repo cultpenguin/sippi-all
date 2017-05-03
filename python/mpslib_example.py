@@ -1,10 +1,14 @@
 # mpslib_example.py
 # example of using mpslib.py
+
+import sys
+sys.path.append('mpslib')
+
+
+#%%
 import mpslib as mps;
 # import mpslib_tmh as mps_tmh;
 import matplotlib.pyplot as plt;
-import importlib
-importlib.reload(mps)
 #plt.ion();
 
 #%%
