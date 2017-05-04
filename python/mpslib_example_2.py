@@ -36,10 +36,10 @@ plt.title('TI 2')
 plt.show();
 
 #%% SIMULATE
-O1 = mps.mpslib(method='mps_snesim_tree', n_real = 1, verbose_level=1, ti_fnam=ti_file1)
+O1 = mps.mpslib(method='mps_snesim_tree', n_real = 1, verbose_level=0, ti_fnam=ti_file1)
 O1.run()
 
-O2 = mps.mpslib(method='mps_snesim_tree', n_real = 1, verbose_level=1, ti_fnam=ti_file2)
+O2 = mps.mpslib(method='mps_snesim_tree', n_real = 1, verbose_level=0, ti_fnam=ti_file2)
 O2.run()
 
 
