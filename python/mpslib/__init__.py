@@ -1,2 +1,2 @@
 from .mpslib import mpslib
-import eas
+from .mpslib import eas

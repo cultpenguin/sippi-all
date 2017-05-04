@@ -1,8 +1,28 @@
 import numpy as np
 import os
 import subprocess
-import eas
+import mpslib.eas as eas
 import time
+
+def is_exe(fpath):
+    return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+def which(program):
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        # test for exe in current working directory
+        if is_exe(program):
+            return program
+        # test for exe in path statement
+        for path in os.environ["PATH"].split(os.pathsep):
+            path = path.strip('"')
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+    return None
 
 class mpslib:
 
@@ -16,12 +36,13 @@ class mpslib:
                 max_search_radius=10000000):
         '''Initialize variables in Class'''
         self.mpslib_exe_folder = os.path.join(os.path.dirname('mpslib.py'),'..')
- 
+        self.blank_grid = None
+        self.blank_val = np.NaN
         self.parameter_filename = parameter_filename.lower() # change string to lower case
         self.method = method.lower() # change string to lower case
         self.verbose_level = verbose_level
         
-        self.par = {};
+        self.par = {}
        
         self.par['n_real'] = n_real
         self.par['rseed'] = rseed
@@ -54,15 +75,15 @@ class mpslib:
 
         if self.method[0:10] == 'mps_snesim':
             self.par['template_size'] = template_size
-            self.par['n_multiple_grids'] = n_multiple_grids;
+            self.par['n_multiple_grids'] = n_multiple_grids
             self.par['n_min_node_count'] = n_min_node_count
             self.par['n_cond'] = n_cond
             #self.exe = 'mps_mps_snesim_tree'
 
         # Check if on windows
-        self.iswin=0;
+        self.iswin=0
         if (os.name == 'nt'):
-            self.iswin=1;
+            self.iswin=1
 
 
     #% Check parameter file setting using  GENESIM
@@ -90,11 +111,11 @@ class mpslib:
     def change_method(self,method='mps_genesim'):  
         print(self.method)
         if method == 'mps_genesim':
-            self.parfile_check_genesim();
-            self.method=method;
+            self.parfile_check_genesim()
+            self.method=method
         if method[0:10] == 'mps_snesim':
-            self.parfile_check_snesim();
-            self.method=method;
+            self.parfile_check_snesim()
+            self.method=method
 
 
     def par_write(self):
@@ -147,7 +168,7 @@ class mpslib:
                    self.par['soft_data_filename'])
         file.write('Number of threads (not currently used) # %d\n' % self.par['n_threads'])
         file.write('Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
-        file.close();
+        file.close()
 
 
     def mps_snesim_par_write(self):
@@ -193,7 +214,7 @@ class mpslib:
                    self.par['soft_data_filename'])
         file.write('Number of threads (not currently used) # %d\n' % self.par['n_threads'])
         file.write('Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
-        file.close();
+        file.close()
         
        
 
@@ -208,13 +229,13 @@ class mpslib:
 
         exefile = self.method        
         if self.iswin:
-            exefile = exefile + '.exe';
+            exefile = exefile + '.exe'
         
                 
         # run mpslob    
         cmd = os.path.join(self.mpslib_exe_folder,exefile)
         if (self.verbose_level > 0):
-            print ("mpslib: trying to run  " + cmd + " " + self.parameter_filename);
+            print ("mpslib: trying to run  " + cmd + " " + self.parameter_filename)
    
         # Make sure no terminal windows i shown n Windows     
         #si = subprocess.STARTUPINFO()
@@ -222,26 +243,107 @@ class mpslib:
         CREATE_NO_WINDOW = 0x08000000
         
         #si.wShowWindow = subprocess.SW_HIDE # default
-        t_start = time.time();    
+        t_start = time.time()
         #stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE);
         #stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, startupinfo=si);
-        stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW);
-        self.execution_time = time.time() - t_start;    
+        stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
+        self.execution_time = time.time() - t_start
         if (self.verbose_level > 0):
-            print ("mpslib: finished in  %3.1f seconds (%3.1g minutes) " % (self.execution_time,self.execution_time/60));
+            print ("mpslib: finished in  %3.1f seconds (%3.1g minutes) " % (self.execution_time,self.execution_time/60))
                      
-        # read on simulated da
-        self.sim=[];
+        # read on simulated data
+        self.sim=[]
         for i in range(0, self.par['n_real']):
-            filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'],i);
+            filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'],i)
             OUT = eas.read(filename)                              
             if (self.verbose_level > 0):
-                print ('mpslib: Reading: %s' % (filename) );
-            self.sim.append(OUT['Dmat']);
+                print ('mpslib: Reading: %s' % (filename) )
+            self.sim.append(OUT['Dmat'])
     
-        return stdout;
+        return stdout
 
-        
+    def run_model(self, normal_msg='Elapsed time (sec)', silent=False):
+            """
+            *Description:*\n
+            This function runs the mpslib executable from python.
+
+            :param normal_msg: last line write to screen upon  successful completion
+            :param silent: boolean, determines if modle outputs should be written to the screen
+
+            :return: returns boolean success if the model run has been completed
+            """
+            success = False
+
+            self.par_write()
+
+            exefile = self.method
+            if self.iswin:
+                exefile = exefile + '.exe'
+
+            exe = which(exefile)
+            exe_name = exefile
+
+            if exe is None:
+                s = 'The program {} does not exist or is not executable.'.format(exe_name)
+                raise Exception(s)
+            else:
+                if not silent:
+                    s = 'Using the following executable to run the model: {}'.format(exe)
+                    print(s)
+
+            if not os.path.isfile(os.path.join(self.parameter_filename)):
+                s = 'The the mpslib input file does not exists: {}'.format(self.parameter_filename)
+                raise Exception(s)
+
+            proc = subprocess.Popen(exe + ' ' + self.parameter_filename, stdout=subprocess.PIPE)
+
+            while success == False:
+                line = proc.stdout.readline()
+                c = line.decode('utf-8', errors='ignore')
+                if c != '':
+                    if normal_msg.lower() in c.lower():
+                        success = True
+                    c = c.rstrip('\r\n')
+                    if not silent:
+                        print('{}'.format(c))
+                else:
+                    break
+
+            # read on simulated data
+            self.sim = []
+            for i in range(0, self.par['n_real']):
+                filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
+                OUT = eas.read(filename)
+                if (self.verbose_level > 0):
+                    print('mpslib: Reading: %s' % (filename))
+                self.sim.append(OUT['Dmat'])
+
+            return success
+
+    def blank_sim(self):
+        if hasattr(self, 'sim') is False:
+            s = 'Simulation results not imported'
+            raise Exception(s)
+
+        if self.blank_grid == None:
+            s = 'No blanking grid defined'
+            raise Exception(s)
+
+        nsim = len(self.sim)
+        sim_grid_size = np.shape(self.sim[0])
+        blank_grid_size = np.shape(self.blank_grid)
+
+        if sim_grid_size != blank_grid_size:
+            s = "Blank grid with size {} incompatiable with sim. grid size {} ".format(sim_grid_size, blank_grid_size)
+            raise Exception(s)
+
+        blk = self.blank_grid == 0
+
+        self.simblk = np.copy(self.sim)
+        for ii in np.arange(nsim):
+            self.simblk[ii][blk == True] = self.blank_val
+
+
 
 
 '''
