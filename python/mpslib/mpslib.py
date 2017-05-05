@@ -1,7 +1,8 @@
 import numpy as np
 import os
 import subprocess
-import mpslib.eas as eas
+#import mpslib.eas as eas
+from . import eas as eas
 import time
 
 def is_exe(fpath):
@@ -41,6 +42,7 @@ class mpslib:
         self.parameter_filename = parameter_filename.lower() # change string to lower case
         self.method = method.lower() # change string to lower case
         self.verbose_level = verbose_level
+        self.sim = None
         
         self.par = {}
        
@@ -221,7 +223,6 @@ class mpslib:
     def run(self, normal_msg='Elapsed time (sec)', silent=False):
         """
         """
-        import os
         
 
         # Write parameter file to disc
@@ -325,7 +326,7 @@ class mpslib:
             s = 'Simulation results not imported'
             raise Exception(s)
 
-        if self.blank_grid == None:
+        if self.blank_grid is None:
             s = 'No blanking grid defined'
             raise Exception(s)
 
@@ -342,6 +343,27 @@ class mpslib:
         self.simblk = np.copy(self.sim)
         for ii in np.arange(nsim):
             self.simblk[ii][blk == True] = self.blank_val
+
+    # Loads existing simulation results into class without running mps algorithm
+    def load_sim(self):
+        # Check if simulation results are already imported
+        if self.sim is not None:
+            s = 'Simulation reaults already imported'
+            raise  Exception(s)
+
+        self.sim = []
+        for i in range(0, self.par['n_real']):
+            filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
+
+            if os.path.isfile(filename) is False:
+                s = '{} file not found'.format(filename)
+
+            OUT = eas.read(filename)
+
+            if (self.verbose_level > 0):
+                print('mpslib: Reading: %s' % (filename))
+            self.sim.append(OUT['Dmat'])
+
 
 
 
