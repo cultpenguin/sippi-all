@@ -8,7 +8,7 @@ sys.path.append('mpslib')
 
 #%%
 import mpslib as mps;
-import mpslibeas;
+import mpslib.eas as eas;
 import matplotlib.pyplot as plt;
 import numpy as np;
 

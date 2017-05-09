@@ -238,16 +238,17 @@ class mpslib:
         if (self.verbose_level > 0):
             print ("mpslib: trying to run  " + cmd + " " + self.parameter_filename)
    
-        # Make sure no terminal windows i shown n Windows     
-        #si = subprocess.STARTUPINFO()
-        #si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        CREATE_NO_WINDOW = 0x08000000
         
         #si.wShowWindow = subprocess.SW_HIDE # default
         t_start = time.time()
         #stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE);
-        #stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, startupinfo=si);
-        stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
+        if self.iswin: 
+            # CREATE_NO_WINDOW = 0x08000000        
+            stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
+        else:
+            stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE);
+            
+            
         self.execution_time = time.time() - t_start
         if (self.verbose_level > 0):
             print ("mpslib: finished in  %3.1f seconds (%3.1g minutes) " % (self.execution_time,self.execution_time/60))
