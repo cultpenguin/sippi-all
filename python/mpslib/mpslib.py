@@ -220,7 +220,7 @@ class mpslib:
         
        
 
-    def run(self, normal_msg='Elapsed time (sec)', silent=False):
+    def run_old(self, normal_msg='Elapsed time (sec)', silent=False):
         """
         """
         
@@ -243,7 +243,7 @@ class mpslib:
         t_start = time.time()
         #stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE);
         if self.iswin: 
-            # CREATE_NO_WINDOW = 0x08000000        
+            CREATE_NO_WINDOW = 0x08000000        
             stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
         else:
             stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE);
@@ -264,7 +264,7 @@ class mpslib:
     
         return stdout
 
-    def run_model(self, normal_msg='Elapsed time (sec)', silent=False):
+    def run(self, normal_msg='Elapsed time (sec)', silent=False):
             """
             *Description:*\n
             This function runs the mpslib executable from python.
@@ -276,12 +276,17 @@ class mpslib:
             """
             success = False
 
+            # write parameter file
             self.par_write()
 
+           
             exefile = self.method
             if self.iswin:
                 exefile = exefile + '.exe'
 
+            # run mpslob    
+            exefile = os.path.abspath(os.path.join(self.mpslib_exe_folder,exefile))
+            
             exe = which(exefile)
             exe_name = exefile
 
@@ -297,7 +302,17 @@ class mpslib:
                 s = 'The the mpslib input file does not exists: {}'.format(self.parameter_filename)
                 raise Exception(s)
 
-            proc = subprocess.Popen(exe + ' ' + self.parameter_filename, stdout=subprocess.PIPE)
+            
+            if (self.verbose_level > 0):
+                print ("mpslib: trying to run  " + exe + " " + self.parameter_filename)
+            
+            if self.iswin: 
+                CREATE_NO_WINDOW = 0x08000000        
+                # stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
+                proc = subprocess.Popen([exe,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
+            else:
+                proc = subprocess.Popen([exe,self.parameter_filename], stdout=subprocess.PIPE)
+
 
             while success == False:
                 line = proc.stdout.readline()
