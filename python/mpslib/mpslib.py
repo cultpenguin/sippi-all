@@ -259,11 +259,11 @@ class mpslib:
             exe_path = self.which(exe_file)
             
             if exe_path is None:
-                s = 'The program {} does not exist or is not executable.'.format(exe_file)
+                s = 'mpslib: The program {} does not exist or is not executable.'.format(exe_file)
                 raise Exception(s)
             else:
                 if not silent:
-                    s = 'Using the following executable to run the model: {}'.format(exe_path)
+                    s = 'mpslib: Using the following executable to run the model: {}'.format(exe_path)
                     print(s)
 
             if not os.path.isfile(os.path.join(self.parameter_filename)):

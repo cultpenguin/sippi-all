@@ -3,8 +3,8 @@ Random Seed (0 `random` seed) # 1
 Number of mulitple grids (start from 0) # 3
 Min Node count (0 if not set any limit)# 0
 Maximum number condtitional data (0: all) # 36
-Search template size X # 8
-Search template size Y # 7
+Search template size X # 9
+Search template size Y # 9
 Search template size Z # 1
 Simulation grid size X # 80
 Simulation grid size Y # 40
