@@ -59,6 +59,8 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	std::stringstream ss;
 	std::string s;
 	std::vector<std::string> data;
+	int read_int; // dummy integer
+
 	// Process each line
 	// Number of realizations
 	_readLineConfiguration(file, ss, data, s, str);
@@ -68,13 +70,24 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	_seed = stof(data[1]);
 	// Maximum number of counts for seeting up the conditional pdf
 	_readLineConfiguration(file, ss, data, s, str);
-	_nMaxCountCpdf =  stoi(data[1]);
+	read_int  =  stoi(data[1]);
+	if (read_int<0) {
+		_nMaxCountCpdf = std::numeric_limits<int>::max();
+	} else {
+		_nMaxCountCpdf=read_int;
+	}
+
 	// Maximum neighbours
 	_readLineConfiguration(file, ss, data, s, str);
 	_maxNeighbours = stoi(data[1]);
 	// Maximum iterations
 	_readLineConfiguration(file, ss, data, s, str);
-	_maxIterations = stoi(data[1]);
+	read_int  =  stoi(data[1]);
+	if (read_int<0) {
+		_maxIterations = std::numeric_limits<int>::max();
+	} else {
+		_maxIterations = read_int;
+	}
 	// Distance Measure and minimum distance
 	_readLineConfiguration_mul(file, ss, data, s, str);
 	_distance_measure = stoi(data[1]);
