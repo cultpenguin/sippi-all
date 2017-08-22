@@ -37,7 +37,7 @@ plt.title('TI 2')
 
 #%% SIMULATE
 O1 = mps.mpslib(method='mps_snesim_tree', n_real = 1, verbose_level=0, ti_fnam=ti_file1)
-#O1.run_model()
+O1.run()
 O1.load_sim()
 
 O1.blank_grid = np.zeros((O1.par['simulation_grid_size'][1],O1.par['simulation_grid_size'][0]),dtype=np.int)
@@ -45,7 +45,7 @@ O1.blank_grid[0:20,:]=1
 O1.blank_sim()
 
 O2 = mps.mpslib(method='mps_snesim_tree', n_real = 1, verbose_level=0, ti_fnam=ti_file2)
-#O2.run_model()
+O2.run()
 O2.load_sim()
 
 O2.blank_grid = np.zeros((O1.par['simulation_grid_size'][1],O1.par['simulation_grid_size'][0]),dtype=np.int)

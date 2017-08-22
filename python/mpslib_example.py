@@ -16,7 +16,10 @@ import matplotlib.pyplot as plt;
 O1 = mps.mpslib(method='mps_snesim_tree',hard_data_fnam = 'mps_2d_hard_data.dat',
                     n_real = 2, verbose_level=1)
 O1.parameter_filename = 'mps_snesim.txt'
+O1.par['debug_level']=-1;
 O1.run()
+
+
 
 plt.set_cmap('hot')
 fig1 = plt.figure(1)

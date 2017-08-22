@@ -5,25 +5,8 @@ import subprocess
 from . import eas as eas
 import time
 
-def is_exe(fpath):
-    return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-def which(program):
-    fpath, fname = os.path.split(program)
-    if fpath:
-        if is_exe(program):
-            return program
-    else:
-        # test for exe in current working directory
-        if is_exe(program):
-            return program
-        # test for exe in path statement
-        for path in os.environ["PATH"].split(os.pathsep):
-            path = path.strip('"')
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return exe_file
-    return None
+def is_exe(filename):
+    return os.path.isfile(filename) and os.access(filename, os.X_OK)
 
 class mpslib:
 
@@ -36,7 +19,10 @@ class mpslib:
                 n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_min=0, distance_pow=1,
                 max_search_radius=10000000):
         '''Initialize variables in Class'''
-        self.mpslib_exe_folder = os.path.join(os.path.dirname('mpslib.py'),'..')
+        
+        mpslib_py_path,fn = os.path.split(__file__)
+        self.mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path,'..','..'))
+        #self.mpslib_exe_folder = os.path.join(os.path.dirname('mpslib.py'),'..')
         self.blank_grid = None
         self.blank_val = np.NaN
         self.parameter_filename = parameter_filename.lower() # change string to lower case
@@ -86,6 +72,37 @@ class mpslib:
         self.iswin=0
         if (os.name == 'nt'):
             self.iswin=1
+
+
+
+
+
+    def which(self,program):
+        '''
+        self.which: Locate executable in the following order:
+            1) current directotu
+            2) MPSlib installation directory
+            3) In system path
+        '''
+        # check if executable is found in the current folder
+        if is_exe(program):
+            return program
+        else:
+            # Check of executable is located in MPLSIB folder
+            program_path_mpslib = os.path.abspath(os.path.join(self.mpslib_exe_folder,program))
+            if is_exe(program_path_mpslib):
+                return program_path_mpslib            
+            else:
+                # Check of executable is located in system path
+                for path in os.environ["PATH"].split(os.pathsep):                    
+                    path = path.strip('"')
+                    exe_file = os.path.join(path, program)
+                    if is_exe(exe_file):
+                        return exe_file
+                        
+                print("mpslib: " + program + " not found")
+                return None
+                
 
 
     #% Check parameter file setting using  GENESIM
@@ -217,54 +234,9 @@ class mpslib:
         file.write('Number of threads (not currently used) # %d\n' % self.par['n_threads'])
         file.write('Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
         file.close()
-        
        
 
     def run(self, normal_msg='Elapsed time (sec)', silent=False):
-        """
-        """
-        
-
-        # Write parameter file to disc
-        self.par_write()
-
-        exefile = self.method        
-        if self.iswin:
-            exefile = exefile + '.exe'
-        
-                
-        # run mpslob    
-        cmd = os.path.join(self.mpslib_exe_folder,exefile)
-        if (self.verbose_level > 0):
-            print ("mpslib: trying to run  " + cmd + " " + self.parameter_filename)
-   
-        
-        #si.wShowWindow = subprocess.SW_HIDE # default
-        t_start = time.time()
-        #stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE);
-        if self.iswin: 
-            # CREATE_NO_WINDOW = 0x08000000        
-            stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
-        else:
-            stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE);
-            
-            
-        self.execution_time = time.time() - t_start
-        if (self.verbose_level > 0):
-            print ("mpslib: finished in  %3.1f seconds (%3.1g minutes) " % (self.execution_time,self.execution_time/60))
-                     
-        # read on simulated data
-        self.sim=[]
-        for i in range(0, self.par['n_real']):
-            filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'],i)
-            OUT = eas.read(filename)                              
-            if (self.verbose_level > 0):
-                print ('mpslib: Reading: %s' % (filename) )
-            self.sim.append(OUT['Dmat'])
-    
-        return stdout
-
-    def run_model(self, normal_msg='Elapsed time (sec)', silent=False):
             """
             *Description:*\n
             This function runs the mpslib executable from python.
@@ -276,28 +248,39 @@ class mpslib:
             """
             success = False
 
+            # write parameter file
             self.par_write()
 
-            exefile = self.method
+           
+            exe_file = self.method
             if self.iswin:
-                exefile = exefile + '.exe'
+                exe_file = exe_file + '.exe'
 
-            exe = which(exefile)
-            exe_name = exefile
-
-            if exe is None:
-                s = 'The program {} does not exist or is not executable.'.format(exe_name)
+            exe_path = self.which(exe_file)
+            
+            if exe_path is None:
+                s = 'mpslib: The program {} does not exist or is not executable.'.format(exe_file)
                 raise Exception(s)
             else:
                 if not silent:
-                    s = 'Using the following executable to run the model: {}'.format(exe)
+                    s = 'mpslib: Using the following executable to run the model: {}'.format(exe_path)
                     print(s)
 
             if not os.path.isfile(os.path.join(self.parameter_filename)):
                 s = 'The the mpslib input file does not exists: {}'.format(self.parameter_filename)
                 raise Exception(s)
 
-            proc = subprocess.Popen(exe + ' ' + self.parameter_filename, stdout=subprocess.PIPE)
+            
+            if (self.verbose_level > 0):
+                print ("mpslib: trying to run  " + exe_path + " " + self.parameter_filename)
+            
+            if self.iswin: 
+                CREATE_NO_WINDOW = 0x08000000        
+                # stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
+                proc = subprocess.Popen([exe_path,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
+            else:
+                proc = subprocess.Popen([exe_path,self.parameter_filename], stdout=subprocess.PIPE)
+
 
             while success == False:
                 line = proc.stdout.readline()
