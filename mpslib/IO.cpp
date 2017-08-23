@@ -505,6 +505,7 @@ namespace MPS {
 						}
 					}
 
+
 					if (numberOfColumns > categories.size()) { //XYZD file
 						//Convert data read from world coordinate into local coordinate (start from 0, 0, 0 and cell size 1, 1, 1)
 						coordX = lineData[0];
@@ -513,9 +514,11 @@ namespace MPS {
 						idxX = (int)((coordX - minWorldX) / stepX);
 						idxY = (int)((coordY - minWorldY) / stepY);
 						idxZ = (int)((coordZ - minWorldZ) / stepZ);
+
 						for (unsigned int nbCats=0; nbCats<categories.size(); nbCats++) {
 							if ((idxX>-1)&(idxY>-1)&(idxZ>-1)&(idxX<dataSizeX)&(idxY<dataSizeY)&(idxZ<dataSizeZ)) {
 							  data[nbCats][idxZ][idxY][idxX] = lineData[nbCats + 3];
+								
 						  } else {
 								std::cout << "Soft data, "<< fileName << ": Data outside simualtion grid ix,iy,iz=" << idxX << " "<< idxY << " "<< idxZ  << std::endl;
 							}
@@ -524,6 +527,7 @@ namespace MPS {
 						MPS::utility::oneDTo3D(dataCnt++, dataSizeX, dataSizeY, idxX, idxY, idxZ);
 						for (unsigned int nbCats=0; nbCats<categories.size(); nbCats++) {
 							data[nbCats][idxZ][idxY][idxX] = lineData[nbCats];
+							//std::cout << nbCats << " "<< data[nbCats][idxZ][idxY][idxX] << std::endl;
 						}
 					}
 				}

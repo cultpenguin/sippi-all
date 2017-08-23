@@ -502,7 +502,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 						isRelocated = x != closestCoords.getX() || y != closestCoords.getY() || z != closestCoords.getZ();
 						float E; // total Entropy
 						float Ei; // Partial Entropy
-						float I; // Informatin content
+						float I; // Information content
 						float p; // probability
 						float q; // a priori 1D marginal
 						E=0;
@@ -510,14 +510,17 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 							//// COMPUTE ENTROPY FOR SOFT PDF
 							if (_shuffleSgPath==2) {
 								p = it->second;
+								//std::cout << p << std::endl;
 								if (p==0) {
 									Ei=0;
 								} else {
-									//Ei=p*(-1*log2(p));
-									Ei=p*(-1*log(p) / log(2.)); //msvc2012 doesnt have log2 yet
+									Ei=p*(-1*log2(p));
+									//Ei=p*(-1*log(p) / log(2.)); //msvc2012 doesnt have log2 yet
 								}
 								E=E+Ei;
-							} else if (_shuffleSgPath==3) {
+							}
+
+							else if (_shuffleSgPath==3) {
 								// THIS IS REALLY ONLY FOR TESTING WITH THE STREBELLE TI!!!
 								// soft probability
 								p = it->second;
@@ -543,6 +546,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 								}
 							}
 						}
+
 						I=1-E; // Information content
 
 						// Order Soft preference based on Entropy, and use a factor to control
