@@ -243,6 +243,10 @@ bool MPS::MPSAlgorithm::_IsClosedToNodeInGrid(const int& x, const int& y, const 
 * @return computed value from softdata
 */
 bool MPS::MPSAlgorithm::_getCpdfFromSoftData(const int& x, const int& y, const int& z, const int& level, std::map<float, float>& softPdf, MPS::Coords3D& closestCoords) {
+
+	// clear soft data - just in case - needed for preferential path to work
+	softPdf.clear();
+
 	//Empty grids check
 	if (_softDataGrids.empty()) return false;
 	//Out of bound check
@@ -497,6 +501,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 	std::list<MPS::Coords3D> allocatedNodesFromSoftData; //Using to allocate the multiple grid with closest hd values
 	std::map<float, float> softPdf;
 	MPS::Coords3D closestCoords;
+
 	//Looping through each index of each multiple grid
 	for (int z=0; z<_sgDimZ; z+= offset) {
 		for (int y=0; y<_sgDimY; y+= offset) {
