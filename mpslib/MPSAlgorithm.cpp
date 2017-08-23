@@ -273,10 +273,18 @@ bool MPS::MPSAlgorithm::_getCpdfFromSoftData(const int& x, const int& y, const i
 	unsigned int lastIndex = (int)_softDataCategories.size() - 1;
 	for (unsigned int i=0; i<lastIndex; i++) {
 		sumProbability += _softDataGrids[i][closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()];
+		//std::cout << "i="<< i << " :: "<< _softDataGrids[i][closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()] << std::endl;
 		softPdf.insert(std::pair<float, float>(_softDataCategories[i], _softDataGrids[i][closestCoords.getZ()][closestCoords.getY()][closestCoords.getX()]));
 	}
 	//Last categorie
 	softPdf.insert(std::pair<float, float>(_softDataCategories[lastIndex], 1 - sumProbability));
+
+	if (_debugMode>1) {
+		std::cout << "_getCpdfFromSoftData->[x,y,z]=" << x << "," << y << "," << z  << " ### closest #### ";
+		std::cout << "" << closestCoords.getX() << "," << closestCoords.getY() << "," << closestCoords.getZ() << std::endl;
+		std::cout << "_getCpdfFromSoftData->  -  [" << softPdf[0] << ","<< softPdf[1] << "]"<<std::endl;
+	}
+
 	return true;
 }
 
@@ -496,6 +504,11 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 				randomValue = ((float) rand() / (RAND_MAX));
 				// Any Soft data??
 				if (_getCpdfFromSoftData(x, y, z, level, softPdf, closestCoords)) {
+					//std::cout << "[x,y,z]=" << x << "," << y << "," << z  << std::endl;
+					//std::cout << softPdf[0] << ","<< softPdf[1] << std::endl;
+					//for(auto it = softPdf[.cbegin()]; it != softPdf.cend(); ++it) {
+					//	std::cout << it[] << std::endl;
+					//}
 					//Check if the closest node found already in the current relocated node
 					isAlreadyAllocated = (std::find(allocatedNodesFromSoftData.begin(), allocatedNodesFromSoftData.end(), closestCoords) != allocatedNodesFromSoftData.end());
 					if (!isAlreadyAllocated) {
