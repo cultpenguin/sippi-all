@@ -81,9 +81,8 @@ end
 
 fprintf(fid,'Training image file (spaces not allowed) # %s\n',O.ti_filename);
 fprintf(fid,'Output folder (spaces in name not allowed) # %s\n',O.output_folder);
-fprintf(fid,'Shuffle Simulation Grid path (1 : random, 0 : sequential) # %d\n',O.shuffle_simulation_grid);
-% fprintf(fid,'Preferential Entropy Factor  (0: No random) # %d\n',O.entropyfactor_simulation_grid);
-fprintf(fid,'Shuffle Training Image path (1 : random, 0 : sequential) # %d\n',O.shuffle_ti_grid);
+fprintf(fid,'Shuffle Simulation Grid path (2: preferential, 1: random, 0: sequential, EF) # %d %g\n',O.shuffle_simulation_grid,O.entropyfactor_simulation_grid);
+fprintf(fid,'Shuffle Training Image path (1: random, 0: sequential) # %d\n',O.shuffle_ti_grid);
 % HARD DATA
 fprintf(fid,'HardData filename  (same size as the simulation grid)# %s\n',O.hard_data_filename);
 fprintf(fid,'HardData seach radius (world units) # %g\n',O.hard_data_search_radius);

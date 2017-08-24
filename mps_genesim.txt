@@ -16,7 +16,7 @@ Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
 Training image file (spaces not allowed) # ti/ti_cb_2x2_40_40_1.dat
 Output folder (spaces in name not allowed) # .
-Shuffle Simulation Grid path (1 : random, 0 : sequential) # 1
+Shuffle Simulation Grid path (2: preferential, 1: random, 0: sequential, EntropyFactor) # 2 14
 Shuffle Training Image path (1 : random, 0 : sequential) # 1
 HardData filename  (same size as the simulation grid)# conditional.dat
 HardData seach radius (world units) # 1

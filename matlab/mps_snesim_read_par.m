@@ -57,13 +57,17 @@ O.ti_filename=strip_space(l);
 l=line_strip_char(fgetl(fid),'#');
 O.output_folder=strip_space(l);
 
+% shuffle simulation grid - random path
 l=line_strip_char(fgetl(fid),'#');
-O.shuffle_simulation_grid=str2num(l);
+dum=str2num(l);
+O.shuffle_simulation_grid=dum(1);
+if length(dum)>1
+    O.entropyfactor_simulation_grid=dum(2);
+else
+    O.entropyfactor_simulation_grid=4;
+end
 
-% l=line_strip_char(fgetl(fid),'#');
-% O.entropyfactor_simulation_grid=str2num(l);
-O.entropyfactor_simulation_grid=4;
-
+% shuffle TI grid -
 l=line_strip_char(fgetl(fid),'#');
 O.shuffle_ti_grid=str2num(l);
 

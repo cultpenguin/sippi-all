@@ -141,12 +141,14 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	data[1].erase(std::remove_if(data[1].begin(), data[1].end(), [] (char x){return std::isspace(x); }), data[1].end()); //Removing spaces
 	_outputDirectory = data[1];
 	// Shuffle SGPATH
-	_readLineConfiguration(file, ss, data, s, str);
+	_readLineConfiguration_mul(file, ss, data, s, str);
 	_shuffleSgPath = (stoi(data[1]));
-	// Shuffle Entropy Factor
-	//_readLineConfiguration(file, ss, data, s, str);
-	//_shuffleEntropyFactor = (stoi(data[1]));
-	_shuffleEntropyFactor = 4;
+	if (data.size()>1) {
+		// EntropyFactor is the second value, if it exists
+		_shuffleEntropyFactor = stof(data[2]);
+	} else {
+		_shuffleEntropyFactor = 4;
+	}
 	// Shuffle TI Path
 	_readLineConfiguration(file, ss, data, s, str);
 	_shuffleTiPath = (stoi(data[1]) != 0);

@@ -57,6 +57,13 @@ void MPS::SNESIMTree::initialize(const std::string& configurationFile) {
 
 	if (_debugMode > -1) {
 		std::cout << "TI size (X,Y,Z): " << _tiDimX << " " << _tiDimY << " " << _tiDimZ << std::endl;
+		if (_shuffleSgPath==0) {
+			std::cout << "Path type: unilateral"<< std::endl;
+		} else if (_shuffleSgPath==1) {
+			std::cout << "Path type: random"<< std::endl;
+		} else if (_shuffleSgPath==2) {
+			std::cout << "Path type: Preferential, Entropy Factor: " << _shuffleEntropyFactor << std::endl;
+		}
 	}
 }
 
