@@ -3,8 +3,8 @@ Random Seed (0 `random` seed) # 1
 Number of mulitple grids (start from 0) # 3
 Min Node count (0 if not set any limit)# 0
 Maximum number condtitional data (0: all) # -1
-Search template size X # 9
-Search template size Y # 9
+Search template size X # 14
+Search template size Y # 14
 Search template size Z # 1
 Simulation grid size X # 80
 Simulation grid size Y # 80
@@ -15,9 +15,9 @@ Simulation grid world/origin Z # 0
 Simulation grid grid cell size X # 1
 Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
-Training image file (spaces not allowed) # ti/ti_cb_4x4_40_40_1.dat
+Training image file (spaces not allowed) # ti/ti_fluvsim_250_250_100.dat
 Output folder (spaces in name not allowed) # .
-Shuffle Simulation Grid path (1 : random, 0 : sequential) # 1
+Shuffle Simulation Grid path (1 : random, 0 : sequential) # 0
 Shuffle Training Image path (1 : random, 0 : sequential) # 1
 HardData filename  (same size as the simulation grid)# conditional.dat
 HardData seach radius (world units) # 1
