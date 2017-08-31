@@ -138,7 +138,7 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	// Shuffle SGPATH
 	_readLineConfiguration_mul(file, ss, data, s, str);
 	_shuffleSgPath = (stoi(data[1]));
-	if (data.size()>1) {
+	if (data.size()>2) {
 		// EntropyFactor is the second value, if it exists
 		_shuffleEntropyFactor = stof(data[2]);
 	} else {
