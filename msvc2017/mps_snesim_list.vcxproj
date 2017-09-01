@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{8283CC68-C05F-4B58-ACB1-6C1CF32CCC2A}</ProjectGuid>
+    <ProjectGuid>{B72C3F65-E85E-4291-B8F4-271F1323202F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -113,26 +113,23 @@
     <ClCompile />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\ENESIM_GENERAL.cpp" />
     <ClCompile Include="..\mpslib\Coords3D.cpp" />
     <ClCompile Include="..\mpslib\Coords4D.cpp" />
-    <ClCompile Include="..\mpslib\ENESIM.cpp" />
     <ClCompile Include="..\mpslib\IO.cpp" />
     <ClCompile Include="..\mpslib\MPSAlgorithm.cpp" />
+    <ClCompile Include="..\mpslib\SNESIM.cpp" />
     <ClCompile Include="..\mpslib\Utility.cpp" />
-    <ClCompile Include="..\mps_genesim.cpp" />
+    <ClCompile Include="..\mps_snesim_list.cpp" />
+    <ClCompile Include="..\SNESIMList.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ENESIM_GENERAL.h" />
     <ClInclude Include="..\mpslib\Coords3D.h" />
     <ClInclude Include="..\mpslib\Coords4D.h" />
-    <ClInclude Include="..\mpslib\ENESIM.h" />
     <ClInclude Include="..\mpslib\IO.h" />
     <ClInclude Include="..\mpslib\MPSAlgorithm.h" />
+    <ClInclude Include="..\mpslib\SNESIM.h" />
     <ClInclude Include="..\mpslib\Utility.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="mps_genesim.txt" />
+    <ClInclude Include="..\SNESIMList.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
