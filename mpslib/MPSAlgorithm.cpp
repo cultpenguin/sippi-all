@@ -792,8 +792,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				MPS::utility::oneDTo3D(_simulationPath[ii], _sgDimX, _sgDimY, SG_idxX, SG_idxY, SG_idxZ);
 
 				if (_debugMode > 2) {
-				std::cout << "i="<< ii <<"/"<< _simulationPath.size()<< std::endl;
-			}
+					std::cout << "i="<< ii <<"/"<< _simulationPath.size()<< std::endl;
+				}
 
 				//Performing simulation for non NaN value ...
 				if (MPS::utility::is_nan(_sg[SG_idxZ][SG_idxY][SG_idxX]))
