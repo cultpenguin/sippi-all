@@ -670,6 +670,11 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 	int sg1DIdx, offset;
 
 	for (int n=0; n<_realizationNumbers; n++) {
+
+		if (_debugMode >= -2) {
+			std::cout << "MPSLIB: simulation realization " << n + 1 << "/" << _realizationNumbers << std::endl;
+		}
+
 		beginRealization = clock();
 		//Initialize the iteration count grid
 		_initializeSG(_sgIterations, _sgDimX, _sgDimY, _sgDimZ, 0);
@@ -697,6 +702,11 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 		//Multi level grids
 		for (int level=_totalGridsLevel; level>=0; level--) {
+
+			if (_debugMode >= -2) {
+				std::cout << "MPSLIB: starting multigrid  " << level <<  std::endl;
+			}
+
 			_InitStartSimulationEachMultipleGrid(level);
 
 			//For each space level from coarse to fine
