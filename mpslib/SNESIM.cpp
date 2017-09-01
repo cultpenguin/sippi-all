@@ -71,6 +71,7 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	//Max conditional count
 	_readLineConfiguration(file, ss, data, s, str);
 	_maxCondData = stoi(data[1]);
+	
 	// Template size x
 	_readLineConfiguration_mul(file, ss, data, s, str);
 	_templateSizeX = stoi(data[1]);
@@ -98,8 +99,7 @@ void MPS::SNESIM::_readConfigurations(const std::string& fileName) {
 	} else {
 		_templateSizeZ_base = _templateSizeZ;
 	}
-
-
+	
 	// Simulation Grid size X
 	_readLineConfiguration(file, ss, data, s, str);
 	_sgDimX = stoi(data[1]);
