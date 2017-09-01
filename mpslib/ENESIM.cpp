@@ -30,7 +30,7 @@
 */
 MPS::ENESIM::ENESIM(void) : MPS::MPSAlgorithm(){
 	// Multiple grids are not used in ENESIM type algorithms
-	_totalGridsLevel=0;
+	_totalGridsLevel=2;
 }
 
 /**
