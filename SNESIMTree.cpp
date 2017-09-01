@@ -77,7 +77,8 @@ void MPS::SNESIMTree::_InitStartSimulationEachMultipleGrid(const int& level) {
 	int templateX = _templateSizeX, templateY = _templateSizeY, templateZ = _templateSizeZ;
 
 	if (_templateSizeX != _templateSizeX_base || _templateSizeY != _templateSizeY_base || _templateSizeZ != _templateSizeZ_base) {
-		//Ajust the template size based on the current level, template get smaller when the level get lower
+		// Use adaptive template
+		// Ajust the template size based on the current level, template get smaller when the level get lower
 		
 		if (_totalGridsLevel > 0) {
 			
@@ -95,12 +96,7 @@ void MPS::SNESIMTree::_InitStartSimulationEachMultipleGrid(const int& level) {
 				std::cout << "Template Size END  = " << _templateSizeX_base << "," << _templateSizeY_base << "," << _templateSizeZ_base << std::endl;
 				std::cout << "Template USE       = " << templateX << "," << templateY << "," << templateZ << std::endl;
 			}
-
-		
 		}
-
-		
-
 	}
 
 	//Building template structure
@@ -111,15 +107,6 @@ void MPS::SNESIMTree::_InitStartSimulationEachMultipleGrid(const int& level) {
 	_searchTree.clear();
 
 	int offset = int(std::pow(2, level));
-	/*
-	if (_debugMode > -1) {
-		std::cout << "totalLevel: " << totalLevel << " offset: " << offset << std::endl;
-		std::cout << "level: " << level << " offset: " << offset << std::endl;
-		std::cout << "original template size X: " << _templateSizeX << " adjusted template size X: " << templateX << std::endl;
-		std::cout << "original template size Y: " << _templateSizeY << " adjusted template size Y: " << templateY << std::endl;
-		std::cout << "original template size Z: " << _templateSizeZ << " adjusted template size Z: " << templateZ << std::endl;
-	}
-	*/
 	int tiX, tiY, tiZ;
 	int deltaX, deltaY, deltaZ;
 	int nodeCnt = 0;
