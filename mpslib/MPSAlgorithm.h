@@ -207,19 +207,20 @@ protected:
 	* 1 : with grid preview on console
 	* 2 : extra files are exported (iteration counter) to output folder
 	*/
-	int _debugMode;
+	int _debugMode = 0;
 	/**
 	* @brief Show the simulation grid result in the console
 	*/
-	bool _showPreview;
+	bool _showPreview = 1;
 	/**
 	* @brief Initial value of the simulation
 	*/
-	float _seed;
+	float _seed = 0;
 	/**
 	* @brief Maximum number of iterations
 	*/
-	unsigned int _maxIterations;
+	unsigned int _maxIterations = std::numeric_limits<unsigned int>::max();
+	
 	/**
 	* @brief Dimension X of the training image
 	*/
@@ -235,7 +236,7 @@ protected:
 	/**
 	* @brief Maximum neighbour allowed when doing the neighbour search function
 	*/
-	int _maxNeighbours;
+	int _maxNeighbours = std::numeric_limits<int>::max();
 	/**
 	* @brief Make a random training image path
 	*/

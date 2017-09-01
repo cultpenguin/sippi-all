@@ -877,8 +877,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 	if(_debugMode > -1 ) {
 		std::cout << "Number of threads: " << _numberOfThreads << std::endl;
-		std::cout << "Conditional points: " << _maxNeighbours << std::endl;
-		std::cout << "Max iterations: " << _maxIterations << std::endl;
+		// std::cout << "_maxNeighbours: " << _maxNeighbours << std::endl;
+		// std::cout << " maxIterations: " << _maxIterations << std::endl;
 		std::cout << "SG: " << _sgDimX << " " << _sgDimY << " " << _sgDimZ << std::endl;
 		std::cout << "TI: " << _tiFilename << " " << _tiDimX << " " << _tiDimY << " " << _tiDimZ << " " << _TI[0][0][0]<< std::endl;
 	}

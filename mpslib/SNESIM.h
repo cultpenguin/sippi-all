@@ -115,7 +115,7 @@ protected:
 	/**
 	* @brief Min node count allowed
 	*/
-	int _minNodeCount;
+	int _minNodeCount = 0;
 
 	/**
 	* @brief List of available faces in the template
