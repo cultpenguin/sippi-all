@@ -1,5 +1,5 @@
 BBNumber of realizations # 1
-Random Seed (0 `random` seed) # 0
+Random Seed (0 `random` seed) # 1
 Maximum number of counts for conditional pdf # -1
 Max number of conditional point # 35
 Max number of iterations # -1
