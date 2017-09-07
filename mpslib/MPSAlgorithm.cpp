@@ -707,6 +707,12 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				std::cout << "MPSLIB: starting multigrid  " << level <<  std::endl;
 			}
 
+
+			if (_debugMode > 2) {
+				//Writting SG to file before simulation is done at current level
+				MPS::io::writeToGSLIBFile(outputFilename + "_sg_A_before_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+			}
+
 			_InitStartSimulationEachMultipleGrid(level);
 
 			//For each space level from coarse to fine
@@ -747,8 +753,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 					}
 				}
 			}
+			
 			if (_debugMode > 2) {
-				MPS::io::writeToGSLIBFile(outputFilename + "after_relocation_before_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+				MPS::io::writeToGSLIBFile(outputFilename + "_sg_B_after_hard_relocation_before_simulation_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 				std::cout << "After relocation" << std::endl;
 				_showSG();
 			}
@@ -786,6 +793,8 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 			////Cleaning the allocated data from the SG
 			//_clearSGFromHD(allocatedNodesFromHardData);
+			
+			MPS::io::writeToGSLIBFile(outputFilename + "_path_" + std::to_string(n) + "_level_" + std::to_string(level)  + ".gslib", _simulationPath, _simulationPath.size(), 1, 1);
 
 			for (unsigned int ii=0; ii<_simulationPath.size(); ii++) {
 				//Get node coordinates
@@ -816,7 +825,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				}
 			}
 			if (_debugMode > 2) {
-				MPS::io::writeToGSLIBFile(outputFilename + "after_simulation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+				MPS::io::writeToGSLIBFile(outputFilename + "_sg_C_after_simulation_before_cleaning_relocation_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 				std::cout << "After simulation" << std::endl;
 				_showSG();
 			}
@@ -824,19 +833,13 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			//Cleaning the allocated data from the SG
 			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData, nodeToPutBack);
 			if (_debugMode > 2) {
-				MPS::io::writeToGSLIBFile(outputFilename + "after_cleaning_relocation" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
+				MPS::io::writeToGSLIBFile(outputFilename + "_sg_D_after_hard_cleaning_relocation_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 				std::cout << "After cleaning relocation" << std::endl;
 				_showSG();
 			}
 
-			//Printing SG out to check
-			//if (level == 0 && _debugMode > -1) {
-
-
-			if (_debugMode > 2) {
-				//Writting SG to file
-				MPS::io::writeToGSLIBFile(outputFilename + "test_sg_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
-			}
+			
+			
 		}
 
 		if (_debugMode > 0) {

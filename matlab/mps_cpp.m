@@ -151,7 +151,11 @@ end
 
 %w_root='C:\Users\tmeha\RESEARCH\PROGRAMMING\MPS';
 
-w_root=[fileparts(which('mps_cpp')),filesep,'..'];
+if isfield(O,'exe_root')
+    w_root = O.exe_root;
+else
+    w_root=[fileparts(which('mps_cpp')),filesep,'..'];
+end
 O.exe_filename=[w_root,filesep,O.method];
 if ~isunix
     O.exe_filename=[O.exe_filename,'.exe'];
@@ -213,6 +217,49 @@ if (O.debug>1)
     end
     
 end
+
+%% relocation grids
+if (O.debug>2)
+    try
+    j=0;
+    for ilevel=O.n_multiple_grids:-1:0;
+        j=j+1;
+                                              
+        O.D_A_before{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_A_before_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
+        O.D_B_after_relocate{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_B_after_hard_relocation_before_simulation_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
+        O.D_C_after_sim{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_C_after_simulation_before_cleaning_relocation_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
+        O.D_D_after_sim{j}=read_eas_matrix(sprintf('%s%s%s%s_sg_D_after_hard_cleaning_relocation_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
+        
+    end
+    catch
+        disp(sprintf('%s: Could not read relocation grids',mfilename))
+    end
+end
+
+
+%% paths at grids
+if (O.debug>2)
+    try
+    j=0;
+    for ilevel=O.n_multiple_grids:-1:0;
+        j=j+1;
+        O.nmg_path{j}.index=read_eas(sprintf('%s%s%s%s_path_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
+        [O.nmg_path{j}.ix,O.nmg_path{j}.iy]=ind2sub([length(O.x) length(O.y)],O.nmg_path{j}.index+1);
+        %scatter(ix,iy,10,1:1:length(p0),'filled');caxis([1 5])
+        
+        
+        %keyboard
+    end
+    
+    catch
+    disp(sprintf('%s: Could not read nmg paths',mfilename))
+    end
+end
+
+
+
+
+
 
 %%
 if (O.debug>1)
