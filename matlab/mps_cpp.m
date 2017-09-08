@@ -244,11 +244,7 @@ if (O.debug>2)
     for ilevel=O.n_multiple_grids:-1:0;
         j=j+1;
         O.nmg_path{j}.index=read_eas(sprintf('%s%s%s%s_path_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
-        [O.nmg_path{j}.ix,O.nmg_path{j}.iy]=ind2sub([length(O.x) length(O.y)],O.nmg_path{j}.index+1);
-        %scatter(ix,iy,10,1:1:length(p0),'filled');caxis([1 5])
-        
-        
-        %keyboard
+        [O.nmg_path{j}.ix,O.nmg_path{j}.iy]=ind2sub([length(O.x) length(O.y)],O.nmg_path{j}.index+1);       
     end
     
     catch
@@ -256,6 +252,20 @@ if (O.debug>2)
     end
 end
 
+%% SOFT GRIDS
+if (O.debug>2)
+    try
+    j=0;
+    for ilevel=O.n_multiple_grids:-1:0;
+        j=j+1;       
+        O.SOFT_before{j}=read_eas_matrix(sprintf('%s%s%s%s_sdg_before_shuffling_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
+        O.SOFT_after{j}=read_eas_matrix(sprintf('%s%s%s%s_sdg_after_shuffling_0_level_%d.gslib',O.output_folder,filesep,f,e,ilevel));   
+    end
+    
+    catch
+        disp(sprintf('%s: Could not read soft data',mfilename))        
+    end
+end
 
 
 

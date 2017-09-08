@@ -39,6 +39,15 @@ else
   
 end
 
+try
+if exist(O.hard_data_filename)
+    d_hard=read_eas(O.hard_data_filename);
+end
+if exist(O.soft_data_filename)
+    d_soft=read_eas(O.soft_data_filename);
+end
+end        
+
 if (length(O.z)==1);
     % 2D
     
@@ -147,16 +156,29 @@ if (length(O.z)==1);
         NG=4;
         NM=O.n_multiple_grids+1;
         for i=1:NM
-            subplot(NG,NM,i);imagesc(O.D_A_before{i});axis image;caxis(cax);colormap(cmap)
+            subplot(NG,NM,i);imagesc(O.x,O.y,O.D_A_before{i});axis image;caxis(cax);colormap(cmap)
             title(sprintf('A - IGRID=%d',O.n_multiple_grids-i+1));
             
-            subplot(NG,NM,NM+i);imagesc(O.D_B_after_relocate{i});axis image;caxis(cax);colormap(cmap)
+            subplot(NG,NM,NM+i);imagesc(O.x,O.y,O.D_B_after_relocate{i});axis image;caxis(cax);colormap(cmap)
+            try
+                hold on;plot(d_hard(:,1),d_hard(:,2),'ro');hold off
+            end
+            try;hold on;scatter(d_soft(:,1),d_soft(:,2),20*abs(5-d_soft(:,4)),'ko');hold off;end
             title('B - After Relo')
+   
             
-            subplot(NG,NM,2*NM+i);imagesc(O.D_C_after_sim{i});axis image;caxis(cax);colormap(cmap)
+            subplot(NG,NM,2*NM+i);imagesc(O.x,O.y,O.D_C_after_sim{i});axis image;caxis(cax);colormap(cmap)
+            try
+                hold on;plot(d_hard(:,1),d_hard(:,2),'ro');hold off
+            end
+            try;hold on;scatter(d_soft(:,1),d_soft(:,2),20*abs(5-d_soft(:,4)),'ko');hold off;end
             title('C - After Sim')
             
-            subplot(NG,NM,3*NM+i);imagesc(O.D_D_after_sim{i});axis image;caxis(cax);colormap(cmap)
+            subplot(NG,NM,3*NM+i);imagesc(O.x,O.y,O.D_D_after_sim{i});axis image;caxis(cax);colormap(cmap)
+            try
+                hold on;plot(d_hard(:,1),d_hard(:,2),'ro');hold off
+            end
+            try;hold on;scatter(d_soft(:,1),d_soft(:,2),20*abs(5-d_soft(:,4)),'ko');hold off;end
             title('D - Rem relocated - done')
         end
         if hardcopy==1;
@@ -166,12 +188,6 @@ if (length(O.z)==1);
     end
     
     if isfield(O,'nmg_path');
-        if exist(O.hard_data_filename)
-            d_hard=read_eas(O.hard_data_filename);
-        end
-        if exist(O.soft_data_filename)
-            d_soft=read_eas(O.soft_data_filename);
-        end
         figure
         N=length(O.nmg_path);
         for i=1:N
@@ -181,29 +197,48 @@ if (length(O.z)==1);
             axis image
             set(gca,'ydir','reverse');
             box on
-            try
-                hold on
-                scatter(d_soft(:,1),d_soft(:,2),20*abs(5-d_soft(:,4)),'ko')
-                hold off
-            end
+            try;hold on;scatter(d_soft(:,1),d_soft(:,2),20*abs(5-d_soft(:,4)),'ko');hold off;end
             try
                 hold on
                 plot(d_hard(:,1),d_hard(:,2),'ro')
                 hold off
             end
+            title(sprintf('MG=%d',O.n_multiple_grids-i+1))
             colormap(gca,hot)
-            colormap(gca,jet)
+            colormap(gca,cmap_linear([1 0 0; 0 1 0; 0 0 1;0 0 0]))
+        end
+        try
+            suptitle('Random path at each grid')
         end
         if hardcopy==1;
-    
-            
-            
             print('-dpng',sprintf('%s_nmg_grid.png',O.ti_filename));
         end
-        
-    
     end
     
+    %% 
+    if isfield(O,'SOFT_before')
+        figure
+        N=length(O.nmg_path);
+        for i=1:N
+           subplot(2,N,i);
+           imagesc(O.x,O.y,O.SOFT_before{i}(:,:,1,1))
+           caxis([-1 1])
+           axis image
+           title(sprintf('before MG=%d',O.n_multiple_grids-i+1))
+          
+           subplot(2,N,i+N);
+           imagesc(O.x,O.y,O.SOFT_after{i}(:,:,1,1))
+           caxis([-1 1])
+           axis image
+           title(sprintf('after MG=%d',O.n_multiple_grids-i+1))
+          
+           
+        end
+    end
+    try;suptitle('SOft Data');end
+    if hardcopy==1;
+        print('-dpng',sprintf('%s_soft_data_grid.png',O.ti_filename));
+    end
     
 end
 
