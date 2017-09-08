@@ -361,7 +361,7 @@ protected:
 	* @brief Shuffle the simulation grid path based preferential to soft data
 	* @param level current multi grid level
 	*/
-	bool _shuffleSgPathPreferentialToSoftData(const int& level);
+	bool _shuffleSgPathPreferentialToSoftData(const int& level, std::list<MPS::Coords3D>& allocatedNodesFromSoftData);
 	/**
 	* @brief Generate a realization from a PDF defined as a map
 	* @param the pdf as a std::map

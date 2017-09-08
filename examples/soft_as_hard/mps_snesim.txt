@@ -1,10 +1,10 @@
-Number of realizations # 1
+Number of realizations # 100
 Random Seed (0 `random` seed) # 1
-Number of mulitple grids (start from 0) # 1
+Number of mulitple grids (start from 0) # 2
 Min Node count (0 if not set any limit)# 0
 Maximum number condtitional data (0: all) # 25
-Search template size X # 7
-Search template size Y # 7
+Search template size X # 3
+Search template size Y # 3
 Search template size Z # 1
 Simulation grid size X # 30
 Simulation grid size Y # 30
@@ -24,4 +24,4 @@ HardData seach radius (world units) # 130
 Softdata categories (separated by ;) # 0;1
 Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft_as_hard.dat
 Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
-Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 3
+Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 0

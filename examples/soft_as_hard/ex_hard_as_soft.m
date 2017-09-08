@@ -14,13 +14,13 @@ O.soft_data_filename='soft_as_hard.dat';
 
 %%
 O.filename_parameter='mps_snesim.txt';
-nmg=1;
+nmg=3;
 O.n_multiple_grids=nmg;
 O.debug=3;
 O.n_real=1;
 O.template_size=[10 10 1];
 O.template_size=[7 7 1];
-O.clean = 0;
+O.clean = 1;
 
 O.exe_root = 'E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
 
@@ -40,8 +40,8 @@ return
 O.filename_parameter='mps_snesim_mul.txt';
 O.debug=0;
 O.n_real=100;
-O.n_multiple_grids=1;
-O.template_size=[9 9 1];
+O.n_multiple_grids=2;
+O.template_size=[3 3 1];
 [r,Oo]=mps_cpp(TI,SIM,O);
 close all;
 mps_cpp_plot(r,Oo,1);

@@ -405,6 +405,8 @@ void MPS::MPSAlgorithm::_clearSGFromHD(std::vector<MPS::Coords3D>& addedNodes, s
 	putbackNodes.clear();
 }
 
+
+
 /**
 * @brief Read a line of configuration file and put the result inside a vector data
 * @param file filestream
@@ -486,8 +488,8 @@ bool MPS::MPSAlgorithm::_readLineConfiguration_mul(std::ifstream& file, std::str
 /**
 * @brief Shuffle the simulation grid path based preferential to soft data
 * @param level current multi grid level
-*/
-bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
+*/               
+bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level, std::list<MPS::Coords3D>& allocatedNodesFromSoftData) {
 	// PATH PREFERENTIAL BY ENTROPY OF SOFT DATA
 	// facEntropy=0 --> prefer soft data, but disregard entroopy
 	// facEntropy>0 --> higher number means more deterministic path based increasingly on Entropy
@@ -498,7 +500,7 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 	int node1DIdx;
 	bool isRelocated = false;
 	bool isAlreadyAllocated = false;
-	std::list<MPS::Coords3D> allocatedNodesFromSoftData; //Using to allocate the multiple grid with closest hd values
+	//std::list<MPS::Coords3D> allocatedNodesFromSoftData; //Using to allocate the multiple grid with closest hd values
 	std::map<float, float> softPdf;
 	MPS::Coords3D closestCoords;
 
@@ -507,18 +509,20 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 	for (int z=0; z<_sgDimZ; z+= offset) {
 		for (int y=0; y<_sgDimY; y+= offset) {
 			for (int x=0; x<_sgDimX; x+= offset) {
+				isRelocated = false;
 				randomValue = ((float) rand() / (RAND_MAX));
 				// Any Soft data??
 				if (_getCpdfFromSoftData(x, y, z, level, softPdf, closestCoords)) {
 
 					// We found a conditional data in the vicinity
-					c = c + 1;
-					std::cout << "nsoft=" << c << std::endl;
-					std::cout << "  [x,y,z]   = " << x << "," << y << "," << z  << " ## ";
-					std::cout << softPdf[0] << ","<< softPdf[1] << std::endl;
-					std::cout << "  [x,y,z]C  = " << closestCoords.getX() << "," << closestCoords.getY() << "," << closestCoords.getZ() << "," << std::endl;
-					//for(auto it = softPdf[.cbegin()]; it != softPdf.cend(); ++it) {
-					//	std::cout << it[] << std::endl;
+					if (_debugMode > 2) {
+						c = c + 1;
+						std::cout << "nsoft=" << c << std::endl;
+						std::cout << "  [x,y,z]   = " << x << "," << y << "," << z << " ## ";
+						std::cout << softPdf[0] << "," << softPdf[1] << std::endl;
+						std::cout << "  [x,y,z]C  = " << closestCoords.getX() << "," << closestCoords.getY() << "," << closestCoords.getZ() << "," << std::endl;
+					}
+					
 					//}
 					//Check if the closest node found already in the current relocated node
 					isAlreadyAllocated = (std::find(allocatedNodesFromSoftData.begin(), allocatedNodesFromSoftData.end(), closestCoords) != allocatedNodesFromSoftData.end());
@@ -531,10 +535,24 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 						isRelocated = x != closestCoords.getX() || y != closestCoords.getY() || z != closestCoords.getZ();
 						E=0;
 						for(auto it = softPdf.cbegin(); it != softPdf.cend(); ++it) {
+							
+							//Put the relocated softdata into the softdata grid to continue the simulation
+							// Remember to remove AFTER simulation is done
+							if (isRelocated) {
+								if (_debugMode > 2) {
+									std::cout << "  RELOCATING CAT:" << it->first << " p:" << it->second << std::endl;
+								}
+								for (unsigned int i = 0; i<_softDataCategories.size(); i++) {
+									if (it->first == _softDataCategories[i]) {
+										_softDataGrids[i][z][y][x] = it->second;										
+										break;
+									}
+								}
+							}
+							
 							//// COMPUTE ENTROPY FOR SOFT PDF
 							if (_shuffleSgPath==2) {
 								p = it->second;
-								//std::cout << p << std::endl;
 								if (p==0) {
 									Ei=0;
 								} else {
@@ -543,21 +561,9 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 								}
 								E=E+Ei;
 							}
-
-							//Put the relocated softdata into the softdata grid to continue the simulation
-							if (isRelocated) {
-								for (unsigned int i=0; i<_softDataCategories.size(); i++) {
-									if (it->first == _softDataCategories[i]) {
-										_softDataGrids[i][z][y][x] = it->second;
-										break;
-									}
-								}
-							}
 						}
 
 						I=1-E; // Information content
-
-						std::cout << "  I->" << I << std::endl;
 
 						// Order Soft preference based on Entropy, and use a factor to control
 						// the importance of Entropy
@@ -590,17 +596,6 @@ bool MPS::MPSAlgorithm::_shuffleSgPathPreferentialToSoftData(const int& level) {
 		}
 	}
 
-	//Reset relocated node of soft data to NaN
-	
-	if (isRelocated) {
-		for (std::list<MPS::Coords3D>::iterator ptToBeRelocated = allocatedNodesFromSoftData.begin(); ptToBeRelocated != allocatedNodesFromSoftData.end(); ++ptToBeRelocated) {
-			for (unsigned int i=0; i<_softDataCategories.size(); i++) {
-				_softDataGrids[i][ptToBeRelocated->getZ()][ptToBeRelocated->getY()][ptToBeRelocated->getX()] = std::numeric_limits<float>::quiet_NaN();
-			}
-		}
-	}
-	
-	allocatedNodesFromSoftData.clear();
 
 	if (_debugMode>-1) {
 		std::cout << "Shuffling path, using preferential path with facEntropy=" << facEntropy << std::endl;
@@ -660,8 +655,13 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 	clock_t endNode, beginRealization, endRealization;
 	double elapsedRealizationSecs, elapsedNodeSecs;
 	int nodeEstimatedSeconds, seconds, hours, minutes, lastProgress;
+	// HARD DATA RELOCATION
 	std::vector<MPS::Coords3D> allocatedNodesFromHardData; //Using to allocate the multiple grid with closest hd values
 	std::vector<MPS::Coords3D> nodeToPutBack; //Using to allocate the multiple grid with closest hd values
+	// SOFT DATA RELOCATION
+	std::list<MPS::Coords3D> allocatedNodesFromSoftData; //Using to allocate the multiple grid with closest hd values
+
+
 	lastProgress = 0;
 	int nodeCnt = 0, totalNodes = 0;
 	int sg1DIdx, offset;
@@ -779,14 +779,12 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 				std::random_shuffle ( _simulationPath.begin(), _simulationPath.end() );
 			} else if (_shuffleSgPath>1) {
 				// shuffling preferential to soft data
-				_shuffleSgPathPreferentialToSoftData(level);
+				_shuffleSgPathPreferentialToSoftData(level, allocatedNodesFromSoftData);
 			}
-
 
 			if (!_softDataGrids.empty() && _debugMode > 2) {
 				MPS::io::writeToGSLIBFile(outputFilename + "_sdg_after_shuffling_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _softDataGrids, _sgDimX, _sgDimY, _sgDimZ, _softDataCategories.size());
 			}
-
 
 			//Performing the simulation
 			//For each value of the path
@@ -839,6 +837,22 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 			//Cleaning the allocated data from the SG
 			if(level != 0) _clearSGFromHD(allocatedNodesFromHardData, nodeToPutBack);
+
+			//Cleaning the allocated data from the Soft Data Grid
+			if (level != 0 && allocatedNodesFromSoftData.size()>0) {
+					for (std::list<MPS::Coords3D>::iterator ptToBeRelocated = allocatedNodesFromSoftData.begin(); ptToBeRelocated != allocatedNodesFromSoftData.end(); ++ptToBeRelocated) {
+						// Clear relocated Soft data
+						for (unsigned int i=0; i<_softDataCategories.size(); i++) {
+							_softDataGrids[i][ptToBeRelocated->getZ()][ptToBeRelocated->getY()][ptToBeRelocated->getX()] = std::numeric_limits<float>::quiet_NaN();
+						}
+						// Clear simulated har data at relocated soft data location
+						_sg[ptToBeRelocated->getZ()][ptToBeRelocated->getY()][ptToBeRelocated->getX()] = std::numeric_limits<float>::quiet_NaN();
+				}
+			}
+			// clear list of allocated nodes on soft data
+			allocatedNodesFromSoftData.clear();
+
+
 			if (_debugMode > 2) {
 				MPS::io::writeToGSLIBFile(outputFilename + "_sg_D_after_hard_cleaning_relocation_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _sg, _sgDimX, _sgDimY, _sgDimZ);
 				std::cout << "After cleaning relocation" << std::endl;
