@@ -22,7 +22,7 @@ O.template_size=[10 10 1];
 O.template_size=[7 7 1];
 O.clean = 1;
 
-O.exe_root = 'E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
+%O.exe_root = 'E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
 
 O.shuffle_simulation_grid=2;
 O.entropyfactor_simulation_grid=100000;
@@ -41,8 +41,8 @@ O.filename_parameter='mps_snesim_mul.txt';
 O.debug=0;
 O.n_real=100;
 O.n_multiple_grids=2;
-O.template_size=[3 3 1];
-[r,Oo]=mps_cpp(TI,SIM,O);
+O.template_size=[5 5 1];
+[r,Oo]=mps_cpp_thread(TI,SIM,O);
 close all;
 mps_cpp_plot(r,Oo,1);
 figure(2);
