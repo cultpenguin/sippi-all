@@ -39,12 +39,23 @@ if nargin==0;
     imagesc(reals);drawnow;
 end
 
-D=[];
-reals=[];
-
 if nargin<1; TI=channels;end
 if nargin<2; SIM=zeros(100,100);end
 if nargin<3, O.null='';end
+
+if nargin==1;
+    if isstruct(TI);
+        O=TI;
+        TI=read_eas_matrix(O.ti_filename);
+        SIM=ones(length(O.y),length(O.x),length(O.z)).*NaN;
+    end
+end
+
+
+
+D=[];
+reals=[];
+
 
 
 %% DEFAULT VALUES

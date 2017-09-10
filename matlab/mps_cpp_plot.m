@@ -53,11 +53,12 @@ if (length(O.z)==1);
     
     % REALS
     figure;
-    nsp=ceil(sqrt(O.n_real));
-    for i=1:O.n_real;
+    np=min([O.n_real, 25]);
+    nsp=ceil(sqrt(np));
+    for i=1:np;
         subplot(nsp,nsp,i);
         imagesc(O.x,O.y,reals(:,:,i));
-        xlabel('X');ylabel('Y');title('First realization')
+        xlabel('X');ylabel('Y');title(sprintf('Real #%d',i))
         axis image;
     end
     if hardcopy==1; 
@@ -234,11 +235,12 @@ if (length(O.z)==1);
           
            
         end
+        try;suptitle('SOft Data');end
+        if hardcopy==1;
+            print('-dpng',sprintf('%s_soft_data_grid.png',O.ti_filename));
+        end
     end
-    try;suptitle('SOft Data');end
-    if hardcopy==1;
-        print('-dpng',sprintf('%s_soft_data_grid.png',O.ti_filename));
-    end
+    
     
 end
 
