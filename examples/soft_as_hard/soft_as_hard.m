@@ -67,7 +67,7 @@ for id=[0:6];
             t(i,j)=Oo.time./O.n_real;
             
             %% figure
-            figure(id);
+            figure(id+1);
             subplot(length(ishuf_arr),length(nmg_arr),j+(i-1)*length(nmg_arr));
             imagesc(em{i,j});
             caxis([-1 1])
@@ -90,7 +90,7 @@ for id=[0:6];
             
         end
     end
-    figure(id)
+    figure(id+1)
     try; suptitle(O.txt);end
     txt=sprintf('snes_id%d_n%d',id,Oo.n_real);
     print_mul(txt)
