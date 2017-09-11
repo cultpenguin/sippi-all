@@ -47,7 +47,7 @@ for id=[0:6];
     ishuf_arr=[0 1 2];
     nmg_arr=[0,1,2,3,4];
     
-    ishuf_arr=[2];
+    ishuf_arr=[1:];
     nmg_arr=[0,1,2];
     
     
@@ -60,7 +60,7 @@ for id=[0:6];
             O.shuffle_simulation_grid=ishuf;
             O.n_multiple_grids=nmg;
             
-            [r,Oo]=mps_cpp(TI,SIM,O);
+            [r,Oo]=mps_cpp_thread(TI,SIM,O);
             disp(sprintf('Time Elapsed: %gs',Oo.time))
             
             em{i,j}=etype(r);

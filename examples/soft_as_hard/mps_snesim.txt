@@ -1,6 +1,6 @@
-Number of realizations # 1
+Number of realizations # 1000
 Random Seed (0 `random` seed) # 302333
-Number of mulitple grids (start from 0) # 2
+Number of mulitple grids (start from 0) # 0
 Min Node count (0 if not set any limit)# 0
 Maximum number condtitional data (0: all) # 25
 Search template size X # 9
@@ -22,6 +22,6 @@ Shuffle Training Image path (1 : random, 0 : sequential) # 1
 HardData filename  (same size as the simulation grid)# duuumy.dat
 HardData seach radius (world units) # 130
 Softdata categories (separated by ;) # 0;1
-Soft datafilenames (separated by ; only need (number_categories - 1) grids) # soft_case1.dat
+Soft datafilenames (separated by ; only need (number_categories - 1) grids) # duuumy.dat
 Number of threads (minimum 1, maximum 8 - depend on your CPU) # 1
-Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 4
+Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # 0
