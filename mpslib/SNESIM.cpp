@@ -266,7 +266,7 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 	float totalCounter = 0;
 	for(std::map<float,int>::iterator iter = conditionalPoints.begin(); iter != conditionalPoints.end(); ++iter) {
 		totalCounter += iter->second;
-		// std::cout << "cpdf ti1: " << iter->first << " " << iter->second << std::endl;
+		//std::cout << "cpdf ti1: " << iter->first << " " << iter->second << std::endl;
 	}
 	//std::cout << "totalCounter " << totalCounter << std::endl;
 
@@ -307,6 +307,9 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 		probabilitiesFromSoftData.insert(std::pair<float, float>(_softDataCategories[lastIndex], 1 - sumProbability));
 		//std::cout << "cpdf sd: " << _softDataCategories[lastIndex] << " " << 1 - sumProbability << std::endl;
 		//Compute the combined probabilities from TI and Softdata
+		
+		// totalValue is the sum of the prodict fo P_TI and P_SOFT, IF THIS IS ZERO, THE the two are conflict
+		// Then rge soft data wins..
 		float totalValue = 0;
 		std::map<float,float>::iterator searchIter;
 		for(std::map<float,float>::iterator iter = probabilitiesFromSoftData.begin(); iter != probabilitiesFromSoftData.end(); ++iter) {
@@ -315,15 +318,57 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 			if (searchIter != probabilitiesFromTI.end()) totalValue += iter->second * probabilitiesFromTI[iter->first];
 			else totalValue += 0; //iter->second; //If probability from TI has less elements than sd then ignore it
 		}
+
+
 		//Normalize and compute cummulated value
 		float cumulateValue = 0;
 		for(std::map<float,float>::iterator iter = probabilitiesFromSoftData.begin(); iter != probabilitiesFromSoftData.end(); ++iter) {
 			//Size check
 			searchIter = probabilitiesFromTI.find(iter->first);
-			if (searchIter != probabilitiesFromTI.end()) cumulateValue += (iter->second * probabilitiesFromTI[iter->first]) / totalValue;
-			else cumulateValue += 0; //(iter->second) / totalValue;  //If probability from TI has less elements than sd then ignore it
+			if (searchIter != probabilitiesFromTI.end()) {
+				std::cout << "P_soft=" << iter->second << " P_TI=" << probabilitiesFromTI[iter->first] << " TOT=" << totalValue << std::endl;
+				cumulateValue += (iter->second * probabilitiesFromTI[iter->first]) / totalValue;
+			} else {
+				cumulateValue += 0; //(iter->second) / totalValue;  //If probability from TI has less elements than sd then ignore it
+			}
+			std::cout << "  cumulateValue=" << cumulateValue << std::endl;
+
 			probabilitiesCombined.insert(std::pair<float, float>(cumulateValue, iter->first));
 		}
+
+		if (totalValue == 0) {
+			// This means there is inconsistentcy between probabilitiesFromTI and probabilitiesFromSoftData
+			// In this case the 'data' takes precedence of the conditional pdf from TI
+			probabilitiesCombined.clear();
+			probabilitiesCombined.insert(probabilitiesFromSoftData.begin(), probabilitiesFromSoftData.end());
+		}
+
+
+		std::cout << "totalCounter " << totalCounter << std::endl;
+		// PRINT SOFT CONDITIONAL AND LCOAL SOFT PROB
+		std::cout << "TI  : ";
+		for (std::map<float, float>::iterator iter = probabilitiesFromTI.begin(); iter != probabilitiesFromTI.end(); ++iter) {
+			std::cout << " P[" << iter->first << "]=";
+			std::cout << iter->second;
+		}
+		std::cout << std::endl;
+		std::cout << "SOFT: ";
+		for (std::map<float, float>::iterator iter = probabilitiesFromSoftData.begin(); iter != probabilitiesFromSoftData.end(); ++iter) {
+			std::cout << " P[" << iter->first << "]=";
+			std::cout << iter->second;
+		}
+		std::cout << std::endl;
+		std::cout << "COMB: ";
+		for (std::map<float, float>::iterator iter = probabilitiesCombined.begin(); iter != probabilitiesCombined.end(); ++iter) {
+			std::cout << " P[" << iter->first << "]=";
+			std::cout << iter->second;
+		}
+		std::cout << std::endl;
+		std::cout << std::endl;
+
+
+
+
 	} else {
 		//Only from TI
 		float cumulateValue = 0;

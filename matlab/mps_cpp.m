@@ -22,6 +22,11 @@
 %   % set as d_soft parameter:
 %   O.d_soft [x y z prob_0 prob_1 ...]
 %
+%
+% % optional
+%   O.exe_root: sets the path the folder containing the MPS binary files
+%
+%
 % See also: mps_snesim_read_par, mps_snesim_write_par, mps_enesim_read_par,
 % mps_enesim_write_par
 %
