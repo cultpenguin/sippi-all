@@ -1,7 +1,7 @@
 clear all;%close all
 TI=read_eas_matrix('ti.dat');
 SIM=zeros(30,30).*NaN;
-O=mps_snesim_read_par('mps_snesim_0417.txt');
+O=mps_snesim_read_par('mps_snesim.txt');
 
 O.template_size=[9 9 1];
 O.n_real=1000;
@@ -10,7 +10,7 @@ O.debug=0;
        
 %O.exe_root='E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
 
-%for id=[6];
+%for id=[1];
 for id=[0:6];
     O.filename_parameter=sprintf('mps_snesim_%d.txt',id);
     clear t em;
@@ -47,7 +47,7 @@ for id=[0:6];
     ishuf_arr=[0 1 2];
     nmg_arr=[0,1,2,3,4];
     
-    ishuf_arr=[1 2];
+    ishuf_arr=[2];
     nmg_arr=[0,1,2];
     
     
@@ -60,7 +60,7 @@ for id=[0:6];
             O.shuffle_simulation_grid=ishuf;
             O.n_multiple_grids=nmg;
             
-            [r,Oo]=mps_cpp_thread(TI,SIM,O);
+            [r,Oo]=mps_cpp(TI,SIM,O);
             disp(sprintf('Time Elapsed: %gs',Oo.time))
             
             em{i,j}=etype(r);
