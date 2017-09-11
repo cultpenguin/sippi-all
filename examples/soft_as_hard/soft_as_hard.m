@@ -4,11 +4,11 @@ SIM=zeros(30,30).*NaN;
 O=mps_snesim_read_par('mps_snesim_0417.txt');
 
 O.template_size=[9 9 1];
-O.n_real=200;
-O.n_cond=16;
+O.n_real=1000;
+O.n_cond=25;
 O.debug=0;
        
-O.exe_root='E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
+%O.exe_root='E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
 
 %for id=[6];
 for id=[0:6];
