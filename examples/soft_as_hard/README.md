@@ -37,7 +37,7 @@ col4, unknown
 Running `soft_as_hard.m` will generate 1000 conditional realizations (using both a random and preferential path). The two figures below shows the Etype-mean 
 (probability of a channel in this case) in case considering the information as soft (top) and hard (bottom) data.
 
-![Consideing soft data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/soft_as_hard/snes_id4_n1000.png)
+![Considering soft data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/soft_as_hard/snes_id4_n1000.png)
 
-![Consideing hard data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/soft_as_hard/snes_id6_n1000.png)
+![Considering hard data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/soft_as_hard/snes_id6_n1000.png)
 
