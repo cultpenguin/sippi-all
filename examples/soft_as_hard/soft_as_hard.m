@@ -47,8 +47,8 @@ for id=[0:6];
     ishuf_arr=[0 1 2];
     nmg_arr=[0,1,2,3,4];
     
-    ishuf_arr=[1:];
-    nmg_arr=[0,1,2];
+    %ishuf_arr=[2];
+    %nmg_arr=[0,1,2];
     
     
     figure(id+1);clf
