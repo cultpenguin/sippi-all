@@ -38,5 +38,5 @@ Running `soft_as_hard.m` will generate 1000 conditional realizations (using both
 (probability of a channel in this case) in case considering the information as soft (top) and hard (bottom) data.
 
 ![Considering soft data](https://raw.githubusercontent.com/ergosimulation/mpslib/snesim/examples/soft_as_hard/snes_id4_n1000.png)
-![Considering hard data](https://raw.githubusercontent.com/ergosimulation/mpslib/master/examples/soft_as_hard/snes_id6_n1000.png)
+![Considering hard data](https://raw.githubusercontent.com/ergosimulation/mpslib/snesim/examples/soft_as_hard/snes_id6_n1000.png)
 
