@@ -27,6 +27,9 @@ namespace MPS {
 	* Functions used to import different file formats into a training image and export a 3D grid into file. It also includes function to draw a 3D grid in the console
 	*
 	*/
+
+	
+
 	namespace io {
 		/**
 		* @brief Static predefined char array which is used to represent on the screen
@@ -50,6 +53,7 @@ namespace MPS {
 		*/
 		bool file_exist(const std::string& fileName);
 
+		
 		/**
 		* @brief Read a GSLIB file and put data inside a training image, multiple channel supported
 		*
@@ -140,6 +144,19 @@ namespace MPS {
 		* @param sgDimZ dimension Z of SG
 		*/
 		void writeToGSLIBFile(const std::string& fileName, const std::vector<std::vector<std::vector<float>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ);
+
+		/**
+		* @brief Write multiple simulation 3D grid result into a GSlib file
+		*
+		* @param fileName destination's file name
+		* @param sg the simulation grid which is a 3D float vector
+		* @param sgDimX dimension X of SG
+		* @param sgDimY dimension Y of SG
+		* @param sgDimZ dimension Z of SG
+		* @param sgN number of 3D realizations
+		*/
+		void writeToGSLIBFile(const std::string& fileName, const std::vector<std::vector<std::vector<std::vector<float>>>>& sg, const int& sgDimX, const int& sgDimY, const int& sgDimZ, const int& sgN);
+	    
 
 		/**
 		* @brief Write indices array into a GSlib file
