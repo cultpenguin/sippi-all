@@ -36,11 +36,12 @@ class MPS::ENESIM :
 private:
 
 protected:
+
 	/**
 	* @brief maximum number of counts setting up conditional pdf
 	*/
-	int _nMaxCountCpdf=1;
-
+	int _nMaxCountCpdf = 1;
+	
 	/**
 	* @brief Select whether to use Metropolis style soft data conditioning
 	*/
@@ -115,6 +116,16 @@ protected:
 	* @return simulated value
 	*/
 	float _getRealizationFromCpdfTiEnesimRejection(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
+
+	/**
+	* @brief Compute realization using cpdf obtained using ENESIM and Metropolis with NON-colocated soft data
+	* @param sgIdxX coordinate X of the current node
+	* @param sgIdxY coordinate Y of the current node
+	* @param sgIdxZ coordinate Z of the current node
+	* @param iterationCnt Iterations counter
+	* @return simulated value
+	*/
+	float _getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, float& iterationCnt);
 
 	/**
 	* @brief Compute distance between conditional data in TI and template L
