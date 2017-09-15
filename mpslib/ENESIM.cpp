@@ -481,12 +481,11 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	std::vector<float> V_c;
 	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L_c, V_c);
 
-	if (_debugMode>-2) {
-		std::cout << "_getCpdfTiEnesim: -- ENESIM TOP --" << std::endl;
-		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
-		std::cout << "nLxyz=" << L_c.size() << "(of max " << _maxNeighbours << ")" << std::endl;
-		std::cout << "circularSearch: _maxNeighbours=" << _maxNeighbours << " _maxSearchRadius=" << _maxSearchRadius << std::endl;
-
+	if (_debugMode>2) {
+		std::cout << "_getCpdfTiEnesimNew: -- ENESIM TOP --"; 
+		std::cout << " SGxyz=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")";
+		std::cout << " nLxyz=" << L_c.size() << "(of max " << _maxNeighbours << ")";
+		std::cout << " CircularSearch: _maxNeighbours=" << _maxNeighbours << " _maxSearchRadius=" << _maxSearchRadius << std::endl;
 	}
 
 //	std::cout << "START" << std::endl;
@@ -581,8 +580,9 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 					L_s.clear();
 					V_s.clear();
 					_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _softDataGrids[0], _maxNeighbours_soft, _maxSearchRadius_soft, L_s, V_s);
-					std::cout << "--> Found N_soft_cond data = " << L_s.size() << std::endl;
-					
+					if (_debugMode>2) {
+						std::cout << "--> Found N_soft_cond data = " << L_s.size() << std::endl;
+					}
 					P_soft_i.clear();
 					P_soft_max_i.clear();
 
@@ -607,7 +607,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 							if (TI_x_soft >= 0 && TI_x_soft < _tiDimX && TI_y_soft >= 0 && TI_y_soft  < _tiDimY && TI_z_soft >= 0 && TI_z_soft  < _tiDimZ) {
 								// get value at soft position in TI
 								//float sdValTI = _sg[sdZ][sdY][sdX];
-								if (_debugMode > -4) {
+								if (_debugMode > 4) {
 									std::cout << " Soft pos in TI=(" << TI_x_soft << "," << TI_y_soft << "," << TI_z_soft << ")";
 									std::cout << " ValInTI=" << _TI[TI_z_soft][TI_y_soft][TI_x_soft];
 									std::cout << " relpos=(" << L_s[i].getX() << "," << L_s[i].getY() << "," << L_s[i].getZ() << ")";
@@ -626,7 +626,6 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 									}
 								}
 
-								
 								// find category id of found value in the TI at locations of the soft data
 								unsigned int icat;	
 								for (unsigned int i = 0; i < _softDataCategories.size(); i++) {
@@ -649,18 +648,23 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 					}
 					
 					// We now have the probability for the maxNeighbours_soft closest soft data, with probabilities stored in P_soft_i
-					std::cout << "--> Using N_soft_cond data = " << P_soft_i.size() << std::endl;
-
+					if (_debugMode > 2) {
+						std::cout << "--> Using N_soft_cond data = " << P_soft_i.size() << std::endl;
+					}
 					// get the combined soft probability
 					P_soft = 0;
 					P_soft_max = 0;
 					if (P_soft_i.size() > 0) {
 						P_soft = P_soft_i[0];
 						P_soft_max = P_soft_max_i[0];
-						std::cout << "  [P_soft,P_soft_max]=" << P_soft_i[0] << "," << P_soft_max_i[0] << std::endl;
+						if (_debugMode>2) {
+							std::cout << "  [P_soft,P_soft_max]=" << P_soft_i[0] << "," << P_soft_max_i[0] << std::endl;
+						}
 						if (P_soft_i.size() > 1) {
 							for (int index = 1; index < P_soft_i.size(); ++index) {
-								std::cout << "  [P_soft,P_soft_max]=" << P_soft_i[index] << "," << P_soft_max_i[index] << std::endl;
+								if (_debugMode > 2) {
+									std::cout << "  [P_soft,P_soft_max]=" << P_soft_i[index] << "," << P_soft_max_i[index] << std::endl;
+								}
 								P_soft = P_soft * P_soft_i[index];
 								P_soft_max = P_soft_max * P_soft_max_i[index];
 							}
@@ -673,13 +677,6 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 						
 					}
 					
-					//P_soft = P_soft / P_soft_max;
-					//std::cout << "conditionalSoftProb[0] " << conditionalSoftProb[0] << std::endl;
-					//std::cout << "conditionalSoftProb[1] " << conditionalSoftProb[1] << std::endl;
-					//std::cout << "valueFromTI=" << valueFromTI << "  P_soft=" << P_soft << std::endl;
-					
-					//std::cout << "conditionalSoftProb[0] " << conditionalSoftProb[0] << std::endl;
-					//std::cout << "conditionalSoftProb[1] " << conditionalSoftProb[1] << std::endl;
 					
 				} else {
 					P_soft = 1;
@@ -719,18 +716,14 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	// and, if avaialble, information from soft probabilities f(m_i|m_c)*f_soft(m)
 
 
-	if (_debugMode >- 2) {
+	if (_debugMode > 2) {
 		std::cout << "  f(m_i|m_c)=[" << conditionalCount[_softDataCategories[0]] << "," << conditionalCount[_softDataCategories[1]] << "]";
 		std::cout << "  f(m_i|m_c)*f_soft(m)=[" << conditionalSoftProb[_softDataCategories[0]] << "," << conditionalSoftProb[_softDataCategories[1]] << "]" << std::endl;
 	}
 
 	
 
-	// At this point set the local soft data as NaN to avoid simulate it again
-	if (!_softDataGrids.empty()) {
-		_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
-	}
-
+	
 	// assign minimum distance to temporary grid 1
 	if (_debugMode>1) {
 		_tg1[sgIdxZ][sgIdxY][sgIdxX] = LC_dist_current;
@@ -1154,7 +1147,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 			randomValue = ((float)rand() / (RAND_MAX));
 			pAcc = SoftProbability;
 
-			if (_debugMode > -2) {
+			if (_debugMode > 2) {
 				std::cout << "  i= " << i << " maxIterations=" << maxIterations;
 				std::cout << "   p_ti = [" << conditionalPdfFromTi[0] << "," << conditionalPdfFromTi[1] << "]";
 				std::cout << " simval = " << simulatedValue;
@@ -1164,12 +1157,10 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 			// accept simulatedValue with probabilty from soft data
 			if (randomValue<pAcc) {
 				isAccepted = true;
-				std::cout << "  ACCEPTED "; // << randomValue << "<" pAcc << std::endl;
-
+				//std::cout << "  cACCEPTED  as " << randomValue << "<" << pAcc << std::endl;
 			}
 			else {
-				std::cout << "  current Hard data real rejected as "; // << randomValue << "<" pAcc << std::endl;
-
+				//std::cout << "  current Hard data real rejected as " << randomValue << "!<" << pAcc << std::endl;
 			}
 			i++;
 
@@ -1184,7 +1175,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 
 	}
 
-	if (_debugMode > -2) {
+	if (_debugMode >1) {
 		std::cout << "at [ix,y,ix]=[" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << "] real=" << simulatedValue << std::endl;
 		// std::cout << "Simulated value="<< simulatedValue << ", LC_dist_min=" << LC_dist_min << " " << std::endl ;
 		// std::cout << "Simulated value=" << simulatedValue << " " << std::endl;
@@ -1192,6 +1183,13 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 
 	// DONE SIMULATING
 	
+	// At this point set the local soft data as NaN to avoid simulate it again
+	if (!_softDataGrids.empty()) {
+		_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
+		// Check if there are any more soft data left. If so, empty the _softDataGrid!
+	}
+
+
 	return simulatedValue;
 }
 

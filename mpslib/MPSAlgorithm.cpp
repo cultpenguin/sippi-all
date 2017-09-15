@@ -1074,8 +1074,7 @@ void MPS::MPSAlgorithm::_circularSearch(const int& sgIdxX, const int& sgIdxY, co
 		foundCnt++;
 		MPS::Coords3D aCoords(0, 0, 0);
 		L.push_back(aCoords);
-		V.push_back(grid[sgIdxZ][sgIdxY][sgIdxX]);
-		std::cout << "FOUD CENTER NODE" << std::endl;
+		V.push_back(grid[sgIdxZ][sgIdxY][sgIdxX]);		
 	}
 
 	//random direction
