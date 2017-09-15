@@ -65,10 +65,20 @@ protected:
 	float _distance_power_order=0; // power order
 
 	/**
-	* @brief Maximum Search Radius
+	* @brief Maximum Search Radius HARD data
 	*/
-	float _maxSearchRadius=1e+9; // power order
+	float _maxSearchRadius=1e+9; 
 
+		
+	/**
+	* @brief Maximum Search Radius HARD data
+	*/
+	int _maxSearchRadius_soft = 5;
+	
+	/**
+	* @brief Maximum number conditioning SOFT data
+	*/
+	int _maxNeighbours_soft = 3;
 
 
 	/**
@@ -87,6 +97,7 @@ protected:
 	* @return true if found a value
 	*/
 	bool _getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPDF);
+	bool _getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPDF, float& SoftProbability);
 
 	/**
 	* @brief Compbine two PDFs assuming independence
@@ -136,7 +147,7 @@ protected:
 	* @return distance
 	*/
 	float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ,  std::vector<float>& L_dist);
-	float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ);
+	//float _computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ);
 
 public:
 	/**

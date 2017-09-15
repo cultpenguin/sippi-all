@@ -201,118 +201,98 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 * @param map with conditional pdf
 * @return true if found a value
 */
-
 bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPdf) {
 	int maxCpdfCount = _nMaxCountCpdf;
 
 	// map containing the count of conditional data values
 	std::map<float, int> conditionalCount;
 
-
-	//float h_dist; // distance to conditional event
-	//float h_dist_cum; // cumulative distance to conditional event
-	//float h_power=0; // distance weight
-	int CpdfCount = 0;
-	float valueFromTI;
-	float LC_dist_min;
-	float LC_dist_current;
-	float TI_x_min, TI_y_min, TI_z_min;
+	int CpdfCount = 0; // the number of matches found, hence the number of counts used to construct the condtitional
+	float valueFromTI; 
+	float LC_dist_current; // the 'current' distance'
+	float LC_dist_min; // The minimal distance found
+	float TI_x_min, TI_y_min, TI_z_min; // The position in the TI associated with the minimal distance
 	int TI_idxX, TI_idxY, TI_idxZ;
+	float V_center_ti = -1; // value of the central node in the TI
+	int node1DIdx; // Integer to hold 1d index from 3D point
+	std::vector<MPS::Coords3D> L_s; // relative location in soft grid
+	std::vector<float> V_s; // value at realtive location in soft grid
 
 
-
-	//Do simulation only for NaN value
-
-	//Seaching for neighbours to get vector V and L
-	//Doing a circular seach ATM ...
-
-	std::vector<MPS::Coords3D> L;
-	std::vector<float> V;
-	//_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, -1, L, V);
-	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L, V);
-		/**
-	* @brief maximum number of counts setting up conditional pdf
-	*/
-
+	// Find (_maxNeighbours) the closest data in simulation grid (_sg)
+	// and store the relive locatoin in L_h, and the values in V_h
+	std::vector<MPS::Coords3D> L_c;
+	std::vector<float> V_c;
+	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L_c, V_c);
 	
-
 	if (_debugMode>2) {
 		std::cout << "_getCpdfTiEnesim: -- ENESIM TOP --"<< std::endl;
 		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY <<  "," << sgIdxZ <<")" << std::endl;
-		std::cout << "nLxyz=" << L.size() << "(of max "<< _maxNeighbours << ")" << std::endl;
+		std::cout << "nLxyz=" << L_c.size() << "(of max "<< _maxNeighbours << ")" << std::endl;
 		std::cout << "circularSearch: _maxNeighbours=" << _maxNeighbours << " _maxSearchRadius=" << _maxSearchRadius << std::endl;
 
 	}
 
-	// Compute realtive distance for each conditional data
-	std::vector<float> L_dist(L.size());
-	for (unsigned int i=0; i<L.size(); i++) {
-
-		if (_debugMode>3) {
-			std::cout << "  Lxyx=("<<L[i].getX() << ","<<L[i].getY() <<  ","<<L[i].getZ() << ")"<< " V="<<V[i]<< std::endl;
+	// Compute relative distance for each conditional data
+	std::vector<float> L_dist(L_c.size());
+	for (unsigned int i=0; i<L_c.size(); i++) {
+		 if (_debugMode>3) {
+			std::cout << "  Lxyz=("<<L_c[i].getX() << ","<<L_c[i].getY() <<  ","<<L_c[i].getZ() << ")"<< " V="<<V_c[i]<< std::endl;
 		}
 		if (_distance_power_order!=0) {
-			//h_dist = sqrt(L[i].getX()*L[i].getX() + L[i].getY()*L[i].getY() + L[i].getZ()*L[i].getZ());
-			L_dist[i] = sqrt(L[i].getX()*L[i].getX() + L[i].getY()*L[i].getY() + L[i].getZ()*L[i].getZ());
+			L_dist[i] = sqrt(L_c[i].getX()*L_c[i].getX() + L_c[i].getY()*L_c[i].getY() + L_c[i].getZ()*L_c[i].getZ());
 			L_dist[i]  = pow(L_dist[i],-1*_distance_power_order) ;
 
 		} else {
 			L_dist[i]=1;
 		}
 	}
- 	//for(float n : L_dist) {
-//        std::cout << n << '\n';
-//			}
 
-	// The training image path is shifted such that a random start location is chosen
+	
+	// The path scanning the training image is shifted such that a random start location is chosen
 	int ti_shift;
 	ti_shift = (std::rand() % (int)(_tiDimX*_tiDimY*_tiDimZ));
 	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
 
-	// At this point V represents the conditional value(s), and L realtive position(s) oF of the contitional values(s).
-	// In the folloing the training image should be scanned for all matches of V,L
-	// to find the local conditional pdf f(m_i ~ m_c)
+	// At this point V_c represents the conditional value(s), and L_c realtive position(s) oF of the contitional (hard) values(s).
+	// to find the local conditional pdf f_TI(m_i | m_c)
 
-	// Loop over training image to find a close match to L,V
+	
+	// For SOFT DATA
+	std::map<float, std::vector<float>> conditionalSoftProb;
 
-	// Set number of count in Cpdf to zero
-	CpdfCount = 0;
-	//float V_ti; // template Value in TI
-	//V_ti=-1;
-	float V_center_ti; // value of the central node in the TI
-	V_center_ti=-1;
-
- 	int node1DIdx; // Integer to hold 1d index from 3D point
-
-  LC_dist_min = 1e+9;
-	//float L_dist;  // sum of realtive distance
+	
+	// Loop over training image to find a close match to L_c and find ,V_c
+	
+	CpdfCount = 0; // Set number of count in Cpdf to zero
+	LC_dist_min = std::numeric_limits<float>::max(); // set the current 'minimum' distance to a very high number
 	float LC_dist; // distance of L,V to value in TI
 	unsigned int i_ti_path;
+	
 	for (i_ti_path=0; i_ti_path<_tiPath.size(); i_ti_path++) {
 		MPS::utility::oneDTo3D(_tiPath[i_ti_path], _tiDimX, _tiDimY, TI_idxX, TI_idxY, TI_idxZ);
-
 
 		// Get the centered value in the TI
 		V_center_ti = _TI[TI_idxZ][TI_idxY][TI_idxX];
 
 		// Get the distance between the conditional data in TI and SIM grid
-		LC_dist = _computeDistanceLV_TI(L, V, TI_idxX, TI_idxY, TI_idxZ, L_dist);
-		//LC_dist = _computeDistanceLV_TI(L, V, TI_idxX, TI_idxY, TI_idxZ);
+		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_dist);
+		
 
 
 		// Check if current L,T in TI match conditional observations better
 		if (LC_dist<LC_dist_min) {
-			LC_dist_min=LC_dist;
-			//std::cout << "  -->" << LC_dist_min << " " << LC_dist << std::endl;
-			// We have a new MIN distance
-			valueFromTI = V_center_ti;
-
-			LC_dist_current = LC_dist;
-			// keep track of the locaton in TI used for match
+			
+			// We have a new MIN distance, update the found conditional values 
+			//   as well as the minimum distance and the associated location in the TI
+			valueFromTI = V_center_ti; 
+			LC_dist_current = LC_dist; // needed?
+			LC_dist_min = LC_dist;
 			TI_x_min = TI_idxX;
 			TI_y_min = TI_idxY;
 			TI_z_min = TI_idxZ;
-
+			  
+			
 			// Add a count to the Cpdf if the current node match L,V according to some threshold..
 			if (LC_dist<=_distance_threshold) {
 				CpdfCount++;
@@ -330,22 +310,6 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 				}
 				// MAKE SURE TO RESET LC_dist_min
 				LC_dist_min = 1e+9;
-			
-			
-				// WE HAVE A MATCH. 
-				// IF COLOCATED
-				//    FIND ANY COLOCATED SOFT DATA -> THE DEFAULT AND FASTEST
-				// IF NON COLOCATED 
-				//    LOOK FOR FOR THE N_c closest NON_COLOCATED DATA
-				// NOW, OPTIONALLY LOOK FOR THE SOFT CONDITIONAL DATA, AND COMPUTE THE PROBABILITY OF THE SOFT CONDITIONAL DATA, CONDITINOAL TO THE FOUND MATCH IN THE TI
-				// FOR EACH MATCH THIS SHOULD RESULT IN PROBABAILITTY : PROD((f_soft(m_i) == m_i^*)) / f_max
-				// THIS probability SHOULD BE RETUREN AS WELL AS THE 
-				// OUTPUT SHOULD BE AN ARRAY OR PROBABILITIS, ONE FOR EACH FOUND MATCH OF THE HARD DATA!
-				// Then, one can decide elsewhere how to combine these
-			
-				// 1. FIND CONDITIONAL SOFT DATA (OPTINALLY ONLY 1 COLOCATED SOFT DATA!!)
-				// 2. LOOP THROUGH CONDITIONAL SOFT DATA AND COMPUTE THE NORMALIZAED PROBABILITY OF EACH ONE SOFT DATA SET
-				//    MULTIPLY THIS TO THE
 			
 
 			}
@@ -379,14 +343,14 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 			break;
 		}
 
-
+		//std::cout << "-- DONE --" << std::endl;
 
 	} // END SCAN OF TI FOR CPDF
   //std::cout << sgIdxX << "," << sgIdxY << "  :h_dist_cum = " << h_dist_cum << "  LC_dist = "<< LC_dist << std::endl;
 
 	
-
-
+	// At this point set the local soft data as NaN to avoid simulate it again
+	_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
 
 	// assign minimum distance to temporary grid 1
 	if (_debugMode>1) {
@@ -396,7 +360,7 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 		_tg3[sgIdxZ][sgIdxY][sgIdxX] = node1DIdx;
 		//_tg4[sgIdxZ][sgIdxY][sgIdxX] = _tiPath[i_ti_path]; // POSITION ON TI
 		_tg4[sgIdxZ][sgIdxY][sgIdxX] = i_ti_path;
-		_tg5[sgIdxZ][sgIdxY][sgIdxX] = L.size(); // number of used conditional points
+		_tg5[sgIdxZ][sgIdxY][sgIdxX] = L_c.size(); // number of used conditional points
 	}
 
 
@@ -440,6 +404,386 @@ bool MPS::ENESIM::_getCpdfTiEnesim(const int& sgIdxX, const int& sgIdxY, const i
 
 		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY <<  "," << sgIdxZ <<")" << std::endl;
 		std::cout << "_getCpdfTiEnesim: -- ENESIM END --"<< std::endl;
+
+	}
+
+
+
+	return true;
+}
+
+
+
+/**
+* @brief Compute cpdf from training image using ENESIM type
+* @param x coordinate X of the current node
+* @param y coordinate Y of the current node
+* @param z coordinate Z of the current node
+* @param map with conditional pdf
+* @return true if found a value
+*/
+bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, std::map<float, float>& cPdf, float& SoftProbability) {
+
+	// MAKE SURE TO COUNT THE NUMBER OF SOFT CONDTIONING DATA ONCE, SUCH THAT WE DO NOT NEED
+	// TO LOOK FOR SOFT DATA ONCE THEY HAVE BEEN SIMULATED!
+	// COULD SPEED UP SNESIM AS WELL
+
+	int maxCpdfCount = _nMaxCountCpdf;
+
+	// map containing the count of conditional hard data values
+	std::map<float, int> conditionalCount;
+	// map containing the probability of conditional conditional data values
+	std::map<float, float> conditionalSoftProb;
+	
+	SoftProbability = 1;
+
+	int CpdfCount = 0; // the number of matches found, hence the number of counts used to construct the condtitional
+	float valueFromTI;
+	float LC_dist_current; // the 'current' distance'
+	float LC_dist_min; // The minimal distance found
+	float TI_x_min, TI_y_min, TI_z_min; // The position in the TI associated with the minimal distance
+	int TI_idxX, TI_idxY, TI_idxZ;
+	float V_center_ti = -1; // value of the central node in the TI
+	int node1DIdx; // Integer to hold 1d index from 3D point
+	std::vector<MPS::Coords3D> L_s; // relative location in soft grid
+	std::vector<float> V_s; // value at realtive location in soft grid
+
+	std::vector<float> P_soft_i;
+	std::vector<float> P_soft_max_i;
+
+	// initialize counters of hard and soft data stats 
+	for (unsigned int i = 0; i < _softDataCategories.size(); i++) {
+		conditionalCount[_softDataCategories[i]] = 0;
+		conditionalSoftProb[_softDataCategories[i]] = 0;
+	}
+						
+	// Find (_maxNeighbours) the closest data in simulation grid (_sg)
+	// and store the relive locatoin in L_h, and the values in V_h
+	std::vector<MPS::Coords3D> L_c;
+	std::vector<float> V_c;
+	_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _sg, _maxNeighbours, _maxSearchRadius, L_c, V_c);
+
+	if (_debugMode>2) {
+		std::cout << "_getCpdfTiEnesim: -- ENESIM TOP --" << std::endl;
+		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
+		std::cout << "nLxyz=" << L_c.size() << "(of max " << _maxNeighbours << ")" << std::endl;
+		std::cout << "circularSearch: _maxNeighbours=" << _maxNeighbours << " _maxSearchRadius=" << _maxSearchRadius << std::endl;
+
+	}
+
+//	std::cout << "START" << std::endl;
+//	std::cout << "f(m_i|m_c)=[" << conditionalCount[_softDataCategories[0]] << "," << conditionalCount[_softDataCategories[1]] << "]";
+//	std::cout << "  f_soft(m_i)=[" << conditionalSoftProb[_softDataCategories[0]] << "," << conditionalSoftProb[_softDataCategories[1]] << "]" << std::endl;
+
+
+	// Compute relative distance for each conditional data
+	std::vector<float> L_dist(L_c.size());
+	for (unsigned int i = 0; i<L_c.size(); i++) {
+		if (_debugMode>3) {
+			std::cout << "  Lxyz=(" << L_c[i].getX() << "," << L_c[i].getY() << "," << L_c[i].getZ() << ")" << " V=" << V_c[i] << std::endl;
+		}
+		if (_distance_power_order != 0) {
+			L_dist[i] = sqrt(L_c[i].getX()*L_c[i].getX() + L_c[i].getY()*L_c[i].getY() + L_c[i].getZ()*L_c[i].getZ());
+			L_dist[i] = pow(L_dist[i], -1 * _distance_power_order);
+
+		}
+		else {
+			L_dist[i] = 1;
+		}
+	}
+
+
+	// The path scanning the training image is shifted such that a random start location is chosen
+	int ti_shift;
+	ti_shift = (std::rand() % (int)(_tiDimX*_tiDimY*_tiDimZ));
+	std::rotate(_tiPath.begin(), _tiPath.begin() + ti_shift, _tiPath.end());
+
+	// At this point V_c represents the conditional value(s), and L_c realtive position(s) oF of the contitional (hard) values(s).
+	// to find the local conditional pdf f_TI(m_i | m_c)
+
+
+	
+
+	// Loop over training image to find a close match to L_c and find ,V_c
+
+	CpdfCount = 0; // Set number of count in Cpdf to zero
+	LC_dist_min = std::numeric_limits<float>::max(); // set the current 'minimum' distance to a very high number
+	float LC_dist; // distance of L,V to value in TI
+	unsigned int i_ti_path;
+
+	for (i_ti_path = 0; i_ti_path<_tiPath.size(); i_ti_path++) {
+		MPS::utility::oneDTo3D(_tiPath[i_ti_path], _tiDimX, _tiDimY, TI_idxX, TI_idxY, TI_idxZ);
+
+		// Get the centered value in the TI
+		V_center_ti = _TI[TI_idxZ][TI_idxY][TI_idxX];
+
+		// Get the distance between the conditional data in TI and SIM grid
+		LC_dist = _computeDistanceLV_TI(L_c, V_c, TI_idxX, TI_idxY, TI_idxZ, L_dist);
+
+
+
+		// Check if current L,T in TI match conditional observations better
+		if (LC_dist<LC_dist_min) {
+
+			// We have a new MIN distance, update the found conditional values 
+			//   as well as the minimum distance and the associated location in the TI
+			valueFromTI = V_center_ti;
+			LC_dist_current = LC_dist; // needed?
+			LC_dist_min = LC_dist;
+			TI_x_min = TI_idxX;
+			TI_y_min = TI_idxY;
+			TI_z_min = TI_idxZ;
+
+			// Add a count to the Cpdf if the current node match L,V according to some threshold..
+			if (LC_dist <= _distance_threshold) {
+				// We have a match of the hard data,
+				// Increment total counter, and counter for the specific found center node node (V_center_ti)
+				CpdfCount++;
+				conditionalCount[valueFromTI]++; // Just increment it.
+
+
+				if (_debugMode > 2) {
+					std::cout << "Matching event  i_ti_path=" << i_ti_path << ", V_center_ti=" << valueFromTI << std::endl;
+				}
+				// MAKE SURE TO RESET LC_dist_min
+				LC_dist_min = 1e+9;
+
+
+				// Check if soft data are available! 
+				float P_soft = 1;
+				float P_soft_max = 1;
+
+				
+				if (!_softDataGrids.empty()) {
+
+					int sdX, sdY, sdZ;
+					int NLs;
+
+					// FIND THE SOFT PROBABILITY ASSOCIATED to the  THE CURRENT MATCH!
+					L_s.clear();
+					V_s.clear();
+					_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _softDataGrids[0], _maxNeighbours_soft, _maxSearchRadius_soft, L_s, V_s);
+
+					
+					P_soft_i.clear();
+					P_soft_max_i.clear();
+
+					if (L_s.size() > 0) {
+						//std::cout << CpdfCount;
+						//std::cout << "  - Found L_s.size()=" << L_s.size() << " conditional data using _maxNeighbours=" << maxNeighbours_soft << "  _maxSearchRadius=" << maxSearchRadius_soft;
+						//std::cout << " at _sgd=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
+						for (unsigned int i = 0; i < L_s.size(); i++) {
+
+							// find location of soft data in simulation/soft-data grid
+							sdX = sgIdxX + L_s[i].getX();
+							sdY = sgIdxY + L_s[i].getY();
+							sdZ = sgIdxZ + L_s[i].getZ();
+
+							// find location of soft data in the training image, _TI
+							int TI_x_soft = TI_x_min + +L_s[i].getX();
+							int TI_y_soft = TI_y_min + +L_s[i].getY();
+							int TI_z_soft = TI_z_min + +L_s[i].getZ();
+
+
+							// If soft data location in _TI is located within the define grid then use it
+							if (TI_x_soft >= 0 && TI_x_soft < _tiDimX && TI_y_soft >= 0 && TI_y_soft  < _tiDimY && TI_z_soft >= 0 && TI_z_soft  < _tiDimZ) {
+								// get value at soft position in TI
+								//float sdValTI = _sg[sdZ][sdY][sdX];
+								if (_debugMode > 4) {
+									std::cout << " Soft pos in TI=(" << TI_x_soft << "," << TI_y_soft << "," << TI_z_soft << ")";
+									std::cout << " relpos=(" << L_s[i].getX() << "," << L_s[i].getY() << "," << L_s[i].getY() << ")";
+									std::cout << " center=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")";
+
+									std::cout << " P=[" << _softDataGrids[0][sdZ][sdY][sdX] << "," << _softDataGrids[1][sdZ][sdY][sdX] << "]";
+									std::cout << " V_C=" << V_s[i] << std::endl;
+								}
+								// find the soft probability of one conditional soft data, as P_soft_i
+								// find the MAX soft probability of the one conditional soft data, as P_soft_max_i
+								float p_max = 0;
+								for (unsigned int icat = 0; icat < _softDataGrids.size(); icat++) {
+									if (_softDataGrids[icat][sdZ][sdY][sdX] > p_max) {
+										p_max = _softDataGrids[icat][sdZ][sdY][sdX];
+									}
+								}
+
+								
+								// find category id of found value in the TI at locations of the soft data
+								unsigned int icat;	
+								for (unsigned int i = 0; i < _softDataCategories.size(); i++) {
+									//std::cout << "_softDataCategories[i]=" << _softDataCategories[i] << " == _TI[TI_z_soft][TI_y_soft][TI_x_soft]=" << _TI[TI_z_soft][TI_y_soft][TI_x_soft] << std::endl;
+									if (_softDataCategories[i] == _TI[TI_z_soft][TI_y_soft][TI_x_soft]) {
+										icat = i;
+									}									
+								}
+								//std::cout << "--- icat=" << icat << std::endl;
+								P_soft_i.push_back(_softDataGrids[icat][sdZ][sdY][sdX]);
+								P_soft_max_i.push_back(p_max);
+
+
+								//std::cout << "P=" << P_soft_i.back() << " TI(soft)=" << _TI[TI_z_soft][TI_y_soft][TI_x_soft] << std::endl;
+
+
+							}
+						}
+					
+					}
+					
+					// We now have the probability for the maxNeighbours_soft closest soft data, with probabilities stored in P_soft_i
+					//std::cout << "-->N_cond data = " << P_soft_i.size() << std::endl;
+
+					// get the combined soft probability
+					P_soft = 0;
+					P_soft_max = 0;
+					if (P_soft_i.size() > 0) {
+						P_soft = P_soft_i[0];
+						P_soft_max = P_soft_max_i[0];
+						//std::cout << "[P_soft,P_soft_max]=" << P_soft_i[0] << "," << P_soft_max_i[0];
+						if (P_soft_i.size() > 1) {
+							for (int index = 1; index < P_soft_i.size(); ++index) {
+								//std::cout << "[P_soft,P_soft_max]=" << P_soft_i[index] << "," << P_soft_max_i[index] << std::endl;
+								P_soft = P_soft * P_soft_i[index];
+								P_soft_max = P_soft_max * P_soft_max_i[index];
+							}
+						}
+
+						// Add weighed count to conditionalSoftProb
+						SoftProbability = P_soft / P_soft_max;
+						conditionalSoftProb[valueFromTI] = conditionalSoftProb[valueFromTI] + SoftProbability; 
+						
+					}
+					
+					//P_soft = P_soft / P_soft_max;
+					//std::cout << "conditionalSoftProb[0] " << conditionalSoftProb[0] << std::endl;
+					//std::cout << "conditionalSoftProb[1] " << conditionalSoftProb[1] << std::endl;
+					//std::cout << "valueFromTI=" << valueFromTI << "  P_soft=" << P_soft << std::endl;
+					
+					//std::cout << "conditionalSoftProb[0] " << conditionalSoftProb[0] << std::endl;
+					//std::cout << "conditionalSoftProb[1] " << conditionalSoftProb[1] << std::endl;
+					
+				} else {
+					P_soft = 1;
+				}
+				
+			}
+
+		}
+
+		if (_debugMode > 3) {
+			std::cout << "  " << "i_ti_path=" << i_ti_path << " ===";
+			std::cout << "  TI	xyz=(" << TI_idxX << "," << TI_idxY << "," << TI_idxZ << ")";
+			std::cout << " - LC_dist=" << LC_dist << " min(LC_dist)=" << LC_dist_current;
+			std::cout << std::endl;
+		}
+
+		if (maxCpdfCount <= CpdfCount) {
+			if (_debugMode > 2) {
+				std::cout << "MaxCpdfCount Reached i_ti_path=" << i_ti_path << " - CpdfCount=" << CpdfCount << std::endl;
+			}
+			break;
+		}
+
+		// Stop looking if we have reached the maximum number of allowed iterations in TI
+		if (i_ti_path>_maxIterations) {
+			if (_debugMode > 1) {
+				std::cout << "Max Ite Reached i_ti_path=" << i_ti_path << " - nmax_ite=" << _maxIterations << std::endl;
+			}
+			break;
+		}
+
+		//std::cout << "-- DONE --" << std::endl;
+
+	} // END SCAN OF TI FOR CPDF
+	
+	// We now have counts to establish the conditional from hard data f(m_i|m_c)
+	// and, if avaialble, information from soft probabilities f(m_i|m_c)*f_soft(m)
+
+
+	if (_debugMode > 2) {
+		std::cout << "f(m_i|m_c)=[" << conditionalCount[_softDataCategories[0]] << "," << conditionalCount[_softDataCategories[1]] << "]";
+		std::cout << "  f(m_i|m_c)*f_soft(m)=[" << conditionalSoftProb[_softDataCategories[0]] << "," << conditionalSoftProb[_softDataCategories[1]] << "]" << std::endl;
+	}
+
+	
+
+	// At this point set the local soft data as NaN to avoid simulate it again
+	_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
+
+	// assign minimum distance to temporary grid 1
+	if (_debugMode>1) {
+		_tg1[sgIdxZ][sgIdxY][sgIdxX] = LC_dist_current;
+		_tg2[sgIdxZ][sgIdxY][sgIdxX] = CpdfCount;
+		MPS::utility::treeDto1D(TI_x_min, TI_y_min, TI_z_min, _tiDimX, _tiDimY, node1DIdx);
+		_tg3[sgIdxZ][sgIdxY][sgIdxX] = node1DIdx;
+		//_tg4[sgIdxZ][sgIdxY][sgIdxX] = _tiPath[i_ti_path]; // POSITION ON TI
+		_tg4[sgIdxZ][sgIdxY][sgIdxX] = i_ti_path;
+		_tg5[sgIdxZ][sgIdxY][sgIdxX] = L_c.size(); // number of used conditional points
+	}
+
+
+
+	// CHECK THAT conditionalCount HAS AT LEAST ONE COUNT
+	// This may not always be the case when no conditional event has been found!
+	if (CpdfCount == 0) {
+		// NO MATCHES HAS BEEN FOUND. ADD THE CURRENT BEST MACTH TO THE conditionalCount
+		// std::cout << " CpdfCount " << CpdfCount << std::endl;
+		if (conditionalCount.find(valueFromTI) == conditionalCount.end()) {
+			// Then we've encountered the word for a first time. Is this slow?
+			conditionalCount[valueFromTI] = 1; // Initialize it to	 1.
+		}
+		else {
+			// Then we've already seen it before..
+			conditionalCount[valueFromTI]++; // Just increment it.
+		}
+	}
+
+	// Get the the sum of the unnormalized conditional probabilities
+	float totalCounter_conditionalCount = 0;
+	for (std::map<float, int>::iterator iter = conditionalCount.begin(); iter != conditionalCount.end(); ++iter) {
+		totalCounter_conditionalCount += iter->second;
+	}
+	float totalCounter_conditionalSoftProb = 0;
+	for (std::map<float, float>::iterator iter = conditionalSoftProb.begin(); iter != conditionalSoftProb.end(); ++iter) {
+		totalCounter_conditionalSoftProb += iter->second;
+	}
+	//std::cout << "totalCounter_conditionalSoftProb=" << totalCounter_conditionalSoftProb << std::endl;
+	//std::cout << "totalCounter_conditionalCount=" << totalCounter_conditionalCount << std::endl;
+
+	// normalize output
+	if (totalCounter_conditionalSoftProb==0) {
+		// NO SOFT INFORMATION
+		// f(m_i | m_c)
+		for (std::map<float, int>::iterator iter = conditionalCount.begin(); iter != conditionalCount.end(); ++iter) {
+			cPdf.insert(std::pair<float, float>(iter->first, (float)(iter->second) / (float)totalCounter_conditionalCount));
+		}
+
+	} else {
+		// USE CPDF CONDITIONAL TO SOFT
+		// f(m_i|m_c)* \prod f_soft(m_i)
+		for (std::map<float, float>::iterator iter = conditionalSoftProb.begin(); iter != conditionalSoftProb.end(); ++iter) {
+			cPdf.insert(std::pair<float, float>(iter->first, (float)(iter->second) / (float)totalCounter_conditionalSoftProb));
+		}
+	}
+	
+	
+	if (_debugMode > 2) {
+		for (std::map<float, float>::iterator iter = cPdf.begin(); iter != cPdf.end(); ++iter) {
+			std::cout << " P(" << iter->first << ")=" << iter->second; 
+			cPdf.insert(std::pair<float, float>(iter->first, (float)(iter->second) / (float)totalCounter_conditionalSoftProb));
+		}
+		std::cout << std::endl;
+	}
+
+	
+
+
+	if (_debugMode>2) {
+		std::cout << "NsimInTI=" << i_ti_path;
+		std::cout << " --CpdfCount = " << CpdfCount;
+		std::cout << " valueFromTI = " << valueFromTI;
+		std::cout << " LC_dist_current = " << LC_dist_current;
+
+		std::cout << "SGxyx=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
+		std::cout << "_getCpdfTiEnesim: -- ENESIM END --" << std::endl;
 
 	}
 
@@ -524,6 +868,7 @@ float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vec
 * @param TIi_dxZ coordinate Z of the current node in TI
 * @return distance
 */
+/*
 float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vector<float>& V, const int& TI_idxX, const int& TI_idxY, const int& TI_idxZ) {
 
 	float h_dist;
@@ -585,7 +930,7 @@ float MPS::ENESIM::_computeDistanceLV_TI(std::vector<MPS::Coords3D>& L, std::vec
 	return LC_dist;
 }
 
-
+*/
 
 
 
@@ -762,87 +1107,36 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 	float simulatedValue;
 	float randomValue;
 	float pAcc;
-
-	std::map<float, float> softPdf;
-	int i = 0;;
-	int maxIterations = 100;  // decide whether soft or ti cpdf takes preference..
-	bool isAccepted = false;
+	float SoftProbability;
 
 
-	//
-	//  START: NONCO
-	//
-	std::vector<MPS::Coords3D> L;
-	std::vector<float> V;
-
-	//int maxSearchRadius_soft = _maxSearchRadius;
-	//int maxNeighbours_soft = _maxNeighbours;
-	int maxSearchRadius_soft = 10;
-	int maxNeighbours_soft = 2;
-	int sdX, sdY, sdZ;
-
-	std::cout << "At _sg location [" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << "]" << std::endl;
-
-
-	if (!_softDataGrids.empty()) {
-		L.clear();
-		_circularSearch(sgIdxX, sgIdxY, sgIdxZ, _softDataGrids[0], maxNeighbours_soft, maxSearchRadius_soft, L, V);
+	if (_nMaxCountCpdf == 1) {
+		// REJECTION TYPE SIMULATION
 		
-		if (L.size() > 0) {
-			std::cout << " relpos=(" << L[i].getX() << "," << L[i].getY() << "," << L[i].getY() << ")  - ";
-			std::cout << "Found L.size()=" << L.size() << "conditional data using _maxNeighbours=" << maxNeighbours_soft << "  _maxSearchRadius=" << maxSearchRadius_soft << std::endl;
-			for (unsigned int i = 0; i < L.size(); i++) {
+		int i = 0;;
+		int maxIterations = 100;  // decide whether soft or ti cpdf takes preference..
+		bool isAccepted = false;
 
-				// find coordinate and value of conditional soft data
-
-				sdX = sgIdxX + L[i].getX();
-				sdY = sgIdxY + L[i].getY();
-				sdZ = sgIdxZ + L[i].getZ();
-
-				if (sdX >= 0 && sdX < _sgDimX && sdY >= 0 && sdY < _sgDimY && sdZ >= 0 && sdZ < _sgDimZ) {
-					// get value at soft position in TI
-					//float sdValTI = _sg[sdZ][sdY][sdX];
-					std::cout << "Soft pos in TI=(" << sdX << "," << sdY << "," << sdZ << ")";
-					//std::cout << " V=" << sdValTI;
-					std::cout << " relpos=(" << L[i].getX() << "," << L[i].getY() << "," << L[i].getY() << ")";
-					std::cout << " center=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
-
-				}
-
-			}
-		}
-		
-
-
-	}
-
-	
-
-	//
-	// END: NONCO
-	//
-
-	i = 0;
-	MPS::Coords3D closestCoords;
-	if (_getCpdfFromSoftData(sgIdxX, sgIdxY, sgIdxZ, 0, softPdf, closestCoords)) {
 
 		do {
 			// MAKE SURE THAT conditionalPdfFromTi IS OBTAINED INDEPENDENTLTY EACH TIME!!!
 			// ESPECIELLY WHEN BASED ON ONLY ONE COUNT
 
+			// obtain conditional and generate a realization wihtout soft data
 			conditionalPdfFromTi.clear();
-			_getCpdfTiEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi);
+			SoftProbability = 1;
+
+			_getCpdfTiEnesimNew(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
 			simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 
 			randomValue = ((float)rand() / (RAND_MAX));
-			pAcc = softPdf[simulatedValue];
+			pAcc = SoftProbability;
 
-			if (_debugMode > -2) {
+			if (_debugMode > 2) {
 				std::cout << "i= " << i << " maxIterations=" << maxIterations;
 				std::cout << "   p_ti = [" << conditionalPdfFromTi[0] << "," << conditionalPdfFromTi[1] << "]";
 				std::cout << " simval = " << simulatedValue;
-				std::cout << "   p_soft = [" << softPdf[0] << "," << softPdf[1] << "]";
-				std::cout << " - r=" << randomValue << "pAcc = " << pAcc << std::endl;
+				std::cout << "   pAcc = p_soft = [" << SoftProbability << std::endl;
 			}
 
 			// accept simulatedValue with probabilty from soft data
@@ -850,23 +1144,16 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 				isAccepted = true;
 			}
 			i++;
-		} while ((i<maxIterations)&(!isAccepted));
-		if (_debugMode > 2) {
-			std::cout << " simval = " << simulatedValue << " - randomValue = " << randomValue << std::endl;
-			std::cout << "________________________________" << std::endl;
-		}
 
+		} while ((i<maxIterations)&(!isAccepted));
 
 	}
 	else {
+		// SIMULTATE DIRECTLY FROM CONDITIONAL
 		// obtain conditional and generate a realization wihtout soft data
-		_getCpdfTiEnesim(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi);
-
-		// sample from conditional pdf
+		_getCpdfTiEnesimNew(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
 		simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 	}
-
-
 
 	// DONE SIMULATING
 	if (_debugMode > 2) {
