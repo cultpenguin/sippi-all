@@ -309,6 +309,24 @@ protected:
 	* @brief Read different data (TI, hard and softdata from files)
 	*/
 	void _readDataFromFiles(void);
+	
+	/**
+	* @param Read hard data
+	*/
+	void _readHardDataFromFiles(void);
+	
+	/**
+	* @param Read soft data
+	*/
+	void _readSoftDataFromFiles(void);
+
+	/**
+	* @brief Read TI data
+	*/
+	void _readTIFromFiles(void);
+
+
+
 	/**
 	* @brief Initialize a sequential simulation path
 	* @param sgDimX dimension X of the path
@@ -316,7 +334,7 @@ protected:
 	* @param sgDimZ dimension Z of the path
 	* @param path output simulation path
 	*/
-	void _initilizePath(const int& sgDimX, const int& sgDimY, const int& sgDimZ, std::vector<int>& path);
+		void _initilizePath(const int& sgDimX, const int& sgDimY, const int& sgDimZ, std::vector<int>& path);
 	/**
 	* @brief Initialize the Simulation Grid with a value, default is NaN
 	* @param sg the simulation GRID

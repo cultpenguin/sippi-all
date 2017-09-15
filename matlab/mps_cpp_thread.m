@@ -7,13 +7,13 @@
 %   TI=channels;           %  training image
 %   SIM=zeros(80,60).*NaN; %  simulation grid
 %   O.method='mps_snesim_tree'; % MPS algorithm to run (def='mps_snesim_tree')
-%   %O.method='mps_snesim_list'; % MPS algorithm to run (def='mps_snesim_tree')
-%   %O.method='mps_enesim_general'; % MPS algorithm to run (def='mps_snesim_tree')
+%   %O.method='mps_snesim_list'; % MPS algorithm to run 
+%   %O.method='mps_genesim'; % MPS algorithm to run
 %   O.n_real=8;             %  optional number of realization
 %   [reals,O]=mps_cpp_thread(TI,SIM,O);
 %
 % See also: mps_cpp, mps_snesim_read_par, mps_snesim_write_par,
-%           mps_enesim_read_par, mps_enesim_write_par
+%           mps_genesim_read_par, mps_genesim_write_par
 %
 %
 function [reals,O,Othread]=mps_cpp_thread(TI,SIM,O,verbose);

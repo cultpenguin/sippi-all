@@ -67,13 +67,13 @@ protected:
 	/**
 	* @brief Maximum Search Radius HARD data
 	*/
-	float _maxSearchRadius=1e+9; 
+	float _maxSearchRadius=0; 
 
 		
 	/**
-	* @brief Maximum Search Radius HARD data
+	* @brief Maximum Search Radius SOFT data
 	*/
-	int _maxSearchRadius_soft = 3;
+    float _maxSearchRadius_soft = 1e+9;
 	
 	/**
 	* @brief Maximum number conditioning SOFT data

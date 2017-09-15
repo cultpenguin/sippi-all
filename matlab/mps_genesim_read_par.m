@@ -1,5 +1,4 @@
-
-function [O]=mps_enesim_read_par(filename);
+function [O]=mps_genesim_read_par(filename);
 if nargin==0
     filename='mps_genesim.txt';
 end

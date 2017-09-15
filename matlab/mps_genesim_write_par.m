@@ -1,4 +1,4 @@
-function O=mps_enesim_write_par(O,parameter_filename);
+function O=mps_genesim_write_par(O,parameter_filename);
 
 if nargin==0, 
     help(mfilename);
@@ -19,7 +19,7 @@ O.parameter_filename=parameter_filename;
 %% SOME DEFAULTS
 if ~isfield(O,'n_real'); O.n_real=1; end
 if ~isfield(O,'rseed'); O.rseed=0; end
-if ~isfield(O,'n_cond'); O.n_cond=25; end
+if ~isfield(O,'n_cond'); O.n_cond=[25 1]; end
 if ~isfield(O,'n_max_ite'); O.n_max_ite=10000; end
 if ~isfield(O,'n_max_cpdf_count'); O.n_max_cpdf_count=10; end
 if ~isfield(O,'template_size'); O.template_size=[5 5 1]; end
@@ -57,14 +57,22 @@ fprintf(fid,'Number of realizations # %d\n',O.n_real);
 fprintf(fid,'Random Seed (0 `random` seed) # %d\n',O.rseed);
 fprintf(fid,'Maximum number of counts for conditional pdf # %d\n',O.n_max_cpdf_count);
 % LIMIT NEIGHBORHOOD
-fprintf(fid,'Max number of conditional point # %d\n',O.n_cond);
+if (length(O.n_cond)==1)
+    fprintf(fid,'Max number of conditional point # %d\n',O.n_cond(1));
+else
+    fprintf(fid,'Max number of conditional point # %d %d\n',O.n_cond(1),O.n_cond(2));
+end
 fprintf(fid,'Max number of iterations # %d\n',O.n_max_ite);
 %
 %Distance measure [1:disc, 2:cont], minimum distance # 1 0
 fprintf(fid,'Distance measure [1:disc, 2:cont], minimum distance, distance power # %d %f %f\n',O.distance_measure,O.distance_min,O.distance_pow);
 
 % maximum search radius
-fprintf(fid,'Maximum search radius # %f\n',O.max_search_radius);
+if (length(O.max_search_radius)==1)
+    fprintf(fid,'Maximum search radius # %f\n',O.max_search_radius(1));
+else
+    fprintf(fid,'Maximum search radius # %f %f\n',O.max_search_radius(1),O.max_search_radius(2));
+end
 
 % SIMULATION GRID SUZE
 for i=1:3;

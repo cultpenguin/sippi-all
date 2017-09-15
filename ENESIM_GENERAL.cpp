@@ -104,7 +104,9 @@ void MPS::ENESIM_GENERAL::startSimulation(void) {
 float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const int& sgIdxZ, const int& level) {
 	// By default do not use rejection sampler to account for soft data
 
-	return _getRealizationFromCpdfTiEnesimRejectionNonCo(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
+	float real;
+	real = _getRealizationFromCpdfTiEnesimRejectionNonCo(sgIdxX, sgIdxY, sgIdxZ, _sgIterations[sgIdxZ][sgIdxY][sgIdxX]);
+	return real;
 
 
 	_RejectionSoftData=0;
@@ -130,4 +132,6 @@ float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const
 */
 void MPS::ENESIM_GENERAL::_InitStartSimulationEachMultipleGrid(const int& level) {
 	//Empty for now
+	std::cout << "RELOADING SOFT DATA" << std::endl;
+	_readSoftDataFromFiles();
 }

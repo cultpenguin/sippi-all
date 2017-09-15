@@ -77,9 +77,17 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 		_nMaxCountCpdf=read_int;
 	}
 
-	// Maximum neighbours
-	_readLineConfiguration(file, ss, data, s, str);
+	// Maximum number of conditional data (_maxNeighbours)
+	_readLineConfiguration_mul(file, ss, data, s, str);
 	_maxNeighbours = stoi(data[1]);
+	if (data.size()>2) {
+		_maxNeighbours_soft = stoi(data[2]);
+	}
+	else {
+		_maxNeighbours_soft = 0;
+	}
+	std::cout << "_maxNeighbours_soft= " << _maxNeighbours_soft << std::endl;
+
 	// Maximum iterations
 	_readLineConfiguration(file, ss, data, s, str);
 	read_int  =  stoi(data[1]);
@@ -88,6 +96,8 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	} else {
 		_maxIterations = read_int;
 	}
+	
+
 	// Distance Measure and minimum distance
 	_readLineConfiguration_mul(file, ss, data, s, str);
 	_distance_measure = stoi(data[1]);
@@ -102,9 +112,17 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	} else {
 		_distance_power_order = 0;
 	}
-// Maximum search Radius
-	_readLineConfiguration(file, ss, data, s, str);
+	// Maximum search Radius
+	_readLineConfiguration_mul(file, ss, data, s, str);
 	_maxSearchRadius = stof(data[1]);
+	if (data.size()>2) {
+		_maxSearchRadius_soft = stof(data[2]);
+	}
+	else {
+		_maxSearchRadius_soft = 0;
+	}
+	std::cout << "_maxSearchRadius_soft= " << _maxSearchRadius_soft << std::endl;
+
 	// Simulation Grid size X
 	_readLineConfiguration(file, ss, data, s, str);
 	_sgDimX = stoi(data[1]);
@@ -640,11 +658,12 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 						//std::cout << "[P_soft,P_soft_max]=" << P_soft_i[0] << "," << P_soft_max_i[0];
 						if (P_soft_i.size() > 1) {
 							for (int index = 1; index < P_soft_i.size(); ++index) {
-								//std::cout << "[P_soft,P_soft_max]=" << P_soft_i[index] << "," << P_soft_max_i[index] << std::endl;
+								//std::cout << "[P_soft,P_soft_max]=" << P_soft_i[index] << "," << P_soft_max_i[index];
 								P_soft = P_soft * P_soft_i[index];
 								P_soft_max = P_soft_max * P_soft_max_i[index];
 							}
 						}
+						//std::cout << std::endl;
 
 						// Add weighed count to conditionalSoftProb
 						SoftProbability = P_soft / P_soft_max;
@@ -698,7 +717,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	// and, if avaialble, information from soft probabilities f(m_i|m_c)*f_soft(m)
 
 
-	if (_debugMode > 2) {
+	if (_debugMode > 1) {
 		std::cout << "f(m_i|m_c)=[" << conditionalCount[_softDataCategories[0]] << "," << conditionalCount[_softDataCategories[1]] << "]";
 		std::cout << "  f(m_i|m_c)*f_soft(m)=[" << conditionalSoftProb[_softDataCategories[0]] << "," << conditionalSoftProb[_softDataCategories[1]] << "]" << std::endl;
 	}
@@ -1130,15 +1149,14 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 
 			_getCpdfTiEnesimNew(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
 			simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
-
 			randomValue = ((float)rand() / (RAND_MAX));
 			pAcc = SoftProbability;
 
-			if (_debugMode > 2) {
+			if (_debugMode > -2) {
 				std::cout << "i= " << i << " maxIterations=" << maxIterations;
 				std::cout << "   p_ti = [" << conditionalPdfFromTi[0] << "," << conditionalPdfFromTi[1] << "]";
 				std::cout << " simval = " << simulatedValue;
-				std::cout << "   pAcc = p_soft = [" << SoftProbability << std::endl;
+				std::cout << "   pAcc =p_soft=" << SoftProbability << std::endl;
 			}
 
 			// accept simulatedValue with probabilty from soft data
@@ -1155,6 +1173,11 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 		// obtain conditional and generate a realization wihtout soft data
 		_getCpdfTiEnesimNew(sgIdxX, sgIdxY, sgIdxZ, conditionalPdfFromTi, SoftProbability);
 		simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
+
+		if (_debugMode > 1) {
+			std::cout << "at [ix,y,ix]=[" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << "] real=" << simulatedValue << std::endl;
+		}
+
 	}
 
 	// DONE SIMULATING

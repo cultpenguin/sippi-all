@@ -27,8 +27,8 @@
 %   O.exe_root: sets the path the folder containing the MPS binary files
 %
 %
-% See also: mps_snesim_read_par, mps_snesim_write_par, mps_enesim_read_par,
-% mps_enesim_write_par
+% See also: mps_snesim_read_par, mps_snesim_write_par, mps_genesim_read_par,
+% mps_genesim_write_par
 %
 
 function [reals,O]=mps_cpp(TI,SIM,O);
@@ -38,7 +38,7 @@ if nargin==0;
     SIM=zeros(80,60).*NaN; %  simulation grid
     O.method='mps_snesim_tree'; % MPS algorithm to run (def='mps_snesim_tree')
     %O.method='mps_snesim_list'; % MPS algorithm to run (def='mps_snesim_tree')
-    %O.method='mps_enesim_general'; % MPS algorithm to run (def='mps_snesim_tree')
+    %O.method='mps_genesim'; % MPS algorithm to run (def='mps_snesim_tree')
     O.n_real=1;             %  optional number of realization
     [reals,O]=mps_cpp(TI,SIM,O);
     imagesc(reals);drawnow;
@@ -143,17 +143,17 @@ if strfind(O.method,'snesim');
 elseif (strcmp(O.method,'mps_genesim'))||(strcmp(O.method,'mps_enesim_general'))
     O.method='mps_genesim';
     if ~isfield(O,'parameter_filename');O.parameter_filename='mps_genesim.txt';end
-    O=mps_enesim_write_par(O);
-elseif strcmp(O.method,'mps_dsam');
+    O=mps_genesim_write_par(O);
+elseif strcmp(O.method,'mps_dsam'|O.method,'mps_ds');
     O.method='mps_genesim';
     O.n_max_cpdf_count=1;
     if ~isfield(O,'parameter_filename');O.parameter_filename='ds.txt';end
-    O=mps_enesim_write_par(O);
+    O=mps_genesim_write_par(O);
 elseif strcmp(O.method,'mps_enesim');
     O.method='mps_genesim';
     O.n_max_cpdf_count=1e+20;
     if ~isfield(O,'parameter_filename');O.parameter_filename='enesim.txt';end
-    O=mps_enesim_write_par(O);
+    O=mps_genesim_write_par(O);
 else
     disp(sprintf('%s: no method for ''%s''',mfilename,O.method));
     return

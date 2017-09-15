@@ -8,10 +8,10 @@ O.n_real=1000;
 O.n_cond=25;
 O.debug=0;
        
-%O.exe_root='E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
+O.exe_root='E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
 
-%for id=[1];
-for id=[0:6];
+for id=[1];
+%for id=[0:6];
     O.filename_parameter=sprintf('mps_snesim_%d.txt',id);
     clear t em;
     

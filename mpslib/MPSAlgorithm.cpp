@@ -141,10 +141,11 @@ float MPS::MPSAlgorithm::_sampleFromPdf(std::map<float, float>& Pdf) {
 	randomValue = ((float) rand() / (RAND_MAX));
 
 	float cumsum_pdf=0; // integral conditional probability density (conditionalPdfFromTi)
+	//std::cout << "   cPDF=" << Pdf[0] << "," << Pdf[1] << std::endl;
 	for(std::map<float,float>::iterator iter = Pdf.begin(); iter != Pdf.end(); ++iter) {
 		cumsum_pdf = cumsum_pdf + iter->second;
 		if (cumsum_pdf >= randomValue) {
-			//std::cout << "randomValue=" << randomValue << "<=" <<  cumsum_pdf << ", THEN index=" << iter->first << std::endl;
+			//std::cout << "   randomValue=" << randomValue << "<=" <<  cumsum_pdf << ", THEN index=" << iter->first << std::endl;
 			simulatedValue = iter->first;
 			break;
 		}
@@ -315,13 +316,24 @@ void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 	//Reading TI file
 	bool readSucessfull = false;
 	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
-	if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = MPS::io::readTIFromGS3DCSVFile(_tiFilename, _TI);
-	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_tiFilename, _TI);
-	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_tiFilename, _TI);
-	if(!readSucessfull) {
-		std::cout << "Error reading TI " << _tiFilename << std::endl;
-		exit(-1);
-	}
+
+	// Read TI
+	_readTIFromFiles();
+
+	//Reading Hard conditional data
+	_readHardDataFromFiles();
+
+	//Reading Soft conditional data
+	_readSoftDataFromFiles();
+
+}
+
+/**
+* @brief Read Hard data
+*/
+void MPS::MPSAlgorithm::_readHardDataFromFiles(void) {
+	bool readSucessfull = false;
+	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
 
 	//Reading Hard conditional data
 	readSucessfull = false;
@@ -330,27 +342,55 @@ void MPS::MPSAlgorithm::_readDataFromFiles(void) {
 	else if (fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_hardDataFileNames, _hdg);
 	else if (fileExtension == "dat") readSucessfull = MPS::io::readHardDataFromEASFile(_hardDataFileNames, -999, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, _hdg);
 	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_hardDataFileNames, _hdg);
-	if((!readSucessfull)&(_debugMode>-1)) {
+	if ((!readSucessfull)&(_debugMode>-1)) {
 		std::cout << "Error reading harddata " << _hardDataFileNames << std::endl;
 	}
+}
 
-	//Reading Soft conditional data
-	for (unsigned int i=0; i<_softDataFileNames.size(); i++) {
+/**
+* @brief Read soft data
+*/
+void MPS::MPSAlgorithm::_readSoftDataFromFiles(void) {
+	bool readSucessfull = false;
+	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
+
+	for (unsigned int i = 0; i<_softDataFileNames.size(); i++) {
 		readSucessfull = false;
 		fileExtension = MPS::utility::getExtension(_softDataFileNames[i]);
 		if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = MPS::io::readTIFromGS3DCSVFile(_softDataFileNames[i], _softDataGrids[i]);
 		else if (fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_softDataFileNames[i], _softDataGrids[i]);
 		else if (fileExtension == "dat") readSucessfull = MPS::io::readSoftDataFromEASFile(_softDataFileNames[i], _softDataCategories, _sgDimX, _sgDimY, _sgDimZ, _sgWorldMinX, _sgWorldMinY, _sgWorldMinZ, _sgCellSizeX, _sgCellSizeY, _sgCellSizeZ, _softDataGrids); //EAS read only 1 file
 		else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_softDataFileNames[i], _softDataGrids[i]);
-		if(!readSucessfull) {
+		if (!readSucessfull) {
 			_softDataGrids.clear();
 			if (_debugMode>-1) {
 				std::cout << "Error reading softdata " << _softDataFileNames[i] << std::endl;
 			}
 		}
-
 	}
+
 }
+
+
+/**
+* @brief Read soft data
+*/
+void MPS::MPSAlgorithm::_readTIFromFiles(void) {
+	bool readSucessfull = false;
+	std::string fileExtension = MPS::utility::getExtension(_tiFilename);
+
+	if (fileExtension == "csv" || fileExtension == "txt") readSucessfull = MPS::io::readTIFromGS3DCSVFile(_tiFilename, _TI);
+	else if (fileExtension == "dat" || fileExtension == "gslib" || fileExtension == "sgems" || fileExtension == "SGEMS") readSucessfull = MPS::io::readTIFromGSLIBFile(_tiFilename, _TI);
+	else if (fileExtension == "grd3") readSucessfull = MPS::io::readTIFromGS3DGRD3File(_tiFilename, _TI);
+	if (!readSucessfull) {
+		std::cout << "Error reading TI " << _tiFilename << std::endl;
+		exit(-1);
+	}
+
+}
+
+
+
 
 /**
 * @brief Fill a simulation grid node from hard data and a search radius
@@ -799,8 +839,9 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 			////Cleaning the allocated data from the SG
 			//_clearSGFromHD(allocatedNodesFromHardData);
 			
-			MPS::io::writeToGSLIBFile(outputFilename + "_path_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _simulationPath, _simulationPath.size(), 1, 1);
-
+			if (_debugMode > 1) {
+				MPS::io::writeToGSLIBFile(outputFilename + "_path_" + std::to_string(n) + "_level_" + std::to_string(level) + ".gslib", _simulationPath, _simulationPath.size(), 1, 1);
+			}
 			for (unsigned int ii=0; ii<_simulationPath.size(); ii++) {
 				//Get node coordinates
 				MPS::utility::oneDTo3D(_simulationPath[ii], _sgDimX, _sgDimY, SG_idxX, SG_idxY, SG_idxZ);

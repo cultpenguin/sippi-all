@@ -13,8 +13,8 @@
 %   [reals,O]=mps_cpp(TI,SIM,O);
 %   mps_cpp_plot(reals,O);
 %
-% See also: mps_snesim_read_par, mps_snesim_write_par, mps_enesim_read_par,
-% mps_enesim_write_par
+% See also: mps_snesim_read_par, mps_snesim_write_par, mps_genesim_read_par,
+% mps_genesim_write_par
 %
 
 function mps_cpp_plot(reals,O,hardcopy);
