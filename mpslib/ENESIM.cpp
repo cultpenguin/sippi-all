@@ -706,7 +706,9 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 	
 
 	// At this point set the local soft data as NaN to avoid simulate it again
-	_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
+	if (!_softDataGrids.empty()) {
+		_softDataGrids[0][sgIdxZ][sgIdxY][sgIdxX] = std::numeric_limits<float>::quiet_NaN();
+	}
 
 	// assign minimum distance to temporary grid 1
 	if (_debugMode>1) {
