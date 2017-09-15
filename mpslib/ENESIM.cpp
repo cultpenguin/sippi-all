@@ -570,7 +570,7 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 
 					if (L_s.size() > 0) {
 						//std::cout << CpdfCount;
-						//std::cout << "  - Found L_s.size()=" << L_s.size() << " conditional data using _maxNeighbours=" << maxNeighbours_soft << "  _maxSearchRadius=" << maxSearchRadius_soft;
+						//std::cout << "  - Found L_s.size()=" << L_s.size() << " conditional data using _maxNeighbours=" << _maxNeighbours_soft << "  _maxSearchRadius=" << _maxSearchRadius_soft;
 						//std::cout << " at _sgd=(" << sgIdxX << "," << sgIdxY << "," << sgIdxZ << ")" << std::endl;
 						for (unsigned int i = 0; i < L_s.size(); i++) {
 

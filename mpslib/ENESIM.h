@@ -73,7 +73,7 @@ protected:
 	/**
 	* @brief Maximum Search Radius HARD data
 	*/
-	int _maxSearchRadius_soft = 5;
+	int _maxSearchRadius_soft = 3;
 	
 	/**
 	* @brief Maximum number conditioning SOFT data
