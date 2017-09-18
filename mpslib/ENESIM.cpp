@@ -86,7 +86,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	else {
 		_maxNeighbours_soft = 0;
 	}
-	std::cout << "_maxNeighbours_soft= " << _maxNeighbours_soft << std::endl;
+	//std::cout << "_maxNeighbours_soft= " << _maxNeighbours_soft << std::endl;
 
 	// Maximum iterations
 	_readLineConfiguration(file, ss, data, s, str);
@@ -121,7 +121,7 @@ void MPS::ENESIM::_readConfigurations(const std::string& fileName) {
 	else {
 		_maxSearchRadius_soft = 0;
 	}
-	std::cout << "_maxSearchRadius_soft= " << _maxSearchRadius_soft << std::endl;
+	//std::cout << "_maxSearchRadius_soft= " << _maxSearchRadius_soft << std::endl;
 
 	// Simulation Grid size X
 	_readLineConfiguration(file, ss, data, s, str);
@@ -1130,7 +1130,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 		// REJECTION TYPE SIMULATION
 		
 		int i = 0;;
-		int maxIterations = 100;  // decide whether soft or ti cpdf takes preference..
+		int maxIterations = 200;  // decide whether soft or ti cpdf takes preference..
 		bool isAccepted = false;
 
 

@@ -326,12 +326,12 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 			//Size check
 			searchIter = probabilitiesFromTI.find(iter->first);
 			if (searchIter != probabilitiesFromTI.end()) {
-				std::cout << "P_soft=" << iter->second << " P_TI=" << probabilitiesFromTI[iter->first] << " TOT=" << totalValue << std::endl;
+				//std::cout << "P_soft=" << iter->second << " P_TI=" << probabilitiesFromTI[iter->first] << " TOT=" << totalValue << std::endl;
 				cumulateValue += (iter->second * probabilitiesFromTI[iter->first]) / totalValue;
 			} else {
 				cumulateValue += 0; //(iter->second) / totalValue;  //If probability from TI has less elements than sd then ignore it
 			}
-			std::cout << "  cumulateValue=" << cumulateValue << std::endl;
+			//std::cout << "  cumulateValue=" << cumulateValue << std::endl;
 
 			probabilitiesCombined.insert(std::pair<float, float>(cumulateValue, iter->first));
 		}
@@ -344,28 +344,29 @@ float MPS::SNESIM::_cpdf(std::map<float, int>& conditionalPoints, const int& x, 
 		}
 
 
-		std::cout << "totalCounter " << totalCounter << std::endl;
-		// PRINT SOFT CONDITIONAL AND LCOAL SOFT PROB
-		std::cout << "TI  : ";
-		for (std::map<float, float>::iterator iter = probabilitiesFromTI.begin(); iter != probabilitiesFromTI.end(); ++iter) {
-			std::cout << " P[" << iter->first << "]=";
-			std::cout << iter->second;
+		if (_debugMode > 2) {
+			std::cout << "totalCounter " << totalCounter << std::endl;
+			// PRINT SOFT CONDITIONAL AND LCOAL SOFT PROB
+			std::cout << "TI  : ";
+			for (std::map<float, float>::iterator iter = probabilitiesFromTI.begin(); iter != probabilitiesFromTI.end(); ++iter) {
+				std::cout << " P[" << iter->first << "]=";
+				std::cout << iter->second;
+			}
+			std::cout << std::endl;
+			std::cout << "SOFT: ";
+			for (std::map<float, float>::iterator iter = probabilitiesFromSoftData.begin(); iter != probabilitiesFromSoftData.end(); ++iter) {
+				std::cout << " P[" << iter->first << "]=";
+				std::cout << iter->second;
+			}
+			std::cout << std::endl;
+			std::cout << "COMB: ";
+			for (std::map<float, float>::iterator iter = probabilitiesCombined.begin(); iter != probabilitiesCombined.end(); ++iter) {
+				std::cout << " P[" << iter->first << "]=";
+				std::cout << iter->second;
+			}
+			std::cout << std::endl;
+			std::cout << std::endl;
 		}
-		std::cout << std::endl;
-		std::cout << "SOFT: ";
-		for (std::map<float, float>::iterator iter = probabilitiesFromSoftData.begin(); iter != probabilitiesFromSoftData.end(); ++iter) {
-			std::cout << " P[" << iter->first << "]=";
-			std::cout << iter->second;
-		}
-		std::cout << std::endl;
-		std::cout << "COMB: ";
-		for (std::map<float, float>::iterator iter = probabilitiesCombined.begin(); iter != probabilitiesCombined.end(); ++iter) {
-			std::cout << " P[" << iter->first << "]=";
-			std::cout << iter->second;
-		}
-		std::cout << std::endl;
-		std::cout << std::endl;
-
 
 
 

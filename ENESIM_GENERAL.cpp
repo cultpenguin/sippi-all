@@ -132,6 +132,8 @@ float MPS::ENESIM_GENERAL::_simulate(const int& sgIdxX, const int& sgIdxY, const
 */
 void MPS::ENESIM_GENERAL::_InitStartSimulationEachMultipleGrid(const int& level) {
 	//Empty for now
-	std::cout << "RELOADING SOFT DATA" << std::endl;
+	if (_debugMode > 1) {
+		std::cout << "Reloading soft data from files" << std::endl;
+	}
 	_readSoftDataFromFiles();
 }

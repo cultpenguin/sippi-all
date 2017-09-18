@@ -708,7 +708,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 
 	for (int n=0; n<_realizationNumbers; n++) {
 
-		if (_debugMode >= -2) {
+		if (_debugMode >= 2) {
 			std::cout << "MPSLIB: simulation realization " << n + 1 << "/" << _realizationNumbers << std::endl;
 		}
 
@@ -740,7 +740,7 @@ void MPS::MPSAlgorithm::startSimulation(void) {
 		//Multi level grids
 		for (int level=_totalGridsLevel; level>=0; level--) {
 
-			if (_debugMode >= -2) {
+			if (_debugMode >= 2) {
 				std::cout << "MPSLIB: starting multigrid  " << level <<  std::endl;
 			}
 
