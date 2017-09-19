@@ -9,11 +9,11 @@ O.hard_data_filename='dummy';
 O.soft_data_filename='dummy';
 O.soft_data_filename='soft_as_softhard.dat';
 O.n_max_ite=100000;
-O.n_max_cpdf_count=10;
+O.n_max_cpdf_count=1;
 O.max_search_radius=[10000 10000];
 
 O.debug=1;
-O.n_real=40;
+O.n_real=400;
 O.clean = 1;
 %O.exe_root = 'E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
 
@@ -35,7 +35,7 @@ for i=1:length(Oo)
     caxis([0 1]);
     title(sprintf('t=%3.1f p%d,ncs=%d ',Oo{i}.time,Oo{i}.shuffle_simulation_grid,Oo{i}.n_cond(2)))
 end
-print_mul(sprintf('%s_nMaxCpdf%03d','ex_hard_as_soft',O.n_max_cpdf_count))
+print_mul(sprintf('%s_nMaxCpdf%03d_B','ex_hard_as_soft',O.n_max_cpdf_count))
 
 
 %%

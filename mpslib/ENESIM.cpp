@@ -1124,6 +1124,8 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 	float randomValue;
 	float pAcc;
 	float SoftProbability;
+	float pAccOpt = 1e-9;
+	float simulatedValueOpt;
 
 
 	if (_nMaxCountCpdf == 1) {
@@ -1137,7 +1139,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 		do {
 			// MAKE SURE THAT conditionalPdfFromTi IS OBTAINED INDEPENDENTLTY EACH TIME!!!
 			// ESPECIELLY WHEN BASED ON ONLY ONE COUNT
-
+			
 			// obtain conditional and generate a realization wihtout soft data
 			conditionalPdfFromTi.clear();
 			SoftProbability = 1;
@@ -1146,12 +1148,26 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 			simulatedValue = _sampleFromPdf(conditionalPdfFromTi);
 			randomValue = ((float)rand() / (RAND_MAX));
 			pAcc = SoftProbability;
+				
+			// Make sure to initialize optimal values
+			if (i == 0) {
+				pAccOpt = pAcc;
+				simulatedValueOpt = simulatedValue;
+			}
 
+			// Store the most probable so far
+			if (pAcc > pAccOpt) {
+				simulatedValueOpt = simulatedValue;
+				pAccOpt = pAcc;
+			}
+			
 			if (_debugMode > 2) {
 				std::cout << "  i= " << i << " maxIterations=" << maxIterations;
 				std::cout << "   p_ti = [" << conditionalPdfFromTi[0] << "," << conditionalPdfFromTi[1] << "]";
 				std::cout << " simval = " << simulatedValue;
-				std::cout << "   pAcc =p_soft=" << SoftProbability << std::endl;
+				std::cout << "   pAcc =p_soft=" << SoftProbability;
+				std::cout << " simvalOpt = " << simulatedValueOpt;
+				std::cout << "   pAccOpt=" << pAccOpt << std::endl;
 			}
 
 			// accept simulatedValue with probabilty from soft data
@@ -1165,6 +1181,7 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 			i++;
 
 		} while ((i<maxIterations)&(!isAccepted));
+		simulatedValue = simulatedValueOpt;
 
 	}
 	else {
