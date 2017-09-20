@@ -643,6 +643,26 @@ bool MPS::ENESIM::_getCpdfTiEnesimNew(const int& sgIdxX, const int& sgIdxY, cons
 
 
 							}
+							else {
+								// relative soft data located OUTSIDE TI grid. 
+								// In this case assign the lowest soft probability is the local soft probabilty
+								// assign the lowest possible soft probability to assign th eleast weight to this data
+								
+								// find the MIN and MAX soft probability of the one conditional soft data, as P_soft_max_i
+								float p_min = 1;
+								float p_max = 0;
+								for (unsigned int icat = 0; icat < _softDataGrids.size(); icat++) {
+									if (_softDataGrids[icat][sdZ][sdY][sdX] < p_min) {
+										p_min = _softDataGrids[icat][sdZ][sdY][sdX];
+									}
+									if (_softDataGrids[icat][sdZ][sdY][sdX] > p_max) {
+										p_max = _softDataGrids[icat][sdZ][sdY][sdX];
+									}
+								}
+								P_soft_i.push_back(p_min);
+								P_soft_max_i.push_back(p_max);
+
+							}
 						}
 					
 					}
@@ -1173,10 +1193,12 @@ float MPS::ENESIM::_getRealizationFromCpdfTiEnesimRejectionNonCo(const int& sgId
 			// accept simulatedValue with probabilty from soft data
 			if (randomValue<pAcc) {
 				isAccepted = true;
-				//std::cout << "  cACCEPTED  as " << randomValue << "<" << pAcc << std::endl;
+				simulatedValueOpt = simulatedValue;
+				pAccOpt = pAcc;
+				//std::cout << "  current hard data ACCEPTED  as " << randomValue << "<" << pAcc << std::endl;
 			}
 			else {
-				//std::cout << "  current Hard data real rejected as " << randomValue << "!<" << pAcc << std::endl;
+				//std::cout << "  current hard data real rejected as " << randomValue << "!<" << pAcc << std::endl;
 			}
 			i++;
 
