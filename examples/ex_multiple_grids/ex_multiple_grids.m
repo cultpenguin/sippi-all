@@ -1,45 +1,36 @@
-% mpslib_multiple_grid
+% ex_multiple_grid: Demonstrate using multiple grids  mps_snesim_tree
 clear all;close all
-x=1:1:90;nx=length(x);
-y=1:1:95;ny=length(y);
 
-
-f_ti{1}='ti_cb_6x6_120_120_1.dat';
-f_ti{2}='ti_strebelle_125_125_1.dat';
-f_ti{3}='ti_lines_arrows_100_100_1.dat';
-i_ti=3;
-
-
-% load TIaxis
-TI=read_eas_matrix(['..',filesep,'..',filesep,'ti',filesep,f_ti{i_ti}]);
+% load training image
+TI=read_eas_matrix('ti.dat');
 
 % setup simulation grid
-SIM=zeros(ny,nx).*NaN;;
+x=1:1:90;nx=length(x);
+y=1:1:95;ny=length(y);
+SIM=ones(ny,nx).*NaN;;
 
-O.debug=1;
-O.n_cond=36;
-O.template_size=[19 19 1];
-%% UNCONDITIONAL
-% MPS_SNESIM_TREE
-O.parameter_filename='mps_snesim.txt';
+%% Uncodtional simulation using mps_snesim_tree with different 
+%  number of multiple grids and conditioning data-
 O.method='mps_snesim_tree'; 
+%O.method='mps_genesim'; 
 O.n_real=1;
 O.rseed=1;
-j=0;
-
+O.debug=1;
 
 O.shuffle_simulation_grid=0; % sequential/unilateral
 O.shuffle_simulation_grid=1; % random
 
 nmg=[0,1,2,3];ni=length(nmg);
-tsize=[3 6 9 15 25];;nj=length(tsize);
+nc =[3^2, 4^2, 5^2, 6^2, 8^2, 9^2];nj=length(nc);
 
 for i=1:length(nmg);
-for j=1:length(tsize);
-    O.template_size=[tsize(j) tsize(j) 1];
+for j=1:length(nc);
+    temp_size=sqrt(nc(j));
+    O.template_size=[temp_size temp_size 1]; 
+    O.n_cond = nc(j);
     O.n_multiple_grids=nmg(i);
-   
-    [reals,O]=mps_cpp(TI',SIM,O);
+    O.parameter_filename=sprintf('mps_snesim_nmg%02d_ts%02d.txt',O.n_multiple_grids,O.template_size(1));
+    [reals,O]=mps_cpp(TI,SIM,O);
     
     subplot(ni,nj,j+(i-1)*nj);
     imagesc(x,y,reals(:,:,1)');
