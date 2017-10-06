@@ -5,41 +5,39 @@ cmap=cmap_linear([1 1 1; 1 0 0; 0 0 0]);
 
 O.parameter_filename='mps_genesim_test.txt';
 O.method='mps_genesim';
-O.hard_data_filename='dummy';
-O.soft_data_filename='dummy';
 O.soft_data_filename='soft_as_softhard.dat';
 O.n_max_ite=100000;
 O.n_max_cpdf_count=1;
 O.max_search_radius=[10000 10000];
 
 O.debug=1;
-O.n_real=100;
+O.n_real=160;
 O.clean = 1;
 %O.exe_root = 'E:\Users\tmh\RESEARCH\PROGRAMMING\GITHUB\MPSLIB\msvc2017\x64\Release';
 
-O.n_cond = [25 1];O.shuffle_simulation_grid=2;
-[r{1},Oo{1}]=mps_cpp_thread(TI,SIM,O);
-O.n_cond = [25 3];O.shuffle_simulation_grid=2;
-[r{2},Oo{2}]=mps_cpp_thread(TI,SIM,O);
-O.n_cond = [25 1];O.shuffle_simulation_grid=1;
-[r{3},Oo{3}]=mps_cpp_thread(TI,SIM,O);
-O.n_cond = [25 3];O.shuffle_simulation_grid=1;
-[r{4},Oo{4}]=mps_cpp_thread(TI,SIM,O);
+
+nc_soft=[0 1 3];
+j=0;
+for ic=1:length(nc_soft);
+    for k=1:2;
+        j=j+1;
+        O.n_cond = [25 nc_soft(ic)];O.shuffle_simulation_grid=k;
+        [r{j},Oo{j}]=mps_cpp_thread(TI,SIM,O);
+    end
+end
 
 %%
 figure(1);clf;
 for i=1:length(Oo)
-    subplot(2,2,i);
+    subplot(3,2,i);
     imagesc(etype(r{i}));
     axis image;
     caxis([0 1]);
-    title(sprintf('t=%3.1f p%d,ncs=%d ',Oo{i}.time,Oo{i}.shuffle_simulation_grid,Oo{i}.n_cond(2)))
+    title(sprintf('t=%3.1fs i_p=%d, nc_{soft}=%d',Oo{i}.time,Oo{i}.shuffle_simulation_grid,Oo{i}.n_cond(2)))
+    %title(sprintf('t=%3.1fs i_p=%d, nc_{hard}=%d, nc_{soft}=%d ',Oo{i}.time,Oo{i}.shuffle_simulation_grid,Oo{i}.n_cond(1),Oo{i}.n_cond(2)))
 end
 print_mul(sprintf('%s_nMaxCpdf%03d_C','ex_hard_as_soft',O.n_max_cpdf_count))
 
-
-%%
-%mps_cpp_plot(r,Oo,1);
 
 
 
