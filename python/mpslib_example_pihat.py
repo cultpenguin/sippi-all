@@ -25,7 +25,7 @@ O1.par['simulation_grid_size'][1]=8;
 
 O1.parameter_filename = 'mps_snesim.txt'
 O1.par['debug_level']=-1;
-O1.par['ti_fnam'] = 'cb.dat';
+O1.par['ti_fnam'] = 'ti.dat';
 O1.par['n_cond']=9;
 i=0;
 while i<1000:
