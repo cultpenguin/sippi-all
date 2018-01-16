@@ -18,7 +18,7 @@ O.rseed=1;
 O.debug=1;
 
 O.shuffle_simulation_grid=0; % sequential/unilateral
-O.shuffle_simulation_grid=1; % random
+%O.shuffle_simulation_grid=1; % random
 
 nmg=[0,1,2,3];ni=length(nmg);
 nc =[3^2, 4^2, 5^2, 6^2, 8^2, 9^2];nj=length(nc);
