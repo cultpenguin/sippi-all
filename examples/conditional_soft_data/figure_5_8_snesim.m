@@ -1,5 +1,5 @@
-% figure_5_snesim_unilateral_random
-clear all;close all;
+% figure_5_snesim
+clear all;
 x=1:1:30;nx=length(x);
 y=1:1:30;ny=length(y);
 
@@ -36,14 +36,14 @@ O.n_real=600;   %  optional number of realization
 i_path_arr=[0,1,2];
 i_soft_arr=[1,2,3];
 
-figure(5);
+figure(5);clf;
 for i=1:length(i_path_arr)
     for j=1:length(i_soft_arr)
         try;progress_txt([i,j],[length(i_path_arr),length(i_soft_arr)]);end
         O.parameter_filename = sprintf('%s_d%d_rpath%d.par',O.method,i_soft_arr(j),i_path_arr(i));
         O.soft_data_filename = f_soft{i_soft_arr(j)};
         O.shuffle_simulation_grid = i_path_arr(i);
-        [reals,O]=mps_cpp(TI,SIM,O);
+        [reals,O]=mps_cpp_thread(TI,SIM,O);
         subplot(length(i_path_arr),length(i_soft_arr),j+(i-1)*3)
         imagesc(etype(reals));caxis([0 1]);
         title(sprintf('SNESIM, d%d, rp%d',i_soft_arr(j),i_path_arr(i)))

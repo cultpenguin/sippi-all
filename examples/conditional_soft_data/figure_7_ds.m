@@ -1,5 +1,5 @@
-% figure_4_enesim_unilateral_random
-clear all;close all;
+% figure_7_ds
+clear all;
 x=1:1:30;nx=length(x);
 y=1:1:30;ny=length(y);
 

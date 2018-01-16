@@ -1,5 +1,5 @@
-% figure_4_enesim_unilateral_random
-clear all;close all;
+% figure_9_10_ds_nonco
+clear all;
 x=1:1:30;nx=length(x);
 y=1:1:30;ny=length(y);
 
@@ -28,7 +28,6 @@ O.n_cond=[n_cond];
 O.n_max_ite=n_max_ite;
 
 O.n_real=600;   %  number of realizations
-O.n_real = 10;
 
 n_cond_soft = [1 3 25];
 %max_search_radius_soft=[0 1];
@@ -39,21 +38,20 @@ for rpath = 1:2;
     
     i_soft_arr=[1,2,3];
     
-    
     i_soft_arr=[1,2,3];
-    figure(8+rpath);
+    figure(8+rpath);clf,
     for i=1:length(n_cond_soft)
         for j=1:length(i_soft_arr)
             try;progress_txt([i,j],[length(n_cond_sodr),length(i_soft_arr)]);end
-            O.parameter_filename = sprintf('%s_d%d_ncond_soft%d.par',O.method,i_soft_arr(j),n_cond_soft(i));
+            O.parameter_filename = sprintf('%s_d%d_ncond_soft%d_rpath%d.par',O.method,i_soft_arr(j),n_cond_soft(i),rpath);
             O.soft_data_filename = f_soft{i_soft_arr(j)};
             O.n_cond=[n_cond n_cond_soft(i)];
             
-            [reals,O]=mps_cpp(TI,SIM,O);
+            [reals,O]=mps_cpp_thread(TI,SIM,O);
             
             subplot(length(n_cond_soft),length(i_soft_arr),j+(i-1)*3)
             imagesc(etype(reals));caxis([0 1]);
-            title(sprintf('DS, d%d, N_{soft}%d',i_soft_arr(j),n_cond_soft(i)))
+            title(sprintf('DS, d%d, N_{soft}%d, rp=%d',i_soft_arr(j),n_cond_soft(i),rpath))
             cb=colorbar;
             ylabel(cb, 'P(channel)')
             axis image

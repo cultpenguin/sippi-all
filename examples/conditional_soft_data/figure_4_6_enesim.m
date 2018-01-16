@@ -1,5 +1,5 @@
-% figure_4_enesim_unilateral_random
-clear all;close all;
+% figure_4_6_enesim
+clear all;
 x=1:1:30;nx=length(x);
 y=1:1:30;ny=length(y);
 
@@ -27,11 +27,11 @@ O.n_max_cpdf_count=30; % Set below \inf to improve CPU
 O.n_cond=[n_cond];
 O.n_max_ite=n_max_ite;
 
-O.n_real=50;   %  optional number of realization
+O.n_real=600;   %  optional number of realization
 
 i_path_arr=[0,1,2];
 i_soft_arr=[1,2,3];
-figure(4);
+figure(4);clf;
 for i=1:length(i_path_arr)
     for j=1:length(i_soft_arr)
         try;progress_txt([i,j],[length(i_path_arr),length(i_soft_arr)]);end
