@@ -22,6 +22,7 @@ SIM = ones(ny,nx).*NaN;
 
 n_cond=5^2;n_max_ite=4000; % OLD RUN
 O.method='mps_genesim'; % MPS algorithm to run
+O.origin=[1 1 0];
 O.n_cond = n_cond; % number of conditional points
 O.n_max_cpdf_count=30; % Set below \inf to improve CPU
 O.n_cond=[n_cond];

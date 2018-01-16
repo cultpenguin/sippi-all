@@ -22,6 +22,7 @@ SIM = ones(ny,nx).*NaN;
 
 n_cond=5^2;n_max_ite=4000; % OLD RUN
 O.method='mps_genesim'; % MPS algorithm to run (def='mps_snesim_tree')
+O.origin=[1 1 0];
 O.n_cond = n_cond; % number of conditional points
 O.n_max_cpdf_count=1; % DIRECT SAMPLING!
 O.n_cond=[n_cond];
@@ -30,11 +31,11 @@ O.n_max_ite=n_max_ite;
 O.n_real=600;   %  number of realizations
 
 n_cond_soft = [1 3 25];
-%max_search_radius_soft=[0 1];
+max_search_radius_soft=1000;
 
-for rpath = 1:2;
+for rpath = 2;
     O.shuffle_simulation_grid = rpath;
-    O.max_search_radius_soft=1000; % SEARCH SOFT DATA AWAY FROM COLOCATED LOCATION
+    O.max_search_radius=[1000 max_search_radius_soft]; % SEARCH SOFT DATA AWAY FROM COLOCATED LOCATION
     
     i_soft_arr=[1,2,3];
     

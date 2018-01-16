@@ -22,6 +22,7 @@ SIM = ones(ny,nx).*NaN;
 
 n_cond=5^2;n_max_ite=4000; % OLD RUN
 O.method='mps_genesim'; % MPS algorithm to run (def='mps_snesim_tree')
+O.origin=[1 1 0];
 O.n_cond = n_cond; % number of conditional points
 O.n_max_cpdf_count=1; % DIRECT SAMPLING!
 O.n_cond=[n_cond];
