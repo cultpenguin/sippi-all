@@ -33,7 +33,7 @@ O.n_real=600;   %  number of realizations
 n_cond_soft = [1 3 25];
 max_search_radius_soft=1000;
 
-for rpath = 2;
+for rpath = [1,2];
     O.shuffle_simulation_grid = rpath;
     O.max_search_radius=[1000 max_search_radius_soft]; % SEARCH SOFT DATA AWAY FROM COLOCATED LOCATION
     
@@ -44,7 +44,7 @@ for rpath = 2;
     for i=1:length(n_cond_soft)
         for j=1:length(i_soft_arr)
             try;progress_txt([i,j],[length(n_cond_sodr),length(i_soft_arr)]);end
-            O.parameter_filename = sprintf('%s_d%d_ncond_soft%d_rpath%d.par',O.method,i_soft_arr(j),n_cond_soft(i),rpath);
+            O.parameter_filename = sprintf('ds_d%d_ncond_soft%d_rpath%d.par',i_soft_arr(j),n_cond_soft(i),rpath);
             O.soft_data_filename = f_soft{i_soft_arr(j)};
             O.n_cond=[n_cond n_cond_soft(i)];
             

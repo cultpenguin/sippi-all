@@ -36,7 +36,7 @@ figure(4);clf;
 for i=1:length(i_path_arr)
     for j=1:length(i_soft_arr)
         try;progress_txt([i,j],[length(i_path_arr),length(i_soft_arr)]);end
-        O.parameter_filename = sprintf('%s_d%d_rpath%d.par',O.method,i_soft_arr(j),i_path_arr(i));
+        O.parameter_filename = sprintf('enesim_d%d_rpath%d.par',i_soft_arr(j),i_path_arr(i));
         O.soft_data_filename = f_soft{i_soft_arr(j)};
         O.shuffle_simulation_grid = i_path_arr(i);
         [reals,O]=mps_cpp_thread(TI,SIM,O);
