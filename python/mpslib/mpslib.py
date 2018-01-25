@@ -1,8 +1,8 @@
 import numpy as np
 import os
 import subprocess
-#import mpslib.eas as eas
 from . import eas as eas
+#from . import trainingimages
 import time
 
 def is_exe(filename):

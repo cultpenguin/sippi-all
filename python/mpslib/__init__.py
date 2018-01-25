@@ -1,2 +1,4 @@
+__all__=['mpslib','eas','trainingimages']
 from .mpslib import mpslib
-from .mpslib import eas
+from . import eas
+from . import trainingimages
