@@ -213,6 +213,10 @@ protected:
 	*/
 	bool _showPreview = 1;
 	/**
+	* @brief Save output as GRD3 files for GoeScene3D
+	*/
+	bool _saveGrd3 = 0;
+	/**
 	* @brief Initial value of the simulation
 	*/
 	float _seed = 0;

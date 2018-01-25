@@ -20,7 +20,7 @@ print(dir(mps))
 #%% MPS_SNESIM_TREE
 
 O1 = mps.mpslib(method='mps_snesim_tree',n_real = 2, verbose_level=-1)
-O1.par['debug_level']=-1;
+O1.par['debug_level']=0;
 O1.parameter_filename = 'mps_snesim.txt'
 O1.run()
 
