@@ -87,7 +87,8 @@ def read(filename='eas.dat'):
         if (debug_level>0):
             print("eas: converted data in matrixes (Dmat)");        
 
-    
+    eas['filename']=filename
+
     return eas;
 
     

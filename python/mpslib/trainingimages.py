@@ -46,6 +46,11 @@ def maze():
     D = get_remote(url,local_file)    
     return D
 
-
-
+'''
+def checkerboard(nx=40, ny=40, cellsize=4):
+    import numpy as np
+    TI=np.kron([[1, 0] * cellsize, [0, 1] * cellsize] * cellsize, np.ones((ny, nx)))
+    #D['Dmat']=TI
+    #D['filename']='cboard'
+'''
 

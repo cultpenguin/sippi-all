@@ -6,21 +6,23 @@ sys.path.append('mpslib')
 
 
 #%%
-import mpslib as mps;
-# import mpslib_tmh as mps_tmh;
-import matplotlib.pyplot as plt;
-#plt.ion();
+import mpslib as mps
+# import mpslib_tmh as mps_tmh
+import matplotlib.pyplot as plt
+#plt.ion()
 
 #%% MPS_SNESIM_TREE
 
 O1 = mps.mpslib(method='mps_snesim_tree',hard_data_fnam = 'mps_2d_hard_data.dat',
                     n_real = 2, verbose_level=1)
 O1.parameter_filename = 'mps_snesim.txt'
-O1.par['debug_level']=-1;
+O1.par['debug_level']=-1
+O1.par['n_cond']=4
+#TI=mps.trainingimages.lines()
+#O1.par['ti_fnam']=TI['filename']
 O1.run()
 
-
-
+# PLOT SNESIM
 plt.set_cmap('hot')
 fig1 = plt.figure(1)
 for i in range(0, O1.par['n_real']):
@@ -29,7 +31,7 @@ for i in range(0, O1.par['n_real']):
 
 fig1.suptitle(O1.method, fontsize=16)
 plt.savefig(O1.method+'.png', dpi=600)
-plt.show();
+plt.show()
 
 
 #%% Use the same modeling parameters, but change simulation methods

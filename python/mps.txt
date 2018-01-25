@@ -1,8 +1,8 @@
-Number of realizations # 1
+Number of realizations # 2
 Random Seed (0 `random` seed) # 1 
 Number of mulitple grids (start from 0) # 3
 Min Node count (0 if not set any limit)# 0
-Maximum number condtitional data (0: all) # 36
+Maximum number condtitional data (0: all) # 9
 Search template size X # 8
 Search template size Y # 7
 Search template size Z # 1
@@ -15,7 +15,7 @@ Simulation grid world/origin Z # 0
 Simulation grid grid cell size X # 1
 Simulation grid grid cell size Y # 1
 Simulation grid grid cell size Z # 1
-Training image file (spaces not allowed) # ti_1.dat
+Training image file (spaces not allowed) # ti_lines.dat
 Output folder (spaces in name not allowed) # .
 Shuffle Simulation Grid path (1 : random, 0 : sequential) # 1
 Shuffle Training Image path (1 : random, 0 : sequential) # 1
