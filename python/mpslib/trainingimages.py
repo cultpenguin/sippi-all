@@ -7,14 +7,20 @@ Created on Wed Jan 24 19:36:26 2018
 
 import os.path
 from . import eas
-import urllib.request
-
+#import urllib.request
+try:
+#    from urllib.request import urlopen
+     from urllib.request import urlretrieve as urlretrieve
+except ImportError:
+#    from urllib2 import urlopen
+    from urllib import urlretrieve as urlretrieve
 
 def get_remote(url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_strebelle.sgems',local_file = 'ti.dat'):
     if not (os.path.exists(local_file)):
         print('Beginning download of ' + url + ' to ' + local_file)
-        urllib.request.urlretrieve(url, local_file)  
-    
+        urlretrieve(url, local_file)
+        #urllib.request.urlretrieve(url, local_file)
+
     print('Loading ' + local_file)
     D = eas.read(local_file)
     return D

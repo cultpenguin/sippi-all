@@ -15,13 +15,13 @@ O1.par['debug_level']=-1
 
 # when debug_level>-1 and the text output from mpslib increase, the mpslib exe file is detached from 
 # python before it has finished running!!!
-#TI, TI_filename=mps.trainingimages.lines()
+TI, TI_filename=mps.trainingimages.lines()
 #TI, TI_filename=mps.trainingimages.bangladesh()
 #TI, TI_filename=mps.trainingimages.checkerboard()
-TI, TI_filename=mps.trainingimages.checkerboard2()
-TI, TI_filename=mps.trainingimages.checkerboard2(nx=40, ny=50, cell_x=8, cell_y=4, cell_2=10)
-TI, TI_filename=mps.trainingimages.checkerboard2(nx=100, ny=100, cell_x=4, cell_y=4, cell_2=3)
-TI, TI_filename=mps.trainingimages.maze()
+#TI, TI_filename=mps.trainingimages.checkerboard2()
+#TI, TI_filename=mps.trainingimages.checkerboard2(nx=40, ny=50, cell_x=8, cell_y=4, cell_2=10)
+#TI, TI_filename=mps.trainingimages.checkerboard2(nx=100, ny=100, cell_x=4, cell_y=4, cell_2=3)
+#TI, TI_filename=mps.trainingimages.maze()
 
 O1.par['ti_fnam']=TI_filename
 
