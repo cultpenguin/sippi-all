@@ -86,16 +86,16 @@ def checkerboard2(nx=40, ny=50, cell_x=8, cell_y=4, cell_2=10):
 
     for ix in range(nx):             # Note that i ranges from 0 through 7, inclusive.
         for iy in range(ny):           # So does j.
-            if (ix%cell_x < (cell_x/2))==(iy%cell_y < (cell_y/2)):  # The top left square is white.
+            if (ix%cell_x < (cell_x/2))==(iy%cell_y < (cell_y/2)): # The checkerboard
                 TI[iy, ix] = 0
             else:
                 TI[iy,ix]=1
 
-            if (ix%cell_2 < (cell_2/2))&(iy%cell_2 < (cell_2/2)):  # The top left square is white.
+            if (ix%(cell_2+1) < (cell_2/2))&(iy%(cell_2+1) < (cell_2/2)): # some more 'checks' a little off
                 TI[iy, ix] = 2
 
             if (ix+iy)%cell_x==0:
                 TI[iy, ix] = 3
 
-    local_file = 'ti_checkerboard2.dat'
+    local_file = 'ti_checkerboard2_%d_%d__%d_%d__%d.dat' % (nx,ny,cell_x,cell_y,cell_2) # a diagonal
     return TI, local_file
