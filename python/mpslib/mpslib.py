@@ -17,7 +17,7 @@ class mpslib:
                 soft_data_categories= np.arange(2), soft_data_filename = 'soft.dat', n_threads = 1, verbose_level = 0, 
                 template_size = np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_min_node_count=0,
                 n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_min=0, distance_pow=1,
-                max_search_radius=10000000):
+                max_search_radius=10000000, ti=np.empty(0)):
         '''Initialize variables in Class'''
         
         mpslib_py_path,fn = os.path.split(__file__)
@@ -248,10 +248,17 @@ class mpslib:
             """
             success = False
 
+            # write training image is set
+            if self.ti.shape[0]>0:
+                #self.par['ti_fnam']='TrainingImage.dat'
+                eas.write_mat(self.ti, self.par['ti_fnam'])
+
+
+
             # write parameter file
             self.par_write()
 
-           
+
             exe_file = self.method
             if self.iswin:
                 exe_file = exe_file + '.exe'
