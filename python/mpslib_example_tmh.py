@@ -36,7 +36,7 @@ O1.parameter_filename='test.par'
 O1.run()
 
 
-plt.ion
+plt.ion()
 plt.subplot(3, 3, 1)
 plt.imshow(TI, interpolation='none')
 plt.title(O1.par['ti_fnam'])

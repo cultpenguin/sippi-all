@@ -1,4 +1,4 @@
-# mpslib_example_tmh
+#%%
 import sys
 sys.path.append('mpslib')
 import matplotlib.pyplot as plt
@@ -6,12 +6,9 @@ import mpslib as mps
 import numpy as np
 
 #%% MPS_SNESIM_TREE
-#O1=mps.mpslib(method='mps_snesim_tree')
-O1=mps.mpslib(method='mps_genesim')
+O1=mps.mpslib(method='mps_snesim_tree')
+#O1=mps.mpslib(method='mps_genesim')
 O1.par['debug_level']=-1
-
-
-
 
 
 # when debug_level>-1 and the text output from mpslib increase, the mpslib exe file is detached from 
@@ -34,14 +31,14 @@ O1.par['simulation_grid_size'][2]=1
 O1.par['soft_data_filename']='soft_case2.dat'
 O1.par['shuffle_simulation_grid']=2
 O1.ti = TI
-O1.par['n_cond']=16
+O1.par['n_cond']=1
 O1.par['rseed']=0
-O1.par['n_real']=25
+O1.par['n_real']=125
 O1.parameter_filename='test.par'
 O1.run()
 
 
-plt.ion()
+#plt.ion()
 plt.figure(1)
 plt.subplot(3, 3, 1)
 plt.imshow(TI, interpolation='none')
@@ -58,7 +55,7 @@ fig1.suptitle(O1.method, fontsize=16)
 plt.show()
 
 
-##%
+#%%
 from scipy import stats
 d=mps.eas.read(O1.par['soft_data_filename'])
 emean = np.mean(O1.sim, axis=0)

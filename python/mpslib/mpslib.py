@@ -8,6 +8,11 @@ import time
 def is_exe(filename):
     return os.path.isfile(filename) and os.access(filename, os.X_OK)
 
+
+#%% FUNCTIONS FOR PLOTTING OF EAS FILES
+
+
+#%% THE CLASS
 class mpslib:
 
     def __init__(self, parameter_filename = 'mps.txt', method = 'mps_genesim', debug_level = 1, n_real = 1, rseed = 1,
@@ -354,6 +359,24 @@ class mpslib:
             if (self.verbose_level > 0):
                 print('mpslib: Reading: %s' % (filename))
             self.sim.append(OUT['Dmat'])
+
+
+    # plot realizations (only in 2D so far)
+    def plot_reals(self, nr=9):
+        import matplotlib.pyplot as plt
+        import numpy as np
+        nsp=np.ceil(np.sqrt(nr))
+        #plt.ion()
+        fig1=plt.figure(1)
+        plt.set_cmap('hot')
+        for i in range(0, np.min((self.par['n_real'],nr))):
+            plt.subplot(nsp,nsp,i+1)
+            plt.imshow(self.sim[i], interpolation='none')
+            plt.title("Real %d" % (i+1))
+        
+        fig1.suptitle(self.method, fontsize=16)
+        plt.show()
+    
 
 
 
