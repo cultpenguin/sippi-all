@@ -75,13 +75,7 @@ def checkerboard(nx=40, ny=40, cellsize=4):
     return TI, local_file
 
 def checkerboard2(nx=40, ny=50, cell_x=8, cell_y=4, cell_2=10):
-
     import numpy as np
-#    cell_x = 10  # Height and width of checkerboard squares.
-#    cell_y = 10  # Height and width of checkerboard squares.
-#
-#    nx = 40
-#    ny = 40
     TI=np.zeros((ny,nx))
 
     for ix in range(nx):             # Note that i ranges from 0 through 7, inclusive.
@@ -95,7 +89,7 @@ def checkerboard2(nx=40, ny=50, cell_x=8, cell_y=4, cell_2=10):
                 TI[iy, ix] = 2
 
             if (ix+iy)%cell_x==0:
-                TI[iy, ix] = 3
+                TI[iy, ix] = 0
 
     local_file = 'ti_checkerboard2_%d_%d__%d_%d__%d.dat' % (nx,ny,cell_x,cell_y,cell_2) # a diagonal
     return TI, local_file
