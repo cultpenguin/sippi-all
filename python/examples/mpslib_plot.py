@@ -10,8 +10,8 @@ Created on Thu Feb  1 20:44:17 2018
 #%%
 
 import sys
-sys.path.append('mpslib')
-import matplotlib.pyplot as plt
+#sys.path.append('../mpslib')
+#import matplotlib.pyplot as plt
 import mpslib as mps
 import numpy as np
 
