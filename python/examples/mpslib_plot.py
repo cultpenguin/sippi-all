@@ -4,16 +4,14 @@ Created on Thu Feb  1 20:44:17 2018
 
 @author: Thomas Mejer Hansen
 """
-
 ##%load_ext autoreload
 ##%autoreload 2
 ##%%
-
-import sys
+#import sys
 #sys.path.append('../mpslib')
-#import matplotlib.pyplot as plt
+
 import mpslib as mps
-import numpy as np
+
 
 O1=mps.mpslib(method='mps_genesim')
 O1.par['debug_level']=-1
@@ -34,39 +32,8 @@ O1.parameter_filename='plot.par'
 O1.run()
 
 
+#%%
 
 O1.plot_reals(O1.par['n_real'])
+O1.plot_etype()
 
-#%% plot realizations
-#%load_ext autoreload
-#%autoreload 2
-
-import matplotlib.pyplot as plt
-import mpslib as mps
-import numpy as np
-
-
-def plot_reals(O1,nshow=9):
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    import numpy as np
-    sns.set()
-    #plt.ion()
-    plt.figure(1)
-    
-    
-    plt.subplot(3, 3, 1)
-    plt.imshow(TI, interpolation='none')
-    plt.title(O1.par['ti_fnam'])
-    
-    plt.set_cmap('hot')
-    fig1 = plt.figure(1)
-    for i in range(1, np.min((O1.par['n_real'],6))):
-        plt.subplot(3,3,i+1)
-        plt.imshow(O1.sim[i], interpolation='none')
-        #sns.heatmap(O1.sim[i])
-        plt.title("Real %d" % i)
-    fig1.suptitle(O1.method, fontsize=16)
-    plt.show()
-    
-O1.plot_reals()

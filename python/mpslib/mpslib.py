@@ -368,6 +368,7 @@ class mpslib:
         nsp=np.ceil(np.sqrt(nr))
         #plt.ion()
         fig1=plt.figure(1)
+        fig1.clf()
         plt.set_cmap('hot')
         for i in range(0, np.min((self.par['n_real'],nr))):
             plt.subplot(nsp,nsp,i+1)
@@ -376,8 +377,49 @@ class mpslib:
         
         fig1.suptitle(self.method, fontsize=16)
         plt.show()
-    
 
+    # plot etypes (only in 2D so far)
+    def plot_etype(self):
+        
+        import matplotlib.pyplot as plt
+        import numpy as np
+        from scipy import stats
+        
+        # read soft data ('check if it exist')
+        d=eas.read(self.par['soft_data_filename'])
+        #d=mps.eas.read(O1.par['soft_data_filename'])
+        
+        # compute Etype
+        emean = np.mean(self.sim, axis=0)
+        estd = np.std(self.sim, axis=0)
+        emode = stats.mode(self.sim, axis=0)
+        emode = emode[0][0]
+
+        # plot the Etypes
+        fig2=plt.figure(2)
+        fig2.clf()                
+        plt.subplot(1,3,1)
+        plt.imshow(emean)
+        plt.colorbar()
+        plt.plot(d['D'][:,0], d['D'][:,1], 'k*',MarkerSize=32)
+        plt.scatter(x=d['D'][:,0], y=d['D'][:,1], c=d['D'][:,4],s=15)
+        plt.title('Etype Mean')
+
+        plt.subplot(1,3,2)
+        plt.imshow(estd)
+        plt.colorbar()
+        #plt.plot(d['D'][:,0], d['D'][:,1], 'k*',MarkerSize=32)
+        plt.title('Etype Std')
+        
+        plt.subplot(1,3,3)
+        plt.imshow(emode)
+        plt.colorbar()
+        plt.title('Etype Mode')
+        
+        #plt.savefig("soft_ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
+        plt.show()
+
+       
 
 
 
