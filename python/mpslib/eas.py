@@ -117,7 +117,7 @@ def write(D = np.empty([]), filename='eas.dat'):
 def write_mat(D = np.empty([]), filename='eas.dat'):
     '''
     eas.write_mat(eas,filename): writes an EAS/GSLIB formatted file from a dictionary
-        eas['D']: The data (2D numpy array)
+        eas['D']: The data (1D/2D/3D numpy array)
         eas['title']: Title of EAS data. Can contained the dimension, e.g. '20 30 1'
         eas['n_cols']: number of columns of data
         eas['header']: Header string of length n_cols    
@@ -138,7 +138,7 @@ def write_mat(D = np.empty([]), filename='eas.dat'):
         
     
     print("eas: writing matrix to %s " % filename)
-    print("eas: (nx,ny)=(%d,%d) " % (nx,ny) )
+    print("eas: (nx,ny,nz)=(%d,%d,%d) " % (nx,ny,nz) )
 
     title = ("%d %d %d" % (nx,ny,nz) )
     print(title)
@@ -153,8 +153,13 @@ def write_mat(D = np.empty([]), filename='eas.dat'):
     eas['title'] = title;
     eas['header'] = [];
     eas['header'].append('Header');
-    eas['D'] = D.ravel();
-    
+    #eas['D'] = D.ravel(order='C'); #NOT OK
+    eas['D'] = D.ravel(order='F'); # OK, but TRANSPOSED
+    #eas['D'] = D.ravel(order='A'); # NOT OK
+    #eas['D'] = D.ravel(order='K');
+
+    #eas['D'] = D.flatten();
+
     write_dict(eas,filename);
     
     return eas

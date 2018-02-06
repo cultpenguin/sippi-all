@@ -56,6 +56,8 @@ def strebelle(di=1, coarse3d=0):
             TI = Dmat[::di,::di]
         else:
             Dmat = TI
+            TI = coarsen_2d_ti(Dmat, di)
+            '''
             ny, nx = Dmat.shape
             ndim3 = di*di
             x = np.arange(nx)
@@ -71,16 +73,26 @@ def strebelle(di=1, coarse3d=0):
                     l=l+1
                     TI_small = Dmat[(0+j)::di,(0+k)::di]
                     TI[::, ::, l] = TI_small[0:ny2,0:nx2]
-
+            '''
     return TI, local_file
 
 
-def lines():
+def lines(di=1,coarse3d=0):
     local_file = 'ti_lines.dat';
     url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_lines_arrows.sgems';
     Deas = get_remote(url,local_file)
-    Dmat = Deas['Dmat']
-    return Dmat, local_file
+    TI = Deas['Dmat']
+
+    if di > 1:
+        local_file = "ti_lines_%d.dat" % di
+        if coarse3d == 0:
+            Dmat = TI
+            TI = Dmat[::di, ::di]
+        else:
+            Dmat = TI
+            TI = coarsen_2d_ti(Dmat, di)
+
+    return TI, local_file
 
 
 def stones():
