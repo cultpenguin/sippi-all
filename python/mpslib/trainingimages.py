@@ -6,6 +6,7 @@ Created on Wed Jan 24 19:36:26 2018
 """
 
 import os.path
+import numpy as np
 from . import eas
 #import urllib.request
 try:
@@ -26,11 +27,13 @@ def get_remote(url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_
     return D
 
 
-def strebelle():    
+def strebelle(di=2):
     local_file = 'ti_strebelle.dat';
     url = 'http://www.trainingimages.org/uploads/3/4/7/0/34703305/ti_strebelle.sgems';
     Deas = get_remote(url,local_file)
     Dmat = Deas['Dmat']
+    if di>1:
+        Dmat = Dmat[::di,::di]
     return Dmat, local_file
 
 

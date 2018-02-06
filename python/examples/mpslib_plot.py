@@ -10,6 +10,7 @@ Created on Thu Feb  1 20:44:17 2018
 #import sys
 #sys.path.append('../mpslib')
 
+import matplotlib.pyplot as plt
 import mpslib as mps
 
 
@@ -33,7 +34,11 @@ O1.run()
 
 
 #%%
-
 O1.plot_reals(O1.par['n_real'])
 O1.plot_etype()
+O1.plot_reals(O1.par['n_real'])
+
+
+wait = input("PRESS ENTER TO CONTINUE.")
+
 

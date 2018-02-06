@@ -376,7 +376,7 @@ class mpslib:
             plt.title("Real %d" % (i+1))
         
         fig1.suptitle(self.method, fontsize=16)
-        plt.show()
+        plt.show(block=False)
 
     # plot etypes (only in 2D so far)
     def plot_etype(self):
@@ -417,9 +417,8 @@ class mpslib:
         plt.title('Etype Mode')
         
         #plt.savefig("soft_ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
-        plt.show()
+        plt.show(block=False)
 
-       
 
 
 
