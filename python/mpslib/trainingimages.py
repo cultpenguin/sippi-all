@@ -57,23 +57,7 @@ def strebelle(di=1, coarse3d=0):
         else:
             Dmat = TI
             TI = coarsen_2d_ti(Dmat, di)
-            '''
-            ny, nx = Dmat.shape
-            ndim3 = di*di
-            x = np.arange(nx)
-            y = np.arange(ny)
-            ix = x[0:(nx - di):di]
-            iy = y[0:(ny - di):di]
-            nx2 = ix.size
-            ny2 = iy.size
-            TI = np.zeros((ny2,nx2, ndim3))
-            l=-1;
-            for j in range(di):
-                for k in range(di):
-                    l=l+1
-                    TI_small = Dmat[(0+j)::di,(0+k)::di]
-                    TI[::, ::, l] = TI_small[0:ny2,0:nx2]
-            '''
+
     return TI, local_file
 
 
@@ -102,12 +86,20 @@ def stones():
     Dmat = Deas['Dmat']
     return Dmat, local_file
 
-def bangladesh():
+def bangladesh(di=1,coarse3d=0):
     local_file = 'ti_bangladesh.dat';
     url = 'http://trainingimages.org/uploads/3/4/7/0/34703305/bangladesh.sgems';
     Deas = get_remote(url,local_file)
-    Dmat = Deas['Dmat']
-    return Dmat, local_file
+    TI = Deas['Dmat']
+    if di > 1:
+        if coarse3d == 0:
+            Dmat = TI
+            TI = Dmat[::di, ::di]
+        else:
+            Dmat = TI
+            TI = coarsen_2d_ti(Dmat, di)
+
+    return TI, local_file
 
 def maze():
     local_file = 'ti_maze.dat';

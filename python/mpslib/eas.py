@@ -133,9 +133,16 @@ def write_mat(D = np.empty([]), filename='eas.dat'):
     elif (D.ndim==2): 
         nz=1;
         (ny,nx) = D.shape;
+        D = np.transpose(D)
     else:
         (ny,nx,nz) = D.shape;
-        
+        # NEXT LINES ARE NEED TO PROPERLY STORE IN EAS FORMAT
+        D2=np.zeros((nx,ny,nz))
+        for iz in range(D.shape[2]):
+            Ds = D[:,:,iz]
+            D2[:, :, iz] = np.transpose(D[:,:,iz])
+
+        D=D2
     
     print("eas: writing matrix to %s " % filename)
     print("eas: (nx,ny,nz)=(%d,%d,%d) " % (nx,ny,nz) )
