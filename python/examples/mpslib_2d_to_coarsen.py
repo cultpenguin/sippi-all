@@ -55,13 +55,12 @@ rseed=1;
 #Coarsen channel TI, using only coarsened TI
 O1=mps.mpslib(method=alg)
 O1.par['debug_level']=-1
-O1.ti = TI1
 O1.par['ti_fnam']='ti1.dat'
 O1.par['simulation_grid_size'][0]=85
 O1.par['simulation_grid_size'][1]=45
+O1.ti = TI1
 O1.par['simulation_grid_size'][2]=1
 O1.par['shuffle_simulation_grid']=2
-O1.par['n_cond']=nc
 O1.par['rseed']=rseed
 O1.par['n_real']=1
 O1.parameter_filename='sim1.par'
@@ -83,6 +82,7 @@ O2.parameter_filename='sim2.par'
 O2.run()
 
 
+O1.par['n_cond']=nc
 #%%
 ax3 = plt.Subplot(fig, outer[2])
 fig.add_subplot(ax3)

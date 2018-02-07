@@ -253,11 +253,19 @@ class mpslib:
             """
             success = False
 
-            # write training image is set
-            if self.ti.shape[0]>0:
-                #self.par['ti_fnam']='TrainingImage.dat'
-                eas.write_mat(self.ti, self.par['ti_fnam'])
+            # write training image if set
+            if hasattr(self,'ti'):
+                if self.ti.shape[0]>0:
+                    #self.par['ti_fnam']='TrainingImage.dat'
+                    eas.write_mat(self.ti, self.par['ti_fnam'])
 
+            # write soft data if set
+            if hasattr(self,'d_soft'):
+                eas.write(self.d_soft, self.par['soft_data_filename'])
+
+            # write hard data if set
+            if hasattr(self,'d_hard'):
+                eas.write(self.d_hard, self.par['hard_data_fnam'])
 
 
             # write parameter file
@@ -360,22 +368,43 @@ class mpslib:
                 print('mpslib: Reading: %s' % (filename))
             self.sim.append(OUT['Dmat'])
 
+    # delete gslib files
+    def delete_gslib(self, remove_all_gslib=0):
+        """
+            *Description:*\n
+            Removes GSLIB files ('.gslib) from the output folder,
+            relate to the current object
+            delete_gslib(remove_all_gslib=1) removes ALL '.gslib' files
+           """
+        import os
+        import glob
+        if (remove_all_gslib)==1:
+            file_list = glob.glob('*.gslib')
+        else:
+            file_list = glob.glob('%s/%s*.gslib' % (self.par['out_folder'], self.par['ti_fnam']))
+        for file in file_list:
+            os.remove(os.path.join(self.par['out_folder'], file))
+            print('Removing {0}'.format(os.path.join(self.par['out_folder'], file)))
 
     # plot realizations (only in 2D so far)
-    def plot_reals(self, nr=9):
+    def plot_reals(self, nr=25):
         import matplotlib.pyplot as plt
+        import matplotlib.gridspec as gridspec
         import numpy as np
-        nsp=np.ceil(np.sqrt(nr))
-        #plt.ion()
-        fig1=plt.figure(1)
-        fig1.clf()
+
+        nr = np.min((self.par['n_real'], nr))
+        nsp = int(np.ceil(np.sqrt(nr)))
+
+        fig = plt.figure(1)
+        sp = gridspec.GridSpec(nsp, nsp, wspace=0.1, hspace=0.1)
         plt.set_cmap('hot')
-        for i in range(0, np.min((self.par['n_real'],nr))):
-            plt.subplot(nsp,nsp,i+1)
+        for i in range(0, nr):
+            ax1 = plt.Subplot(fig, sp[i])
+            fig.add_subplot(ax1)
             plt.imshow(self.sim[i], interpolation='none')
-            plt.title("Real %d" % (i+1))
-        
-        fig1.suptitle(self.method, fontsize=16)
+            plt.title("Real %d" % (i + 1))
+
+        fig.suptitle(self.method + ' - ' + self.parameter_filename, fontsize=16)
         plt.show(block=False)
 
     # plot etypes (only in 2D so far)
@@ -383,12 +412,22 @@ class mpslib:
         
         import matplotlib.pyplot as plt
         import numpy as np
+        import os
         from scipy import stats
         
         # read soft data ('check if it exist')
-        d=eas.read(self.par['soft_data_filename'])
-        #d=mps.eas.read(O1.par['soft_data_filename'])
-        
+        use_soft=0
+        if (os.path.isfile(self.par['soft_data_filename'])):
+            d_soft=eas.read(self.par['soft_data_filename'])
+            use_soft=1
+
+        # read hard data ('check if it exist')
+        use_hard=0
+        if (os.path.isfile(self.par['hard_data_fnam'])):
+            d_hard=eas.read(self.par['hard_data_fnam'])
+            use_hard=1
+
+
         # compute Etype
         emean = np.mean(self.sim, axis=0)
         estd = np.std(self.sim, axis=0)
@@ -396,27 +435,32 @@ class mpslib:
         emode = emode[0][0]
 
         # plot the Etypes
-        fig2=plt.figure(2)
-        fig2.clf()                
+        fig=plt.figure(2)
+        fig.clf()
+        plt.set_cmap('hot')
         plt.subplot(1,3,1)
-        plt.imshow(emean)
-        plt.colorbar()
-        plt.plot(d['D'][:,0], d['D'][:,1], 'k*',MarkerSize=32)
-        plt.scatter(x=d['D'][:,0], y=d['D'][:,1], c=d['D'][:,4],s=15)
+        im=plt.imshow(emean, zorder=-1)
+        plt.colorbar(im, fraction=0.046, pad=0.04)
+        if (use_hard):
+            plt.plot(d_hard['D'][:, 0], d_hard['D'][:, 1], "k.",  MarkerSize=25, zorder=0)
+            plt.scatter(d_hard['D'][:, 0], d_hard['D'][:, 1], c=d_hard['D'][:, 3], s=25, zorder=1)
+        if (use_soft):
+            plt.plot(d_soft['D'][:, 0], d_soft['D'][:, 1], ".", color=((.4,.4,.4)), MarkerSize=25, zorder=0)
+            plt.scatter(d_soft['D'][:, 0], d_soft['D'][:, 1], c=d_soft['D'][:, 3], s=25, zorder=2)
         plt.title('Etype Mean')
 
         plt.subplot(1,3,2)
-        plt.imshow(estd)
-        plt.colorbar()
-        #plt.plot(d['D'][:,0], d['D'][:,1], 'k*',MarkerSize=32)
+        im=plt.imshow(estd)
+        plt.colorbar(im,fraction=0.046, pad=0.04)
         plt.title('Etype Std')
         
         plt.subplot(1,3,3)
-        plt.imshow(emode)
-        plt.colorbar()
+        im=plt.imshow(emode)
+        plt.colorbar(im,fraction=0.046, pad=0.04)
         plt.title('Etype Mode')
         
         #plt.savefig("soft_ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
+        fig.suptitle(self.method + ' - ' + self.parameter_filename, fontsize=16)
         plt.show(block=False)
 
 

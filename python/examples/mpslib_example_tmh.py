@@ -1,16 +1,11 @@
 # mpslib_example_tmh
-import sys
-sys.path.append('mpslib')
 import matplotlib.pyplot as plt
 import mpslib as mps
 
-
 #%% MPS_SNESIM_TREE
-#O1=mps.mpslib(method='mps_snesim_tree')
-O1=mps.mpslib(method='mps_genesim')
+O1=mps.mpslib(method='mps_snesim_tree')
+#O1=mps.mpslib(method='mps_genesim')
 O1.par['debug_level']=-1
-
-
 
 
 
@@ -37,17 +32,16 @@ O1.run()
 
 
 plt.ion()
+
+O1.plot_reals()
+
+O1.plot_etype()
+plt.savefig("ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
+
+plt.figure(3)
 plt.subplot(3, 3, 1)
 plt.imshow(TI, interpolation='none')
 plt.title(O1.par['ti_fnam'])
 
-plt.set_cmap('hot')
-fig1 = plt.figure(1)
-for i in range(1, O1.par['n_real']):
-    plt.subplot(3,3,i+1)
-    plt.imshow(O1.sim[i], interpolation='none')
-    plt.title("Real %d" % i)
 
-fig1.suptitle(O1.method, fontsize=16)
-plt.savefig("ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
 plt.show()

@@ -111,7 +111,7 @@ def write(D = np.empty([]), filename='eas.dat'):
             
     print("eas: writing data to %s " % filename)
     print("eas: ncolumns=%d, ndata=%d  " % (ncols,ndata) )
-
+    print("eas: not implemented yet!!")
     pass
 
 def write_mat(D = np.empty([]), filename='eas.dat'):
