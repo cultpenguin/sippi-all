@@ -2,38 +2,55 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import mpslib as mps
 
 plt.ion()
 
 
-
-di=3 # Use every di'th data
+di=6 # Use every di'th data
 # NO coarsening --> 1 2D TI
-#TI1, TI_filename1 = mps.trainingimages.lines(di, coarse3d=0)
 TI1, TI_filename1 = mps.trainingimages.strebelle(di, coarse3d=0)
-#TI1, TI_filename1 = mps.trainingimages.bangladesh(di, coarse3d=0)
 # Coarsening --> multiple 2D TI
-#TI2, TI_filename2 = mps.trainingimages.lines(di, coarse3d=1)
 TI2, TI_filename2 = mps.trainingimages.strebelle(di, coarse3d=1)
-#TI2, TI_filename2 = mps.trainingimages.bangladesh(di, coarse3d=1)
+
 mps.eas.write_mat(TI1,'ti1.dat')
 mps.eas.write_mat(TI2,'ti2.dat')
 
 
-#%%
-fig, axs = plt.subplots(1,2, figsize=(10, 6), facecolor='w', edgecolor='k')
-plt.subplot(121)
-plt.imshow(TI1)
-plt.subplot(122)
-plt.imshow(TI2[:,:,0])
-plt.show()
+#%% Plot the training images
+fig = plt.figure(figsize=(15, 15))
+outer = gridspec.GridSpec(2, 2, wspace=0.2, hspace=0.2)
 
+ax1 = plt.Subplot(fig, outer[0])
+fig.add_subplot(ax1)
+plt.imshow(TI1)
+plt.title('One coarse TI')
+
+ax1 = plt.Subplot(fig, outer[1])
+fig.add_subplot(ax1)
+plt.axis('off')
+plt.title('LL')
+plt.title('Mulitple coarse TI')
+
+nsp = int(np.floor(np.sqrt(TI2.shape[2])))
+
+for i in [1]:
+    inner = gridspec.GridSpecFromSubplotSpec(nsp, nsp,
+                    subplot_spec=outer[i], wspace=0.02, hspace=0.02)
+
+    for j in range(nsp*nsp):
+        ax = plt.Subplot(fig, inner[j])
+        fig.add_subplot(ax)
+        plt.imshow(TI2[:, :, j])
+        plt.axis('off')
+
+#%% RUN THE SIMULATIONS
 
 alg='mps_snesim_tree'
 #alg='mps_genesim'
-nc=5*5
-rseed=3;
+nc=8*8
+rseed=1;
 #nc=8*8
 #Coarsen channel TI, using only coarsened TI
 O1=mps.mpslib(method=alg)
@@ -67,12 +84,17 @@ O2.run()
 
 
 #%%
-fig, axs = plt.subplots(2,1, figsize=(8, 10), facecolor='w', edgecolor='k')
-plt.subplot(211)
+ax3 = plt.Subplot(fig, outer[2])
+fig.add_subplot(ax3)
 plt.imshow(O1.sim[0])
 plt.title('Real using Single coarse TI')
-plt.subplot(212)
+
+ax4 = plt.Subplot(fig, outer[3])
+fig.add_subplot(ax4)
 plt.imshow(O2.sim[0])
 plt.title('Real using Multiple coarse TI')
-plt.suptitle("%s - di=%d" % (alg,di))
 
+plt.suptitle("%s - di=%d" % (alg,di))
+plt.savefig('mpslib_coarsen_%d_%s.png'%(di,alg))
+
+plt.show()
