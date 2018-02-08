@@ -5,7 +5,7 @@ cmap=cmap_linear([1 1 1; 1 0 0; 0 0 0]);
 
 O.parameter_filename='mps_genesim_test.txt';
 O.method='mps_genesim';
-O.soft_data_filename='soft_as_softhard.dat';
+O.soft_data_fnam='soft_as_softhard.dat';
 O.n_max_ite=100000;
 O.n_max_cpdf_count=1;
 O.max_search_radius=[10000 10000];

@@ -2,59 +2,64 @@ import numpy as np
 import os
 import subprocess
 from . import eas as eas
-#from . import trainingimages
+# from . import trainingimages
 import time
+
 
 def is_exe(filename):
     return os.path.isfile(filename) and os.access(filename, os.X_OK)
 
 
-#%% FUNCTIONS FOR PLOTTING OF EAS FILES
+# %% FUNCTIONS FOR PLOTTING OF EAS FILES
 
 
-#%% THE CLASS
+# %% THE CLASS
 class mpslib:
 
-    def __init__(self, parameter_filename = 'mps.txt', method = 'mps_genesim', debug_level = 1, n_real = 1, rseed = 1,
-                out_folder = '.', ti_fnam = 'ti.dat', simulation_grid_size = np.array([80, 40, 1]),
-                origin = np.zeros(3), grid_cell_size = np.array([1, 1, 1]),hard_data_fnam = 'd_hard.dat',
-                shuffle_simulation_grid =1, entropyfactor_simulation_grid=4, shuffle_ti_grid=1, hard_data_search_radius = 1,
-                soft_data_categories= np.arange(2), soft_data_filename = 'soft.dat', n_threads = 1, verbose_level = 0, 
-                template_size = np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_min_node_count=0,
-                n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_min=0, distance_pow=1,
-                max_search_radius=10000000, ti=np.empty(0)):
+    def __init__(self, parameter_filename='mps.txt', method='mps_genesim', debug_level=1, n_real=1, rseed=1,
+                 out_folder='.', ti_fnam='ti.dat', simulation_grid_size=np.array([80, 40, 1]),
+                 origin=np.zeros(3), grid_cell_size=np.array([1, 1, 1]), hard_data_fnam='hard.dat',
+                 shuffle_simulation_grid=2, entropyfactor_simulation_grid=4, shuffle_ti_grid=1,
+                 hard_data_search_radius=1,
+                 soft_data_categories=np.arange(2), soft_data_fnam='soft.dat', n_threads=1, verbose_level=0,
+                 template_size=np.array([8, 7, 1]), n_multiple_grids=3, n_cond=36, n_min_node_count=0,
+                 n_max_ite=1000000, n_max_cpdf_count=1, distance_measure=1, distance_min=0, distance_pow=1,
+                 max_search_radius=10000000, remove_gslib_after_simulation=1, gslib_combine=1, ti=np.empty(0)):
         '''Initialize variables in Class'''
-        
-        mpslib_py_path,fn = os.path.split(__file__)
-        self.mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path,'..','..'))
-        #self.mpslib_exe_folder = os.path.join(os.path.dirname('mpslib.py'),'..')
+
+        mpslib_py_path, fn = os.path.split(__file__)
+        self.mpslib_exe_folder = os.path.abspath(os.path.join(mpslib_py_path, '..', '..'))
+        # self.mpslib_exe_folder = os.path.join(os.path.dirname('mpslib.py'),'..')
         self.blank_grid = None
         self.blank_val = np.NaN
-        self.parameter_filename = parameter_filename.lower() # change string to lower case
-        self.method = method.lower() # change string to lower case
+        self.parameter_filename = parameter_filename.lower()  # change string to lower case
+        self.method = method.lower()  # change string to lower case
         self.verbose_level = verbose_level
+        self.remove_gslib_after_simulation = remove_gslib_after_simulation  # remove individual gslib fiels after simulation
+        self.gslib_combine = gslib_combine  # combine realzations into one gslib file
+
         self.sim = None
-        
+
         self.par = {}
-       
+
         self.par['n_real'] = n_real
         self.par['rseed'] = rseed
         self.par['n_max_cpdf_count'] = n_max_cpdf_count
         self.par['out_folder'] = out_folder
-        self.par['ti_fnam'] = ti_fnam.lower() # change string to lower case
+        self.par['ti_fnam'] = ti_fnam.lower()  # change string to lower case
         self.par['simulation_grid_size'] = simulation_grid_size
         self.par['origin'] = origin
         self.par['grid_cell_size'] = grid_cell_size
-        self.par['hard_data_fnam'] = hard_data_fnam.lower() # change string to lower case
+        self.par['hard_data_fnam'] = hard_data_fnam.lower()  # change string to lower case
         self.par['shuffle_simulation_grid'] = shuffle_simulation_grid
         self.par['entropyfactor_simulation_grid'] = entropyfactor_simulation_grid
         self.par['shuffle_ti_grid'] = shuffle_ti_grid
         self.par['hard_data_search_radius'] = hard_data_search_radius
         self.par['soft_data_categories'] = soft_data_categories
-        self.par['soft_data_filename'] = soft_data_filename.lower() # change string to lower case
+        self.par['soft_data_fnam'] = soft_data_fnam.lower()  # change string to lower case
         self.par['n_threads'] = n_threads
         self.par['debug_level'] = debug_level
-        
+
         # if the method is GENSIM, add package specific parameters
         if self.method == 'mps_genesim':
             self.par['n_cond'] = n_cond
@@ -64,25 +69,21 @@ class mpslib:
             self.par['distance_min'] = distance_min
             self.par['distance_pow'] = distance_pow
             self.par['max_search_radius'] = max_search_radius
-            #self.par['exe'] = 'mps_genesim'
+            # self.par['exe'] = 'mps_genesim'
 
         if self.method[0:10] == 'mps_snesim':
             self.par['template_size'] = template_size
             self.par['n_multiple_grids'] = n_multiple_grids
             self.par['n_min_node_count'] = n_min_node_count
             self.par['n_cond'] = n_cond
-            #self.exe = 'mps_mps_snesim_tree'
+            # self.exe = 'mps_mps_snesim_tree'
 
         # Check if on windows
-        self.iswin=0
+        self.iswin = 0
         if (os.name == 'nt'):
-            self.iswin=1
+            self.iswin = 1
 
-
-
-
-
-    def which(self,program):
+    def which(self, program):
         '''
         self.which: Locate executable in the following order:
             1) current directotu
@@ -94,25 +95,23 @@ class mpslib:
             return program
         else:
             # Check of executable is located in MPLSIB folder
-            program_path_mpslib = os.path.abspath(os.path.join(self.mpslib_exe_folder,program))
+            program_path_mpslib = os.path.abspath(os.path.join(self.mpslib_exe_folder, program))
             if is_exe(program_path_mpslib):
-                return program_path_mpslib            
+                return program_path_mpslib
             else:
                 # Check of executable is located in system path
-                for path in os.environ["PATH"].split(os.pathsep):                    
+                for path in os.environ["PATH"].split(os.pathsep):
                     path = path.strip('"')
                     exe_file = os.path.join(path, program)
                     if is_exe(exe_file):
                         return exe_file
-                        
+
                 print("mpslib: " + program + " not found")
                 return None
-                
 
-
-    #% Check parameter file setting using  GENESIM
+    # % Check parameter file setting using  GENESIM
     def parfile_check_genesim(self):
-        
+
         self.par.setdefault('n_cond', 25)
         self.par.setdefault('n_max_ite', 10000)
         self.par.setdefault('n_max_cpdf_count', 10)
@@ -120,27 +119,24 @@ class mpslib:
         self.par.setdefault('distance_min', 0)
         self.par.setdefault('distance_pow', 0)
         self.par.setdefault('max_search_radius', 1000000)
-        
-        
-        
-    #% Check parameter file setting using  SNESIM
+
+    # % Check parameter file setting using  SNESIM
     def parfile_check_snesim(self):
-           
+
         self.par.setdefault('template_size', np.array([5, 5, 1]))
         self.par.setdefault('n_multiple_grids', 3)
-        self.par.setdefault('n_min_node_count',0)
+        self.par.setdefault('n_min_node_count', 0)
         self.par.setdefault('n_cond', -1)
-    
+
     # Change simulation method        
-    def change_method(self,method='mps_genesim'):  
+    def change_method(self, method='mps_genesim'):
         print(self.method)
         if method == 'mps_genesim':
             self.parfile_check_genesim()
-            self.method=method
+            self.method = method
         if method[0:10] == 'mps_snesim':
             self.parfile_check_snesim()
-            self.method=method
-
+            self.method = method
 
     def par_write(self):
         if self.method == 'mps_genesim':
@@ -164,7 +160,8 @@ class mpslib:
         file.write('Maximum number of counts for condtitional pdf # %d\n' % self.par['n_max_cpdf_count'])
         file.write('Max number of conditional point # %d\n' % self.par['n_cond'])
         file.write('Max number of iterations # %d\n' % self.par['n_max_ite'])
-        file.write("Distance measure [1:disc, 2:cont], minimum distance, power # %d %3.1f %3.1f\n" % (self.par['distance_measure'],self.par['distance_min'],self.par['distance_pow']))
+        file.write("Distance measure [1:disc, 2:cont], minimum distance, power # %d %3.1f %3.1f\n" % (
+        self.par['distance_measure'], self.par['distance_min'], self.par['distance_pow']))
         file.write("Max Search Radius for conditional data # %f \n" % self.par['max_search_radius'])
         file.write('Simulation grid size X # %d\n' % self.par['simulation_grid_size'][0])
         file.write('Simulation grid size Y # %d\n' % self.par['simulation_grid_size'][1])
@@ -177,7 +174,8 @@ class mpslib:
         file.write('Simulation grid grid cell size Z # %g\n' % self.par['grid_cell_size'][2])
         file.write('Training image file (spaces not allowed) # %s\n' % self.par['ti_fnam'])
         file.write('Output folder (spaces in name not allowed) # %s\n' % self.par['out_folder'])
-        file.write('Shuffle Simulation Grid path (1 : random, 0 : sequential) # %d\n' % self.par['shuffle_simulation_grid'])
+        file.write(
+            'Shuffle Simulation Grid path (1 : random, 0 : sequential) # %d\n' % self.par['shuffle_simulation_grid'])
         file.write('Shuffle Training Image path (1 : random, 0 : sequential) # %d\n' % self.par['shuffle_ti_grid'])
         file.write('HardData filename  (same size as the simulation grid)# %s\n' % self.par['hard_data_fnam'])
         file.write('HardData seach radius (world units) # %g\n' % self.par['hard_data_search_radius'])
@@ -189,11 +187,11 @@ class mpslib:
                 file.write('; %d' % ii)
         file.write('\n')
         file.write('Soft datafilenames (separated by ; only need (number_categories - 1) grids) # %s\n' %
-                   self.par['soft_data_filename'])
+                   self.par['soft_data_fnam'])
         file.write('Number of threads (not currently used) # %d\n' % self.par['n_threads'])
-        file.write('Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
+        file.write(
+            'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
         file.close()
-
 
     def mps_snesim_par_write(self):
         cwd = os.getcwd();
@@ -209,9 +207,18 @@ class mpslib:
         file.write('Number of mulitple grids (start from 0) # %d\n' % self.par['n_multiple_grids'])
         file.write('Min Node count (0 if not set any limit)# %d\n' % self.par['n_min_node_count'])
         file.write('Maximum number condtitional data (0: all) # %d\n' % self.par['n_cond'])
-        file.write('Search template size X # %d\n' % self.par['template_size'][0])
-        file.write('Search template size Y # %d\n' % self.par['template_size'][1])
-        file.write('Search template size Z # %d\n' % self.par['template_size'][2])        
+        if (self.par['template_size'].ndim==2):
+            file.write('Search template size X # %d %d\n' % (self.par['template_size'][0, 0], self.par['template_size'][0, 1]))
+            file.write('Search template size Y # %d %d\n' % (self.par['template_size'][1, 0], self.par['template_size'][1, 1]))
+            file.write('Search template size Z # %d %d\n' % (self.par['template_size'][2, 0], self.par['template_size'][2, 1]))
+        else:
+            file.write('Search template size X # %d %d\n' % (self.par['template_size'][0], self.par['template_size'][0]))
+            file.write('Search template size Y # %d %d\n' % (self.par['template_size'][1], self.par['template_size'][1]))
+            file.write('Search template size Z # %d %d\n' % (self.par['template_size'][2], self.par['template_size'][2]))
+            #file.write('Search template size X # %d\n' % self.par['template_size'][0])
+            #file.write('Search template size Y # %d\n' % self.par['template_size'][1])
+            #file.write('Search template size Z # %d\n' % self.par['template_size'][2])
+
         file.write('Simulation grid size X # %d\n' % self.par['simulation_grid_size'][0])
         file.write('Simulation grid size Y # %d\n' % self.par['simulation_grid_size'][1])
         file.write('Simulation grid size Z # %d\n' % self.par['simulation_grid_size'][2])
@@ -223,7 +230,8 @@ class mpslib:
         file.write('Simulation grid grid cell size Z # %g\n' % self.par['grid_cell_size'][2])
         file.write('Training image file (spaces not allowed) # %s\n' % self.par['ti_fnam'])
         file.write('Output folder (spaces in name not allowed) # %s\n' % self.par['out_folder'])
-        file.write('Shuffle Simulation Grid path (1 : random, 0 : sequential) # %d\n' % self.par['shuffle_simulation_grid'])
+        file.write(
+            'Shuffle Simulation Grid path (1 : random, 0 : sequential) # %d\n' % self.par['shuffle_simulation_grid'])
         file.write('Shuffle Training Image path (1 : random, 0 : sequential) # %d\n' % self.par['shuffle_ti_grid'])
         file.write('HardData filename  (same size as the simulation grid)# %s\n' % self.par['hard_data_fnam'])
         file.write('HardData seach radius (world units) # %g\n' % self.par['hard_data_search_radius'])
@@ -235,14 +243,14 @@ class mpslib:
                 file.write('; %d' % ii)
         file.write('\n')
         file.write('Soft datafilenames (separated by ; only need (number_categories - 1) grids) # %s\n' %
-                   self.par['soft_data_filename'])
+                   self.par['soft_data_fnam'])
         file.write('Number of threads (not currently used) # %d\n' % self.par['n_threads'])
-        file.write('Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
+        file.write(
+            'Debug mode(2: write to file, 1: show preview, 0: show counters, -1: no ) # %d\n' % self.par['debug_level'])
         file.close()
-       
 
     def run(self, normal_msg='Elapsed time (sec)', silent=False):
-            """
+        """
             *Description:*\n
             This function runs the mpslib executable from python.
 
@@ -251,79 +259,105 @@ class mpslib:
 
             :return: returns boolean success if the model run has been completed
             """
-            success = False
+        import os
+        success = False
 
-            # write training image if set
-            if hasattr(self,'ti'):
-                if self.ti.shape[0]>0:
-                    #self.par['ti_fnam']='TrainingImage.dat'
-                    eas.write_mat(self.ti, self.par['ti_fnam'])
+        # write training image if set
+        if hasattr(self, 'ti'):
+            if self.ti.shape[0] > 0:
+                # self.par['ti_fnam']='TrainingImage.dat'
+                eas.write_mat(self.ti, self.par['ti_fnam'])
 
-            # write soft data if set
-            if hasattr(self,'d_soft'):
-                eas.write(self.d_soft, self.par['soft_data_filename'])
+        # write soft data if set
+        if hasattr(self, 'd_soft'):
+            eas.write(self.d_soft, self.par['soft_data_fnam'])
 
-            # write hard data if set
-            if hasattr(self,'d_hard'):
-                eas.write(self.d_hard, self.par['hard_data_fnam'])
+        # write hard data if set
+        if hasattr(self, 'd_hard'):
+            eas.write(self.d_hard, self.par['hard_data_fnam'])
 
+        # write parameter file
+        self.par_write()
 
-            # write parameter file
-            self.par_write()
+        exe_file = self.method
+        if self.iswin:
+            exe_file = exe_file + '.exe'
 
+        exe_path = self.which(exe_file)
 
-            exe_file = self.method
-            if self.iswin:
-                exe_file = exe_file + '.exe'
+        if exe_path is None:
+            s = 'mpslib: The program {} does not exist or is not executable.'.format(exe_file)
+            raise Exception(s)
+        else:
+            if not silent:
+                s = 'mpslib: Using the following executable to run the model: {}'.format(exe_path)
+                print(s)
 
-            exe_path = self.which(exe_file)
-            
-            if exe_path is None:
-                s = 'mpslib: The program {} does not exist or is not executable.'.format(exe_file)
-                raise Exception(s)
-            else:
+        if not os.path.isfile(os.path.join(self.parameter_filename)):
+            s = 'The the mpslib input file does not exists: {}'.format(self.parameter_filename)
+            raise Exception(s)
+
+        if (self.verbose_level > 0):
+            print("mpslib: trying to run  " + exe_path + " " + self.parameter_filename)
+
+        if self.iswin:
+            CREATE_NO_WINDOW = 0x08000000
+            # stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
+            proc = subprocess.Popen([exe_path, self.parameter_filename], stdout=subprocess.PIPE,
+                                    creationflags=CREATE_NO_WINDOW)
+        else:
+            proc = subprocess.Popen([exe_path, self.parameter_filename], stdout=subprocess.PIPE)
+
+        while success == False:
+            line = proc.stdout.readline()
+            c = line.decode('utf-8', errors='ignore')
+            if c != '':
+                if normal_msg.lower() in c.lower():
+                    success = True
+                c = c.rstrip('\r\n')
                 if not silent:
-                    s = 'mpslib: Using the following executable to run the model: {}'.format(exe_path)
-                    print(s)
-
-            if not os.path.isfile(os.path.join(self.parameter_filename)):
-                s = 'The the mpslib input file does not exists: {}'.format(self.parameter_filename)
-                raise Exception(s)
-
-            
-            if (self.verbose_level > 0):
-                print ("mpslib: trying to run  " + exe_path + " " + self.parameter_filename)
-            
-            if self.iswin: 
-                CREATE_NO_WINDOW = 0x08000000        
-                # stdout = subprocess.run([cmd,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
-                proc = subprocess.Popen([exe_path,self.parameter_filename], stdout=subprocess.PIPE, creationflags=CREATE_NO_WINDOW)
+                    print('{}'.format(c))
             else:
-                proc = subprocess.Popen([exe_path,self.parameter_filename], stdout=subprocess.PIPE)
+                break
 
+        # read on simulated data
+        self.sim = []
+        for i in range(0, self.par['n_real']):
+            filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
+            OUT = eas.read(filename)
+            if (self.verbose_level > 0):
+                print('mpslib: Reading: %s' % (filename))
+            self.sim.append(OUT['Dmat'])
+            success = True
 
-            while success == False:
-                line = proc.stdout.readline()
-                c = line.decode('utf-8', errors='ignore')
-                if c != '':
-                    if normal_msg.lower() in c.lower():
-                        success = True
-                    c = c.rstrip('\r\n')
-                    if not silent:
-                        print('{}'.format(c))
-                else:
-                    break
+        # combine gslib output files
+        if (self.gslib_combine):
+            import os
+            n = 0;
+            header = []
+            for i in range(self.par['n_real']):
+                cur_file = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
+                if os.path.isfile(cur_file):
+                    if (self.verbose_level > 1):
+                        print('mpslib: Merging %s' % cur_file)
+                    d_cur = eas.read(cur_file)
+                    if n == 0:
+                        n_data = len(d_cur['D'])
+                        Dall = np.zeros((n_data, self.par['n_real']))
+                    header.append('Real #%d' % (i + 1))
+                    Dall[:, i] = d_cur['D']
+                    n = n + 1
+        Dall = Dall[:, range(n)]
 
-            # read on simulated data
-            self.sim = []
-            for i in range(0, self.par['n_real']):
-                filename = '%s_sg_%d.gslib' % (self.par['ti_fnam'], i)
-                OUT = eas.read(filename)
-                if (self.verbose_level > 0):
-                    print('mpslib: Reading: %s' % (filename))
-                self.sim.append(OUT['Dmat'])
+        # remove gslib output files
+        if (self.remove_gslib_after_simulation):
+            self.delete_gslib()
 
-            return success
+        filename_out = '%s.gslib' % (self.par['ti_fnam'])
+        title = 'Realizations from %s - %s' % (self.method, d_cur['title'])
+        eas.write(Dall, filename_out, title=title, header=header)
+
+        return success
 
     def blank_sim(self):
         if hasattr(self, 'sim') is False:
@@ -353,7 +387,7 @@ class mpslib:
         # Check if simulation results are already imported
         if self.sim is not None:
             s = 'Simulation reaults already imported'
-            raise  Exception(s)
+            raise Exception(s)
 
         self.sim = []
         for i in range(0, self.par['n_real']):
@@ -370,24 +404,25 @@ class mpslib:
 
     # delete gslib files
     def delete_gslib(self, remove_all_gslib=0):
-        """
-            *Description:*\n
-            Removes GSLIB files ('.gslib) from the output folder,
-            relate to the current object
-            delete_gslib(remove_all_gslib=1) removes ALL '.gslib' files
-           """
+        '''Removes GSLIB output files from folder
+
+        :param remove_all_gslib: (def=0) removes aonly GSLIB files related to the cirrent run
+                                 (1) removed ALL GSLIB files.
+        :return:
+        '''
         import os
         import glob
-        if (remove_all_gslib)==1:
+        if (remove_all_gslib) == 1:
             file_list = glob.glob('*.gslib')
         else:
             file_list = glob.glob('%s/%s*.gslib' % (self.par['out_folder'], self.par['ti_fnam']))
         for file in file_list:
             os.remove(os.path.join(self.par['out_folder'], file))
-            print('Removing {0}'.format(os.path.join(self.par['out_folder'], file)))
+            if (self.verbose_level > 1):
+                print('Removing {0}'.format(os.path.join(self.par['out_folder'], file)))
 
     # plot realizations (only in 2D so far)
-    def plot_reals(self, nr=25):
+    def plot_reals(self, nr=25, hardcopy=0, hardcopy_filename='reals'):
         import matplotlib.pyplot as plt
         import matplotlib.gridspec as gridspec
         import numpy as np
@@ -405,28 +440,30 @@ class mpslib:
             plt.title("Real %d" % (i + 1))
 
         fig.suptitle(self.method + ' - ' + self.parameter_filename, fontsize=16)
+        if (hardcopy):
+            plt.savefig(hardcopy_filename)
+
         plt.show(block=False)
 
     # plot etypes (only in 2D so far)
     def plot_etype(self):
-        
+
         import matplotlib.pyplot as plt
         import numpy as np
         import os
         from scipy import stats
-        
+
         # read soft data ('check if it exist')
-        use_soft=0
-        if (os.path.isfile(self.par['soft_data_filename'])):
-            d_soft=eas.read(self.par['soft_data_filename'])
-            use_soft=1
+        use_soft = 0
+        if (os.path.isfile(self.par['soft_data_fnam'])):
+            d_soft = eas.read(self.par['soft_data_fnam'])
+            use_soft = 1
 
         # read hard data ('check if it exist')
-        use_hard=0
+        use_hard = 0
         if (os.path.isfile(self.par['hard_data_fnam'])):
-            d_hard=eas.read(self.par['hard_data_fnam'])
-            use_hard=1
-
+            d_hard = eas.read(self.par['hard_data_fnam'])
+            use_hard = 1
 
         # compute Etype
         emean = np.mean(self.sim, axis=0)
@@ -435,36 +472,33 @@ class mpslib:
         emode = emode[0][0]
 
         # plot the Etypes
-        fig=plt.figure(2)
+        fig = plt.figure(2)
         fig.clf()
         plt.set_cmap('hot')
-        plt.subplot(1,3,1)
-        im=plt.imshow(emean, zorder=-1)
+        plt.subplot(1, 3, 1)
+        im = plt.imshow(emean, zorder=-1)
         plt.colorbar(im, fraction=0.046, pad=0.04)
         if (use_hard):
-            plt.plot(d_hard['D'][:, 0], d_hard['D'][:, 1], "k.",  MarkerSize=25, zorder=0)
+            plt.plot(d_hard['D'][:, 0], d_hard['D'][:, 1], "k.", MarkerSize=25, zorder=0)
             plt.scatter(d_hard['D'][:, 0], d_hard['D'][:, 1], c=d_hard['D'][:, 3], s=25, zorder=1)
         if (use_soft):
-            plt.plot(d_soft['D'][:, 0], d_soft['D'][:, 1], ".", color=((.4,.4,.4)), MarkerSize=25, zorder=0)
+            plt.plot(d_soft['D'][:, 0], d_soft['D'][:, 1], ".", color=((.4, .4, .4)), MarkerSize=25, zorder=0)
             plt.scatter(d_soft['D'][:, 0], d_soft['D'][:, 1], c=d_soft['D'][:, 3], s=25, zorder=2)
         plt.title('Etype Mean')
 
-        plt.subplot(1,3,2)
-        im=plt.imshow(estd)
-        plt.colorbar(im,fraction=0.046, pad=0.04)
+        plt.subplot(1, 3, 2)
+        im = plt.imshow(estd)
+        plt.colorbar(im, fraction=0.046, pad=0.04)
         plt.title('Etype Std')
-        
-        plt.subplot(1,3,3)
-        im=plt.imshow(emode)
-        plt.colorbar(im,fraction=0.046, pad=0.04)
+
+        plt.subplot(1, 3, 3)
+        im = plt.imshow(emode)
+        plt.colorbar(im, fraction=0.046, pad=0.04)
         plt.title('Etype Mode')
-        
-        #plt.savefig("soft_ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
+
+        # plt.savefig("soft_ti_example_%s_%s.png" % (O1.method,O1.par['ti_fnam']), dpi=600)
         fig.suptitle(self.method + ' - ' + self.parameter_filename, fontsize=16)
         plt.show(block=False)
-
-
-
 
 
 '''

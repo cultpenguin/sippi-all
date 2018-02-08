@@ -28,7 +28,7 @@ O1.par['simulation_grid_size'][0]=35
 O1.par['simulation_grid_size'][1]=35
 O1.par['simulation_grid_size'][2]=1
 
-O1.par['soft_data_filename']='soft_case2.dat'
+O1.par['soft_data_fnam']='soft_case2.dat'
 O1.par['shuffle_simulation_grid']=2
 O1.ti = TI
 O1.par['n_cond']=1
@@ -57,7 +57,7 @@ plt.show()
 
 #%%
 from scipy import stats
-d=mps.eas.read(O1.par['soft_data_filename'])
+d=mps.eas.read(O1.par['soft_data_fnam'])
 emean = np.mean(O1.sim, axis=0)
 estd = np.std(O1.sim, axis=0)
 mode=stats.mode(O1.sim, axis=0)

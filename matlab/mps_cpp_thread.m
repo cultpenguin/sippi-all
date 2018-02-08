@@ -74,14 +74,14 @@ for i=1:actual_threads;
         end
     catch
         try 
-            disp(sprintf('%s: Could not copy %s to %s',mfilename,O.soft_data_filename,outdir{i}));
+            disp(sprintf('%s: Could not copy %s to %s',mfilename,O.soft_data_fnam,outdir{i}));
         catch
             % disp(sprintf('%s: No soft data',mfilename));
         end
     end
     try
-        if exist([pwd,filesep,O.soft_data_filename]','file');
-            copyfile([pwd,filesep,O.soft_data_filename],[outdir{i}]);
+        if exist([pwd,filesep,O.soft_data_fnam]','file');
+            copyfile([pwd,filesep,O.soft_data_fnam],[outdir{i}]);
         end
     end
     

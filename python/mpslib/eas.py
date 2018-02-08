@@ -30,7 +30,7 @@ plt.show();
 """
 import numpy as np
 import os
-debug_level=0;
+debug_level=0
 
 def read(filename='eas.dat'):
     '''
@@ -40,59 +40,59 @@ def read(filename='eas.dat'):
         eas['title']: Title of EAS data. Can contained the dimension, e.g. '20 30 1'
         eas['n_cols']: number of columns of data
         eas['header']: Header string of length n_cols    
-    '''    
-    file = open(filename,"r") ;
-    if (debug_level>0):
-        print("eas: file ->%20s" % filename);        
+    '''
+    file = open(filename, "r")
+    if (debug_level > 0):
+        print("eas: file ->%20s" % filename)
+
+    eas = {}
+    eas['title'] = (file.readline()).strip('\n')
+
+    if (debug_level > 0):
+        print("eas: title->%20s" % eas['title'])
+
+    dim_arr = eas['title'].split()
+    if len(dim_arr) == 3:
+        eas['dim'] = {}
+        eas['dim']['nx'] = np.int(dim_arr[0])
+        eas['dim']['ny'] = np.int(dim_arr[1])
+        eas['dim']['nz'] = np.int(dim_arr[2])
+
+    eas['n_cols'] = np.int(file.readline())
     
-    eas={};
-    eas['title'] = (file.readline()).strip('\n');    
-    
-    if (debug_level>0):
-        print("eas: title->%20s" % eas['title']);        
-    
-    dim_arr=eas['title'].split()
-    if len(dim_arr)==3:
-        eas['dim'] = {};
-        eas['dim']['nx'] = np.int(dim_arr[0])        
-        eas['dim']['ny'] = np.int(dim_arr[1])        
-        eas['dim']['nz'] = np.int(dim_arr[2])        
-    
-    eas['n_cols'] = np.int(file.readline());    
-    
-    eas['header'] = [];
+    eas['header'] = []
     for i in range(0, eas['n_cols']):
         # print (i)
-        h_val = (file.readline()).strip('\n');
-        eas['header'].append(h_val);
+        h_val = (file.readline()).strip('\n')
+        eas['header'].append(h_val)
 
         if (debug_level>1):
-            print("eas: header(%2d)-> %s" % (i,eas['header'][i] ) );        
+            print("eas: header(%2d)-> %s" % (i,eas['header'][i]))
 
-    file.close();    
+    file.close()
 
 
     try:
-        eas['D'] = np.genfromtxt(filename, skip_header=2+eas['n_cols']);    
+        eas['D'] = np.genfromtxt(filename, skip_header=2+eas['n_cols'])
         if (debug_level>1):
-            print("eas: Read data from %s" % filename );        
+            print("eas: Read data from %s" % filename)
     except:
-        print("eas: COULD NOT READ DATA FROM %s" % filename );        
+        print("eas: COULD NOT READ DATA FROM %s" % filename)
         
     
     
     # If dimensions are given in title, then convert to 2D/3D array
     if "dim" in eas:
-        eas['Dmat']=eas['D'].reshape((eas['dim']['ny'],eas['dim']['nx']));   
+        eas['Dmat']=eas['D'].reshape((eas['dim']['ny'],eas['dim']['nx']))
         if (debug_level>0):
-            print("eas: converted data in matrixes (Dmat)");        
+            print("eas: converted data in matrixes (Dmat)")
 
     eas['filename']=filename
 
-    return eas;
+    return eas
 
     
-def write(D = np.empty([]), filename='eas.dat'):
+def write(D = np.empty([]), filename='eas.dat', title='eas title', header=[]):
     '''
     eas.write(D,filename): writes an EAS/GSLIB formatted file from an 1D-3D numpy array
         D: 1D to 3D numpy array
@@ -100,19 +100,30 @@ def write(D = np.empty([]), filename='eas.dat'):
     '''
     if (D.ndim==0): 
             print("eas: no data to write - exiting")
-            return 0;
+            return 0
     
     if (D.ndim==1):
-        ncols=1;
-        ndata=len(D);
+        ncols=1
+        ndata=len(D)
     else:    
-        (ncols,ndata) = D.shape;
+        (ndata,ncols) = D.shape
             #(ncols,ndata) = D.shape; 
-            
-    print("eas: writing data to %s " % filename)
-    print("eas: ncolumns=%d, ndata=%d  " % (ncols,ndata) )
-    print("eas: not implemented yet!!")
-    pass
+
+    eas={}
+    eas['D'] = D
+    eas['n_cols'] = ncols
+    eas['title'] = title
+    eas['header'] = []
+    for i in range(ncols):
+        if i<len(header):
+            eas['header'].append(header[i])
+        else:
+            eas['header'].append('col%d' % i)
+
+    print("eas: writing data to %s, ncolumns=%d, ndata=%d." % (filename, ncols, ndata))
+    write_dict(eas,filename)
+
+    return eas
 
 def write_mat(D = np.empty([]), filename='eas.dat'):
     '''
@@ -125,17 +136,17 @@ def write_mat(D = np.empty([]), filename='eas.dat'):
     '''
     if (D.ndim==0): 
             print("eas: no data to write - exiting")
-            return 0;
+            return 0
     
     if (D.ndim==1):
-        ny=1;
-        nx=len(D);
+        ny=1
+        nx=len(D)
     elif (D.ndim==2): 
-        nz=1;
-        (ny,nx) = D.shape;
+        nz=1
+        (ny,nx) = D.shape
         D = np.transpose(D)
     else:
-        (ny,nx,nz) = D.shape;
+        (ny,nx,nz) = D.shape
         # NEXT LINES ARE NEED TO PROPERLY STORE IN EAS FORMAT
         D2=np.zeros((nx,ny,nz))
         for iz in range(D.shape[2]):
@@ -148,36 +159,43 @@ def write_mat(D = np.empty([]), filename='eas.dat'):
     print("eas: (nx,ny,nz)=(%d,%d,%d) " % (nx,ny,nz) )
 
     title = ("%d %d %d" % (nx,ny,nz) )
-    print(title)
-    
-    
-    eas={};
-    eas['dim'] = {};
+    print("eas: title=%s"%title)
+
+    eas={}
+    eas['dim'] = {}
     eas['dim']['nx'] = nx
     eas['dim']['ny'] = ny    
     eas['dim']['nz'] = nz        
     eas['n_cols'] = 1 
-    eas['title'] = title;
-    eas['header'] = [];
-    eas['header'].append('Header');
-    #eas['D'] = D.ravel(order='C'); #NOT OK
-    eas['D'] = D.ravel(order='F'); # OK, but TRANSPOSED
-    #eas['D'] = D.ravel(order='A'); # NOT OK
-    #eas['D'] = D.ravel(order='K');
+    eas['title'] = title
+    eas['header'] = []
+    eas['header'].append('Header')
+    #eas['D'] = D.ravel(order='C') #NOT OK
+    eas['D'] = D.ravel(order='F') # OK, but TRANSPOSED
+    #eas['D'] = D.ravel(order='A') # NOT OK
+    #eas['D'] = D.ravel(order='K')
 
     #eas['D'] = D.flatten();
 
-    write_dict(eas,filename);
-    
+    write_dict(eas,filename)
+
     return eas
 
 def write_dict(eas,filename='eas.dat'):
+    """
+    :param eas: eas dictionary as read using eas.read
+    :param filename: filename
+    :return: 1
 
+    Example:
+    Deas = eas.read('data.gslib')
+    eas.write(Deas,'data2.gslib')
+    """
     if (eas['D'].ndim==1):
         n_data = len(eas['D'])
         n_cols=1;
     else:
-        (n_data,n_cols) = len(eas['D'])
+        (n_data,n_cols) = eas['D'].shape
     
     
     full_path = os.path.join(filename)
@@ -198,8 +216,8 @@ def write_dict(eas,filename='eas.dat'):
         #    f.write('%s%d\n' % ('real', ii))
 
         for ii in np.arange(n_data):
-            for jj in np.arange(n_col):
-                file.write('%d ' % eas['D'][ii, jj])
+            for jj in np.arange(n_cols):
+                file.write('%12g ' % eas['D'][ii, jj])
             file.write('\n')
     file.close();   
     return 1

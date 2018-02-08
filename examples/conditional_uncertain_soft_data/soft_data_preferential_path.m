@@ -14,17 +14,17 @@ SIM=ones(30,30)*NaN;
 d=read_eas('soft_case1.dat');
 i_use=randomsample(900,60);
 write_eas('soft.dat',d(i_use,:));
-O.soft_data_filename='soft.dat';
+O.soft_data_fnam='soft.dat';
 
 
-%O.soft_data_filename='soft_case1.dat';
-O.soft_data_filename='soft_case2.dat';
-%O.soft_data_filename='soft_case3.dat';
+%O.soft_data_fnam='soft_case1.dat';
+O.soft_data_fnam='soft_case2.dat';
+%O.soft_data_fnam='soft_case3.dat';
 
 
 O.entropyfactor_simulation_grid=4;
 
-d=read_eas(O.soft_data_filename);
+d=read_eas(O.soft_data_fnam);
 %%
 N=5
 for i=1:N;

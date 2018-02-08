@@ -45,7 +45,7 @@ for rpath = [1,2];
         for j=1:length(i_soft_arr)
             try;progress_txt([i,j],[length(n_cond_sodr),length(i_soft_arr)]);end
             O.parameter_filename = sprintf('ds_d%d_ncond_soft%d_rpath%d.par',i_soft_arr(j),n_cond_soft(i),rpath);
-            O.soft_data_filename = f_soft{i_soft_arr(j)};
+            O.soft_data_fnam = f_soft{i_soft_arr(j)};
             O.n_cond=[n_cond n_cond_soft(i)];
             
             [reals,O]=mps_cpp_thread(TI,SIM,O);

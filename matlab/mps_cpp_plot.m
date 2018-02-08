@@ -43,8 +43,8 @@ try
 if exist(O.hard_data_filename)
     d_hard=read_eas(O.hard_data_filename);
 end
-if exist(O.soft_data_filename)
-    d_soft=read_eas(O.soft_data_filename);
+if exist(O.soft_data_fnam)
+    d_soft=read_eas(O.soft_data_fnam);
 end
 end        
 
