@@ -1,6 +1,5 @@
 #%%
 import sys
-sys.path.append('mpslib')
 import matplotlib.pyplot as plt
 import mpslib as mps
 import numpy as np

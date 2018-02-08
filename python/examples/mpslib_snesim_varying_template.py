@@ -9,19 +9,20 @@ import matplotlib.gridspec as gridspec
 
 O1=mps.mpslib(method='mps_snesim_tree')
 
-TI1, TI_filename1 = mps.trainingimages.strebelle(2, coarse3d=1)
+#TI1, TI_filename1 = mps.trainingimages.strebelle(2, coarse3d=1)
+TI1, TI_filename1 = mps.trainingimages.strebelle(1, coarse3d=1)
 O1.ti=TI1
 
-O1.par['n_multiple_grids']=23;
-O1.par['n_cond']=25
+O1.par['n_multiple_grids']=4;
+O1.par['n_cond']=49
 O1.par['n_real']=1
 O1.par['rseed']=1
 O1.par['debug_level']=-1
-O1.par['simulation_grid_size'][0]=135
-O1.par['simulation_grid_size'][1]=100
+O1.par['simulation_grid_size'][0]=2*135
+O1.par['simulation_grid_size'][1]=2*100
 
-r1 = 8 # template size in the coarse grid
-r2 = [8,7,6,5,4,3,2,1] # template size in the finest grid
+r1 = 10 # template size in the coarse grid
+r2 = [10,9,8,7,6,5,4,3] # template size in the finest grid
 
 t=[]
 R=[]
@@ -35,13 +36,12 @@ for ir in range(len(r2)):
     O1.mps_snesim_par_write()
     O1.run()
     R.append(O1.sim[0])
-    O1.plot_reals(9,1,name)
+    #O1.plot_reals(9,1,name)
 
     t1 = time.time()
     t.append(t1 - t0)
 
 # Plot the realizations and a bar of the timing
-plt.figure(1)
 fig = plt.figure(figsize=(15, 15))
 outer = gridspec.GridSpec(3, 3, wspace=0.2, hspace=0.2)
 
