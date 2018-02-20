@@ -1,0 +1,95 @@
+\begin{thebibliography}{17}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+
+\bibitem[{Deutsch and Journel(1998)}]{GSLIB}
+Deutsch, C.~V., Journel, A.~G., 1998. {GSLIB}, Geostatistical Software Library
+  and User's Guide, 2nd Edition. Applied Geostatistics. Oxford University
+  Press.
+
+\bibitem[{Deutsch et~al.(2000)Deutsch, Tran, and Xie}]{Deutsch:2000:DSSIM-HR}
+Deutsch, C.~V., Tran, T.~T., Xie, Y., 2000. An approach to ensure histogram
+  rerpoduction in direct sequential simulation. Tech. rep., Centre for
+  Computational Geostatistics, University of Alberta, Edmonton, Alberta.
+
+\bibitem[{Gloaguen et~al.(2004)Gloaguen, Marcotte, and
+  Chouteau}]{Gloaguen:2004:Banff}
+Gloaguen, E., Marcotte, D., Chouteau, M., 2004. A non-linear tomographic
+  inversion algorithm based on iterated cokrigriging and conditional
+  simulations. In: Leuangthong, O., Deutsch, C. (Eds.), Geostatistics Banff
+  2004. Vol.~1. Springer, pp. 409--418.
+
+\bibitem[{Gloaguen et~al.(2005)Gloaguen, Marcotte, Chouteau, and
+  Perroud}]{Gloaguen:2005}
+Gloaguen, E., Marcotte, D., Chouteau, M., Perroud, H., 2005. Borehole radar
+  velocity inversion using cokriging and cosimulation. Journal of Applied
+  Geophysics 57~(4), 242--259.
+
+\bibitem[{G\'{o}mez-Hern\'{a}ndez and
+  Cassiraga(2000)}]{GomezHernandez:2000:CapeTown}
+G\'{o}mez-Hern\'{a}ndez, J., Cassiraga, E.~F., 2000. Sequential conditional
+  simulations with linear constrains. In: Monestiez, P., Allard, D.,
+  Froideveaux, R. (Eds.), Geostatistics'2000 Cape Town. Geostatistical
+  Association of Southern Africa.
+
+\bibitem[{G\'{o}mez-Hern\'{a}ndez et~al.(2004)G\'{o}mez-Hern\'{a}ndez,
+  Froidevaux, and Biver}]{GomezHernandez:2004:Banff}
+G\'{o}mez-Hern\'{a}ndez, J., Froidevaux, R., Biver, P., 2004. Exact
+  conditioning to linear constraints in kriging and simulation. In:
+  Leuangthong, O., Deutsch, C. (Eds.), Geostatistics Banff 2004. Vol.~2.
+  Springer, pp. 999--1005.
+
+\bibitem[{Goovaerts(1997)}]{Goovaerts:1997}
+Goovaerts, P., 1997. Geostatistics for natural resources evalutaion. Applied
+  Geostatistics Series. Oxford University Press.
+
+\bibitem[{Hansen et~al.(2006)Hansen, Journel, Tarantola, and
+  Mosegaard}]{Hansen:2006:geostatinv}
+Hansen, T.~M., Journel, A.~G., Tarantola, A., Mosegaard, K., 2006. Linear
+  inverse {G}aussian theory and geostatistics. Geophysics 71~(6), R101--R111.
+
+\bibitem[{Jensen et~al.(2000)Jensen, Jacobsen, and
+  Christensen-Dalsgaard}]{Munk}
+Jensen, J.~M., Jacobsen, B.~H., Christensen-Dalsgaard, J., 2000. Sensitivity
+  kernels for time-distance inversion. Solar Phys.: SOHO9 topical issue
+  192~(1-2), 231--239.
+
+\bibitem[{Journel(1999)}]{Journel:1999:VOL}
+Journel, A.~G., 1999. Conditioning geostatistical operations to nonlinear
+  volume averages,. Mathematical Geology 31, 931--953.
+
+\bibitem[{Journel and Huijbregts(1978)}]{Journel:1978:MG}
+Journel, A.~G., Huijbregts, C.~J., 1978. {M}ining {G}eostatistics. Academic
+  Press.
+
+\bibitem[{Liu et~al.(2006)Liu, Jiang, and Kyriakidis}]{Liu:2006:FFTcov}
+Liu, Y., Jiang, Y., Kyriakidis, P., 2006. Calculation of average covariance
+  using fast fourier transform. Tech. rep., Stanford Center for Reservoir
+  Forecasting, Petroleum Engineering Department, Stanford University.
+
+\bibitem[{Oz et~al.(2003)Oz, Deutsch, Tran, and Xie}]{Oz:2003:DSSIM-HR}
+Oz, B., Deutsch, C.~V., Tran, T.~T., Xie, Y., 2003. {DSSIM-HR}: a {FORTRAN} 90
+  program for direct sequential simulation with histogram reproduction. Comput.
+  Geosci. 29~(1), 39--51.
+
+\bibitem[{Robertson et~al.(2006)Robertson, Mueller, and
+  Bloom}]{Robertson:2006:DSSIM}
+Robertson, R.~K., Mueller, U.~A., Bloom, K.~M., 2006. Direct sequential
+  simulation with histogram reproduction: A comparison of algorithms.
+  Mathematical Geology 32~(3), 382--395.
+
+\bibitem[{Soares(2001)}]{Soares:2001:DSS}
+Soares, A., November 2001. Direct sequential simulation and cosimulation. Math.
+  Geol 33~(8), 911--926.
+
+\bibitem[{Srinivasan and Journel(1998)}]{SrinavasanJournel:1998}
+Srinivasan, S., Journel, A.~G., 1998. Simulation of permeability field
+  conditioned to well test data. In: SPE Annual Technical Conference and
+  Exhibition, New Orleans, Louisiana. No. SPE 49289. SPE, pp. 731--745.
+
+\bibitem[{Woodward(1992)}]{Woodward}
+Woodward, M.~J., 1992. Wave-equation tomography. Geophysics 57~(1), 15--26.
+
+\end{thebibliography}
