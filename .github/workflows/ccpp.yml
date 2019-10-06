@@ -11,7 +11,7 @@ jobs:
     - uses: actions/checkout@v1
     
     - name: gfortran
-      run: apt install gfortran
+      run: sudo apt install gfortran
       
     - name: gslib
       working-directory: ./src/gslib
