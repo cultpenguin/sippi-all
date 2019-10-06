@@ -9,11 +9,11 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: configure
-      run: ./configure
-    - name: make
+      
+    - name: gslib
+      working-directory: ./src/gslib
       run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      
+    - name: make
+      working-directory: ./src
+      run: make
