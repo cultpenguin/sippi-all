@@ -31,7 +31,11 @@
 %
 function V=visim(parfile,visim_bin)
 
-p=mgstat_dir;
+try
+    p=mgstat_dir;
+catch
+    p='';
+end
 
 visim_bin_ok=0;
 if nargin==2
@@ -43,12 +47,12 @@ if nargin==2
     elseif exist([pwd,filesep,visim_bin,'.exe'])
         visim_bin=[pwd,filesep,visim_bin];
         visim_bin_ok=1;
-    elseif exist([mgstat_dir,filesep,'bin',filesep,visim_bin])
-        visim_bin=[mgstat_dir,filesep,'bin',filesep,visim_bin];
+    elseif exist([p,filesep,'bin',filesep,visim_bin])
+        visim_bin=[p,filesep,'bin',filesep,visim_bin];
         visim_bin_ok=1;
-    elseif exist([mgstat_dir,filesep,'bin',filesep,visim_bin,'.exe'])
+    elseif exist([p,filesep,'bin',filesep,visim_bin,'.exe'])
    
-        visim_bin=[mgstat_dir,filesep,'bin',filesep,visim_bin,'.exe'];
+        visim_bin=[p,filesep,'bin',filesep,visim_bin,'.exe'];
         visim_bin_ok=1;
     end
    
@@ -62,17 +66,11 @@ end
 if visim_bin_ok==1
     mgstat_verbose(sprintf('%s : using VISIM exe : %s',mfilename,visim_bin),1)
 else
-    
-
-    % FIRST TRY TO FIND THE snesim BINARY IN THE mGstat/bin/ DIRECTORY
-    [p,f,s]=fileparts(which('mgstat_verbose'));
-    mgstat_bin_dir=[p,filesep,'bin'];
+    % FIRST TRY TO FIND THE snesim BINARY IN THE visim/src DIRECTORY
+    [p,f,s]=fileparts(which('visim'));
+    bin_dir=[p,filesep,'..',filesep,'src'];
     if isunix==1
-        visim_bin=[mgstat_bin_dir,filesep,'visim_',computer('arch')];
-        if ~exist(visim_bin,'file')
-            visim_bin=[mgstat_bin_dir,filesep,'visim'];
-        end
-        
+        visim_bin=[bin_dir,filesep,'visim'];
         if ismac
             if isempty(getenv('DYLD_LIBRARY_PATH'))
                 disp(sprintf('%s: SETTING DYLD LIBRARY PATH',mfilename))
