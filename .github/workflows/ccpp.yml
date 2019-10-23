@@ -13,10 +13,6 @@ jobs:
     - name: gfortran
       run: sudo apt install gfortran
       
-    - name: gslib
-      working-directory: ./src/gslib
-      run: make
-      
     - name: make
       working-directory: ./src
       run: make
