@@ -1,16 +1,19 @@
 %% VISIM EXAMPLES
 
 %% The simplest Examples
-clear all;
-V=visim_init;
-visim;
-V=visim(V);
+% clear all;
+% V=visim_init;
+% visim;
+% V=visim(V);
 
 %%
 fclose all;
 clear all
 delete('*.eas')
 delete('*.out')
+delete('d_vol*eas');delete('visim.par');delete('randpath_visim.out');
+
+
 x=0:5:100;
 y=0:5:110;
 z=0;
@@ -73,7 +76,7 @@ if useSoftPoint==1
     if useHardPoint==1
         V.cond_sim=1; % hard and soft data
     else
-        V.cond_sim=1; % soft data
+        V.cond_sim=3; % soft data
     end
 end
 
@@ -88,6 +91,19 @@ V.gmean=m0;
 V.debuglevel=-1;
 V.densitypr=0;
 V.volnh.method=0;
+
+
+V.volnh.method=0; 
+V.densitypr=0;
+V.debuglevel=2;
+V.nsim=22;
+
+V.read_randpath=0;
+V.read_volnh=-1;
+V.read_covtable=-1;
+tic
+V=visim(V);
+toc
 
 % run visim
 tic
@@ -107,7 +123,7 @@ plot(r(:,1:20),'.')
 %figure(2);clf;
 %visim_plot_sim(V);
 
-
+return
 %% VISIM through SIPPI - random walk
 clear prior
 
