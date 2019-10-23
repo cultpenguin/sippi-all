@@ -78,7 +78,7 @@ else
             end
         end
     else
-        visim_bin=sprintf('%s\\bin\\visim.exe',p);
+        visim_bin=sprintf('%s\\..\\src\\visim.exe',p);
     end
     
 

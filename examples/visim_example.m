@@ -7,21 +7,25 @@ visim;
 V=visim(V);
 
 %%
+fclose all;
 clear all
+delete('*.eas')
+delete('*.out')
 x=0:5:100;
 y=0:5:110;
 z=0;
 
 m0=5;
+nugget=0.000001;
 sill=1;
-range=30;
+range=50;
 rotation=70;
-anisotropy=0.15;
+anisotropy=0.25;
 Va=sprintf('%g Sph(%g,%g,%g)',sill,range,rotation,anisotropy);
 
 V=visim_init(x,y,z);
 
-useTarget=1;
+useTarget=0;
 if useTarget==1;
     d_target=[randn(200,1)*1.5+2;randn(200,1)*.5+6];
     sill=var(d_target);
@@ -37,27 +41,69 @@ if useTarget==1;
 end
 
 
-useHard=1;
-if useHard==1
+useHardPoint=0;
+if useHardPoint==1
     V.fconddata.fname='d_obs.eas';
     d_obs=[20,20,0,1
-        80,80,2,0];    
+        80,80,0,2];    
     %V.cols=[1:1:4]';
     write_eas(V.fconddata.fname,d_obs);
     V.cond_sim=2; % only point data
+
 end
 
+
+useSoftPoint=1;
+if useSoftPoint==1
+    
+    d_obs=[x(1),y(1),0,1,0.001
+        x(2),y(1),0,1,0.01    
+        x(end),y(end),0,2,0.02];    
+   
+    V.fvolgeom.fname='d_volgeom.eas';
+    V.fvolsum.fname='d_volsum.eas';
+    
+    clear d_volgeom d_volsum
+    for i=1:size(d_obs,1)
+        d_volgeom(i,:)=[d_obs(i,1:3) i 1];
+        d_volsum(i,:)= [i 1 d_obs(i,4:5)];
+    end
+    write_eas(V.fvolgeom.fname,d_volgeom);
+    write_eas(V.fvolsum.fname,d_volsum);
+    if useHardPoint==1
+        V.cond_sim=1; % hard and soft data
+    else
+        V.cond_sim=1; % soft data
+    end
+end
+
+
+V.read_randpath=0;
 V.nsim=50;
 
 V=visim_set_variogram(V,Va);
+V.Va.nugget=nugget;
 V.gmean=m0;
 
+V.debuglevel=-1;
+V.densitypr=0;
+V.volnh.method=0;
+
 % run visim
+tic
 V=visim(V);
+toc
 
 figure(1);clf;
 visim_plot_etype(V,1);
 
+figure(2);
+r=f77strip('randpath_visim.out');
+subplot(1,2,1);
+plot(std(r));
+subplot(1,2,2);
+plot(r(:,1:20),'.')
+%axis image
 %figure(2);clf;
 %visim_plot_sim(V);
 
@@ -69,7 +115,7 @@ ip=1;
 prior{ip}.type='visim';
 prior{ip}.x=1:1:80;
 prior{ip}.y=1:1:80;
-prior{ip}.Cm='1 Gau(20,30,.5)';
+prior{ip}.Cm='1 Gau(50,30,.5)';
 
 % SGSIM
 prior{ip}.method='sgsim';
