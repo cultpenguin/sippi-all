@@ -62,19 +62,25 @@
 
 \title{VISIM\\user guide}
 
-
 \author{Thomas Mejer Hansen and Klaus Mosegaard\\
-Niels Bohr Institute, Juliane Mariesvej 28, 2100 K\o benhavn \O, Denmark\\
-http://imgp.gfy.ku.dk tmh@gfy.ku.dk}
+DTU Informatics, Technical University of Denmark, Lyngby, Denmark\\
+http://imgp.imm.dtu.dk tmeha@imm.dtu.dk}
 
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-This is an accompanion to the paper by Hansen and Mosegaard (submitted), describing in more detail how to run VISIM.
+The paper 'VISIM: Sequential simulation for linear inverse problems', Hansen and Mosegaard (2008) contains information on how to run \visimprog. Some features not covered by the paper is described in the text below. Please also take a look at mGstat (http://mgstat.sourceforge.net/) that allow running, controlling and visualizing \visimprog from within Matlab.
 \end{abstract}
 
+
+\section{Updates}
+\subsection{1.2 - 1.4. September 2008}
+Added the \texttt{do\_discrete} option, to enable discrete direct sequential simulation.
+
+\subsection{1.5. November 2008}
+Added optins \texttt{read\_volnh} and \texttt{read\_randpath} for reading/writing the volume average neighborhood and random path.
 
 
 
@@ -162,6 +168,18 @@ When read\_lambda=1 no kriging system is in fact inverted, and the kriging weigh
 In case read\_lambda=-1 no lambda data are written to disk.
 
 
+\subsection{Reading/writing volume average neighborhood}
+The fourth flag of line 11.
+Using read\_volnh=-1, nothing happens.
+Using read\_volnh=0, the used volume average neighorhood is written to volnh\_parfile.out.
+Using read\_volnh=1, the used volume average neighorhood is read from volnh\_parfile.out.
+\subsection{Reading/writing random path}
+The fifth flag of line 11.
+Using read\_randpath=-1, nothing happens.
+Using read\_randpath=0, the used volume average neighorhood is written to randpath\_parfile.out.
+Using read\_randpath=1, the used volume average neighorhood is read from randpath\_parfile.out.
+
+
 \subsection{Output}
 Estimation or simulation output are saved to the filename listed in line 12. In addition any verbose information, as for example the covariance lookup tables, are saved to various filenames (indicating the content) with the output filename appended. Thus from one run of \visimprog, a number of files are created, all ending with the text string as given by the filename in line 12.
 
@@ -200,7 +218,7 @@ When dssim [1] has been selected, a number of options are available for controll
 The target histogram to match is computed from the list of data input through the file defined in line 15, \texttt{reference.eas}, which is an ASCII formatted EAS file.
 
 Lines 17-18 controls the range and number of mean and variance values
-in normal score space to back transform into a lookup table. Width a
+in normal score space to back transform into a lookup table. With a
 wider range and the more samples, the histogram reproduction will be
 better.
 By default 100 mean values between -3.5 and 3.5, and 100 variance
@@ -209,6 +227,8 @@ Line 19 set the number of quantiles to back transform from normal
 score space (\texttt{n\_q}).
 By default these are set to  \texttt{n\_q}=170.
 As the case study will show, these options should be carefully chosen to ensure optimal results.
+
+\texttt{do\_discrete} determines whether the target histogram should be treated as continuous or discrete. If \texttt{do\_discrete}=1, and the target reference data is [1 3 9], then simulated data will only contain these three values, 1, 3 and 9. This can be used to perform categorial type simulation. If \texttt{do\_discrete}=0, the target reference histogram will be treated as continuous, and interpolation of the target histogram performed to provide histogram values in the range defined by the tails (lines 36-38).
 
 The mean and variance of the back transformed distributions are saved
 on disk to the files \texttt{cond\_mean\_visim.out} and 
@@ -408,6 +428,7 @@ We thank Albert Tarantola and Andre Journel for concise discussion on the simila
 
 \nocite{Gloaguen:2005}
 \nocite{Gloaguen:2004:Banff}
+\nocite{Hansen:VISIM}
 
 \bibliographystyle{elsart-harv}
 \bibliography{../../LATEX/bibtex/thomas}                     
@@ -434,7 +455,7 @@ reference.eas            - reference histogram
 1    0                        - columns for variable and weights
 \textit{\textcolor{ch}{-3.5   3.5  100               - min_Gmean, max_Gmean, n_Gmean}}
 \textit{\textcolor{ch}{0      2    100               - min_Gvar, max_Gvar, n_Gvar}}
-\textit{\textcolor{ch}{170                           - n_q, n_Gsim}}
+\textit{\textcolor{ch}{170 0                           - n_q, do\_discrete}}
 21    .125    .250             -nx,xmn,xsiz
 49    .125    .250              -ny,ymn,ysiz
 1     .125    .250              -nz,zmn,zsiz
