@@ -1,0 +1,7 @@
+[map "0b870889-1dce-377a-9e57-de7bb1c210f7"]
+	object = bd4bc4120d8f63599e0694dae049ea8ac03b4bc3
+	type = include + expand tree
+[map "b6b6b223-a97d-3092-8b0c-3703ceda20b8"]
+	object = b79742e2f8ebf97d340c858901d162f033ecad15
+	path = mpslib
+	type = expand module
