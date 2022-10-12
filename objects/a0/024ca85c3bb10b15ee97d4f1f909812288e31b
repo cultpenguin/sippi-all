@@ -1,0 +1,24 @@
+[module "1668a826-cdc0-3b9d-a570-4a76d92e1959"]
+	conflict = request-pull
+	path = mgstat
+	pull = merge subtree
+	pull = squash never
+	ref = if refs/heads/main sync refs/heads/master
+	url = agnostic://gh/32385731
+[module "091675b0-1293-3e95-bd2a-50073d8b2ab8"]
+	conflict = request-pull
+	path = visim
+	pull = merge subtree
+	pull = squash never
+	ref = if refs/heads/main sync refs/heads/master
+	url = agnostic://gh/122204652
+[map "80d12cdb-606a-3a27-b18c-7791e83e74fa"]
+	object = 1919d6fa77c36957c75cf0ee9120f949e6e4b008
+	path = mgstat
+	stage = sync
+	type = extract module
+[map "ec29f3fb-2f70-335a-8649-5d1a38708639"]
+	object = 0ff6834db24294b1bd01ce44dd7312f58e0769d7
+	path = visim
+	stage = sync
+	type = extract module
