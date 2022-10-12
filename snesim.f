@@ -95,7 +95,7 @@ c Ch30 new begin: add global variables
       REAL, PARAMETER :: ANGTOL=10
 c Ch30 new end
       ! Maximum number of original sample data
-      INTEGER, PARAMETER :: MAXDAT=1000
+      INTEGER, PARAMETER :: MAXDAT=100000
       REAL, PARAMETER :: EPSILON=1.0e-20, DEG2RAD=3.141592654/180.0
       INTEGER, PARAMETER :: UNEST=-99
       
