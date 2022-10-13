@@ -1,0 +1,122 @@
+<sect1 xml:id="InstallSippi"><title>Install &sippi;</title>
+<para>
+The latest stable version  (v &sippi-version;) of &sippi; can be downloaded from <link xlink:href="http://sippi.sourceforge.net">http://sippi.sourceforge.net</link> as <link xlink:href="https://sourceforge.net/projects/sippi/files/latest/download?source=fileshttps://sourceforge.net/projects/sippi/files/latest/download?source=files">SIPPI.zip</link>. This version includes
+<link xlink:href="http://github.com/cultpenghin/mgstat/">&mgstat;</link>, VISIM,
+<link xlink:href="https://github.com/SCRFpublic/snesim-standalone">SNESIM</link>, and
+<link xlink:href="http://github.com/ergosimulation/mpslib/">&mps;</link>.
+
+</para>
+
+<para>
+Unpack ZIPPI.zip somewhere, for example to 'c:\Users\tmh\SIPPI'. Then setup the Matlab path to point to the appropriate SIPPI directories by typing:
+</para>
+<screen>
+addpath c:\Users\tmh\SIPPI
+sippi_set_path
+</screen>
+<para>
+For use on Windows, no other setup should be needed.
+</para>
+<para>
+For use on Linux, no other setup should be needed
+</para>
+<para>
+For use on OS X, Xcode with gcc libraries but be available to run some of the
+compiled programs. In addition, the 'DYLD_LIBRARY_PATH' must be set to point to the shared libraries neeeded by the compiled programs for OSX. In &matlab; this can be set using:
+<screen>
+setenv('DYLD_LIBRARY_PATH', '/usr/local/bin');
+</screen>
+
+</para>
+
+<sect2 xml:id="SippiGithub"><title>Install &sippi; manually from github</title>
+<para>
+The current development version  of &sippi; (less stable and documented) is hosted on github and can be downloaded (including  &mgstat;, SNESIM, VISIM and &mps;) 
+using git:
+<screen>
+cd INSTALL_DIR
+git clone  https://github.com/cultpenguin/sippi.git SIPPI
+git clone  https://github.com/cultpenguin/mgstat.git mGstat
+git clone  https://github.com/ergosimulation/mps.git MPS
+</screen>
+Then add a path to both SIPPI, mGstat and MPS in Matlab using
+<screen>
+>> addpath INSTALL_DIR/mGstat
+>> addpath INSTALL_DIR/SIPPI
+>> addpath INSTALL_DIR/MPS/matlab
+>> sippi_set_path
+</screen>
+</para>
+
+<sect3><title>Manual compilation</title>
+<para>
+&sippi; (optionally) make use of standalone programs from
+MPS,
+(<link xlink:href="https://github.com/ergosimulation/mps">github</link>)
+SNESIM
+(<link xlink:href="https://github.com/SCRFpublic/snesim-standalone">github</link>)
+and mGstat
+(VISIM <link xlink:href="https://github.com/cultpenguin/mgstat">github</link>)
+ .
+ Pre-compiled slef-contained binaries are available for windows and Linux, but for use on OS-X one may need to manually these programs
+</para>
+<para>
+These programs are needed to make use of the  <link linkend="prior_mps">MPS</link>, <link linkend="prior_visim">VISIM</link>  and <link linkend="prior_snesim">SNESIM</link> type <link linkend="prior_types">a priori models</link> (and can hence be ignored if not used).
+</para>
+<sect4><title>Compiling &visim;</title>
+<para>
+The source code for VISIM is located in <varname>mGstat/visim/visim_src</varname>. The compiled program should be placed in <varname>mGstat/bin</varname> and called <varname>visim</varname>.
+</para>
+</sect4>
+
+
+
+<sect4><title>Compiling &snesim;</title>
+<para>
+The source code for SNESIM is available from <link xlink:href="https://github.com/SCRFpublic/snesim-standalone">github</link>.
+</para>
+<para>
+The compiled program should be placed in <varname>mGstat/bin</varname> and
+called
+<varname>snesim.exe</varname> (windows)
+<varname>snesim_glnxa64.exe</varname> (64 bit Linux)
+<varname>snesim_maci64.exe</varname> (64 but OS X).
+.
+</para>
+</sect4>
+
+<sect4><title>Compiling &mps;</title>
+<para>
+The source code for &mps; is available from <link xlink:href="https://github.com/cultpenguin/mps">github</link>.
+To dowload and compile &mps; use for example
+<screen>
+cd INSTALL_DIR
+git clone  https://github.com/ergosimulation/mpslib.git MPSLIB
+cd MPS
+make all
+</screen>
+Matlabs path should be updated to include <varname>INSTALL_DIR/MPSLIB/matlab</varname>.
+</para>
+<para>
+</para>
+</sect4>
+
+</sect3>
+
+
+</sect2>
+
+<sect2 xml:id="SGEMS"><title>SGeMS (optional)</title>
+<para>
+To make use of the SISIM and SNESIM_STD type prior models, SGeMS needs to be available.
+</para>
+<para>
+Currently only SGeMS version 2.1 (<link xlink:href="http://sourceforge.net/projects/sgems/files/sgems/sgems-2.1Beta/sgems_2.1beta_installer.exe/download">download</link>) for Windows is supported by &sippi;
+</para>
+<para>
+Support for SGeMS will be discontinued after relevase v1.5, as the <link xlink:href="http://github.com/cultpenguin/mps/">&mps;</link> library will be used instead.
+</para>
+</sect2>
+
+
+</sect1>

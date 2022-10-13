@@ -1,0 +1,202 @@
+<para>
+Once the
+<varname>prior</varname>,
+<varname>data</varname>, and
+<varname>forward</varname> data structures have been defined, the associated a posteriori probability can be sampled using the rejection sampler and the extended Metropolis sampler.
+</para>
+
+
+<sect1 xml:id="sec_rejection"><title>The rejection sampler</title>
+<para>
+The rejection sampler provides a simple, and also in many cases inefficient, approach to sample the posterior distribution.
+</para>
+<para>
+At each iteration of the rejection sample an independent realization, m_pro, of the prior is generated, and the model is accepted as a realization of the posterior with probability Pacc = L(m_pro)/L_max. It can be initiated using
+<screen>
+options.mcmc.nite=400000; % Number of iteration, defaults to 1000
+options.mcmc.i_plot=500; % Number of iteration between visual updates, defaults to 500
+options=sippi_rejection(data,prior,forward,options);
+</screen>
+By default the rejection sampler is run assuming a maximum likelihood of 1 (i.e. L_max = 1).
+If L_max is known, then it can be set using in the <varname>options.Lmax</varname> or <varname>options.logLmax</varname> fields
+<screen>
+options.mcmc.Lmax=1e-9;
+options=sippi_rejection(data,prior,forward,options);
+</screen>
+or
+<screen>
+options.mcmc.logLmax=log(1e-9);
+options=sippi_rejection(data,prior,forward,options);
+</screen>
+</para>
+<para>
+Alternatively, L_max can be automatically adjusted to reflect the maximum likelihood found while running the rejection sampler using
+<screen>
+options.mcmc.adaptive_rejection=1
+options=sippi_rejection(data,prior,forward,options);
+</screen>
+</para>
+<para>
+An alternative to rejection sampling, also utilizing independent realizations of the prior, that does not require one to set L_max is the <link linkend="sec_independentmetropolis">independent extended metropolis sampler</link>, which may be computatinoally superior to the rejection sampler,
+</para>
+</sect1>
+
+
+<!-- METROPOLIS -->
+<sect1 xml:id="sec_extendedmetropolis"><title>The extended Metropolis sampler</title>
+<para>The extended Metropolis algorithm is in general a much more efficient algorithm for sampling the a posteriori probability</para>
+<para>
+The extended Metropolis sampler can be run using
+<screen>
+options.mcmc.nite=40000; 	% number of iterations, default nite=30000
+options.mcmc.i_sample=50;	% save the current model for every 50 iterations, default, i_sample=500
+options.mcmc.i_plot=1000;   % plot progress of the Metropolis sampler for every 100 iterations
+                            % default i_plot=50;
+options.txt='case_line_fit'; % descriptive name appended to output folder name, default txt='';
+
+[options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
+</screen>
+One can choose to accept all steps in the Metropolis sampler, which will result in an algorithm sampling the prior model, using
+<screen>
+options.mcmc.accept_all=1; % default [0]
+</screen>
+One can choose to accept models that lead to an improvement in the likelihood, which results in an optimization like algorithm using
+<screen>
+options.mcmc.accept_only_improvements=1; % default [0]
+</screen>
+
+</para>
+
+<para>
+See <link linkend="sippi_metropolis">sippi_metropolis</link> for more details.
+</para>
+
+<sect2 xml:id="sec_controling_step_length"><title>Controlling the step length</title>
+<para></para>
+<para>
+One optionally, as part of running the <link linkend="sec_extendedmetropolis">extended Metropolis sampler</link>, automatically update the 'step'-length of the <link linkend="sec_seq_gibbs">sequential Gibbs sampler</link> in order to ensure a specific approximate acceptance ratio of the Metropolis sampler. See <citation>CHM12</citation> for details.
+</para>
+<para>
+The default parameters for adjusting the step length, as given below, are set in the '<link linkend="sec_seq_gibbs_step">prior.seq_gibbs</link>' structure. These parameters will be set the first time 'sippi_prior' is called with the 'prior' structure as output.The default parameters.
+</para>
+<screen>
+prior{m}.seq_gibbs.step_min=0;
+prior{m}.seq_gibbs.step_min=1;
+prior{m}.seq_gibbs.i_update_step=50
+prior{m}.seq_gibbs.i_update_step_max=1000
+prior{m}.seq_gibbs.n_update_history=50
+prior{m}.seq_gibbs.P_target=0.3000
+</screen>
+<para>By default, adjustment of the step length, in order to achieve an acceptance ratio of 0.3 ('prior{m}.seq_gibbs.P_target'), will be performed for every 50 ('prior{m}.seq_gibbs.i_update_step') iterations, using the acceptance ratio observed in the last 50 ('prior{m}.seq_gibbs.i_update_history') iterations.
+ </para>
+<para>
+Adjustment of the step length will be performed only in the first 1000 ('prior{m}.seq_gibbs.i_update_step_max') iterations.
+</para>
+<para>
+In order to disable automatic adjustment of the step length simply set
+<screen>
+prior{m}.seq_gibbs.i_update_step_max=0; % disable automatic step length
+</screen>
+</para>
+</sect2>
+
+<sect2 xml:id="sec_independentmetropolis"><title>The independent extended Metropolis sampler</title>
+<para>The 'independent' extended Metropolis sampler, in which each proposed model is independant of the previously visited model, can be chosen by forcing the 'step'-length to be 1 (i.e. leading to independant samples from the prior), using e.g.
+<screen>
+% force independent prior sampling
+for ip=1:length(prior);
+	prior{ip}.seq_gibbs.step=1;
+	prior{ip}.seq_gibbs.i_update_step_max=0;
+end
+% run 'independent' extended Metropolis sampling
+[options,data,prior,forward,m_current]=sippi_metropolis(data,prior,forward,options)
+</screen>
+
+</para>
+</sect2>
+
+<sect2 xml:id="sec_metropolis_annealing"><title>Annealing schedule</title>
+<para>
+Simulated annealing like behavior can be controlled in the <varname>options.mcmc.anneal</varname> structure. By default annealing is disabled.
+</para>
+<para>
+Annealing consist of setting the temperature (similar to scaling the noise). A temperature foes not affect the exploration. For temperatures larger than 1, the acceptance ratio increases (the exploration of the Metropolis sampler increases). For temperatures below 1, the acceptance ratio decreases (and hence the exploration of the Metropolis sampler).
+</para>
+<para>
+The temperature is set to <varname>options.mcmc.anneal.T_begin</varname> at any iteration before <varname>options.mcmc.anneal.i_begin</varname>.
+The temperature is set to <varname>options.mcmc.anneal.T_end</varname> at any iteration after <varname>options.mcmc.anneal.i_end</varname>.
+</para>
+<para>
+In between iteration number
+<varname>options.mcmc.anneal.i_start</varname> and
+<varname>options.mcmc.anneal.i_end</varname>
+the temperature changes following either an exponential decay (<varname>options.mcmc.anneal.type='exp'</varname>), or simple linear interpolation (<varname>options.mcmc.anneal.type='linear'</varname>).
+</para>
+<para>
+An annealing schedule can be used allow a Metropolis sampler that allow exploration of more of the model space in the beginning of the chain. Recall though that the posterior is not sampled until (at least) the annealing has been ended at iteration, <varname>options.mcmc.anneal.i_end</varname>, if the <varname>options.mcmc.anneal.T_end=1</varname>. This can potentially help not to get trapped in a local minimum.
+</para>
+<para>
+To use this type of annealing, where the annealing stops after 10000 iterations, after which the algorithm performs like a regular Metropolis sampler, use for example
+
+<screen>
+options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+options.mcmc.anneal.i_end=10000; %  iteration number when annealing stops
+</screen>
+which is equivalent to
+<screen>
+options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+options.mcmc.anneal.i_end=10000; %  iteration number when annealing stops
+options.mcmc.anneal.T_begin=5; % start temperature
+options.mcmc.anneal.T_end=1; % end temperature
+</screen>
+</para>
+</sect2>
+
+
+<sect2 xml:id="sec_tempering"><title>Parallel tempering</title>
+<para>
+Parallel tempering is implemented according to <citation>S13</citation>. It is an extension of the Metropolis algorithm, that start a number of parallel chains of Metropolis sampling algorithms. Each chain is run with a different temperature, and the state of each chain is allowed jump between chains according to some rules that ensure the correct probability density is sampled. This allow the sampling algorithm to better handle a posterior distribution with multiple, disconnected, areas of high probability.
+</para>
+<para>
+The following three setting enable parallel tempering.
+</para>
+<screen>
+TEMPERING
+options.mcmc.n_chains=3; % set number of chains (def=1, no multiple chains)
+options.mcmc.T=[1 2 3];      % set temperature of chains [1:n_chains]
+options.mcmc.chain_frequency_jump=0.1; % probability allowing a jump between two chains
+</screen>
+<para>
+<varname>options.mcmc.n_chains</varname> defines the number of chains. If not set only one chain is used, and the no parallel tempering is performed.
+</para>
+<para>
+<varname>options.mcmc.T</varname> defines the temperature of each chain. A temperature of '1', which is the default, implies no tempering. A higher temperature allow a chain to be more exploratory.
+</para>
+<para>
+<varname>options.mcmc.chain_frequency_jump</varname> defines the frequency with which a jump from one chain to another is suggested. A value of one means that a jump is proposed at each iteration, while a value of 0.1 (default) means that a jump is only proposed with 10 percentage probability (on average one in 10 iterations).
+</para>
+
+</sect2>
+
+</sect1>
+
+<!-- LSQ-->
+<!--
+<sect1 xml:id="sec_lsq"><title>linear least squares</title>
+<para></para>
+</sect1>
+-->
+
+<!-- SIMULATED ANNEALING -->
+
+<!--
+<sect1 xml:id="sec_simanneal"><title>Simulated Annealing</title>
+<para>Simulated annealing type optimization can be setup using an <link linkend="sec_metropolis_annealing">annealing schedule</link> that is enable to the entire run of the Metropolis sampler, and that ends by a noise scaling factor less than 1. This can be obtained using e.g.
+<screen>
+options.mcmc.anneal.i_begin=1; % default, iteration number when annealing begins
+options.mcmc.anneal.i_end=options.mcmc.nite; %  iteration number when annealing stops
+options.mcmc.anneal.fac_begin=20; % default, noise is scaled by fac_begin at iteration i_begin
+options.mcmc.anneal.fac_end=0.01; % 1/100 of the noise level
+</screen>
+</para>
+</sect1> -->

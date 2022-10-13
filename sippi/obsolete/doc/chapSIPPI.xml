@@ -1,0 +1,971 @@
+<para><link linkend="sec_ex_tomography">tomography example</link>
+This section contains information about how to use and control SIPPI, which requires one to   
+<itemizedlist mark='bullet'>
+      <listitem>
+        <para>Define the <link linkend="chapprior">prior model</link>, in form of the prior data structure</para>
+      </listitem>
+      <listitem>
+        <para>Define the <link linkend="chapforward">forward model</link>, in form of the forward data structure, and the sippi_forward.m m-file</para>
+      </listitem>
+      <listitem>
+        <para>Define the <link linkend="chapdata">data and noise model</link>, in form of the prior data structure</para>
+      </listitem>
+</itemizedlist>
+</para>
+<para>
+[For examples of how to apply &sippi; for different problems, see <link linkend="chapExamples">the section with examples</link>].
+</para>
+
+
+<sect1 xml:id="chapprior"><title><varname>prior</varname>: The a priori model</title>
+<para>
+A priori information is defined by the <varname>prior</varname> Matlab structure. Any number of different types of a priori models can be defined. For example a 1D uniform prior can be defined in <varname>prior{1}</varname>, and 2D Gaussian prior can be defined in <varname>prior{2}</varname>.   
+</para>
+<para>
+Once a prior data structure has been defined (see examples below), a realization from the prior model can be generated using 
+<screen>
+m=sippi_prior(prior);
+</screen>
+The realization from the prior can be visualized using 
+<screen>
+sippi_plot_prior(prior,m);
+</screen>
+A sample (many realizations) from the prior can be visualized using
+<screen>
+m=sippi_plot_prior_sample(prior);
+</screen>
+</para>
+<para>
+All a priori model types in &sippi; allow to generate a new model in the vicinity of a current model using
+<screen>
+[m_new,prior]=sippi_prior(prior,m);
+</screen>
+in such a way that the prior model will be sampled if the process is repeated (see <link linkend="sec_seq_gibbs">Sequential Gibbs Sampling</link>).
+</para>
+
+
+
+
+<!--
+<para>
+Each prior type is defined by setting a number field in the <varname>prior</varname> Matlab structure. For example, an descriptive name (which is can be optionally set) describing the prior can be set in the <varname>name</varname> field, e.g.
+<screen>
+prior{1}.name='My Prior';
+</screen>
+</para>
+-->
+<sect2 xml:id="prior_types"><title>Types of a priori models</title>
+<para>
+Six types of a priori models are available, and can be selected by setting the <varname>type
+</varname> in the <varname>prior</varname> structure using e.q. <varname>
+prior{1}.type='gaussian'</varname>.  
+</para>
+<para>
+</para>
+<para>
+The <link linkend="prior_uniform">UNIFORM</link> type prior specifies an uncorrelated ND uniform model.
+</para>
+<para>
+The <link linkend="prior_gaussian">GAUSSIAN</link> type prior specifies a 1D generalized Gaussian model.
+</para>
+<para>
+The <link linkend="prior_fftma">FFTMA</link> type prior specifies a 1D-3D Gaussian type a priori model based on the FFT Moving Average method, which is very efficient for unconditional sampling, and for defining a prior Gaussian model with variable/uncertain mean, variance,  ranges, and rotation.
+</para>
+<para>
+The <link linkend="prior_cholesky">CHOLESKY</link> type prior specifies a 1D-3D Gaussian type a priori model based on Cholesky decomposition of the covariance model,
+</para>
+<para>
+The <link linkend="prior_visim">VISIM</link> type prior model specifies 1D-3D Gaussian models, utilizing both sequential Gaussian simulation (SGSIM) and direct sequential simulation (DSSIM) that can be conditioned to data of both point- and volume support and linear average data. 
+</para>
+<para>
+The <link linkend="prior_plurigaussian">PLURIGAUSSIAN</link> type prior model specifies 1D-3D pluriGaussian. It is a type if truncated Gaussian model that can be used for efficient simulation of categorical values.
+</para>
+<!--
+<para>
+The <link linkend="prior_sisim">SISIM</link> type prior model specifies a 1D-3D prior model based on Gaussian indicator statistics. This type of prior requires <link linkend="SGEMS">SGEMS</link> to be installed.
+</para>
+-->
+<para>
+The <link linkend="prior_mps">MPS</link> type prior model specifies a 1D-3D multiple-point-based statistical prior model, based on the  <link xlink:href="https://github.com/cultpenguin/mps">&mps;</link> C++ library. Simulation types includes SNESIM (based on a search tree or list), ENESIM, and GENESIM (generalized ENESIM).
+</para>
+<para>
+The <link linkend="prior_snesim">SNESIM</link> type prior model specifies a 1D-3D multiple-point-based statistical prior model based on the SNESIM code from <link xlink:href="https://github.com/SCRFpublic/snesim-standalone">Stanford/SCRF</link>.
+</para>
+<para>
+The <link linkend="prior_snesim_std">SNESIM_STD</link> is similar to the 'SNESIM' type prior, but is based on <link linkend="SGEMS">SGEMS</link>.
+</para>
+<para>
+The following section documents the properties of each type of prior model.
+</para>
+<para>
+Examples of using different types of prior models or combining prior models can be found in the <link linkend="sec_ex_prior">examples section</link>. 
+</para>
+
+<!-- GAUSSIAN -->
+<sect3 xml:id="prior_uniform"><title>Uniform distribution</title>
+<para>
+A uniform prior model can be specified using the 'uniform' type prior model
+</para>
+<screen>
+prior{1}.type='uniform';
+</screen>
+<para>
+The only parameters needed are the minimum (<varname>min</varname>) and maximum (<varname>max</varname>) values. A 1D uniform distribution between -1 and 1 can be specified as 
+</para>
+<screen>
+prior{1}.type='uniform';
+prior{1}.min=-1;
+prior{1}.max=1;
+</screen>
+<para>
+By setting the <varname>x</varname>, <varname>y</varname>, and <varname>z</varname> parameter, a higher order prior (uncorrelated) can be set. For example 3 independent model parameters with a uniform prior distribution between 20 and 50, can be defined as
+</para>
+<screen>
+prior{1}.type='uniform';
+prior{1}.x=[1 2 3];
+prior{1}.min=20;
+prior{1}.max=50;
+</screen>
+
+<para>
+Note that using the 'uniform' type priori model, is slightly more computational efficient than using a '<link linkend="prior_gaussian">gaussian</link>' type prior model with a high norm.
+</para>
+</sect3>
+
+<!-- GAUSSIAN -->
+<sect3 xml:id="prior_gaussian"><title>1D Generalized Gaussian</title>
+<para>
+A 1D generalized Gaussian prior model can be specified using the 'gaussian' type prior model
+</para>
+<screen>
+prior{1}.type='gaussian';
+</screen>
+
+<para>
+A simple  1D Gaussian distribution with mean 10, and standard deviation 2, can be specified using
+</para>
+<screen>
+ip=1;
+prior{ip}.type='gaussian';
+prior{ip}.m0=10;
+prior{ip}.std=2;
+</screen>
+
+<para>
+The norm of a generalized Gaussian can be set using the 'norm' field. A generalized 1D Gaussian with mean 10, standard deviation of 2, and a norm of 70, can be specified using 
+(The norm is equivalent to the beta factor referenced in <link xlink:href="http://en.wikipedia.org/wiki/Generalized_normal_distribution">Wikipedia:Generalized_normal_distribution</link>)
+</para>
+<screen>
+ip=2;
+prior{ip}.type='gaussian';
+prior{ip}.m0=10;
+prior{ip}.std=2;
+prior{ip}.norm=70;
+</screen>
+
+<para>
+A 1D distribution with an arbitrary shape can be defined by setting <varname>d_target</varname>, which must contain a sample of the distribution that one would like to replicate. For example, to generate a sample from a non-symmetric bimodal distribution, one can use e.g.
+</para>
+<screen>
+% Create target distribution
+N=10000;
+prob_chan=0.3;
+d1=randn(1,ceil(N*(1-prob_chan)))*.5+8.5;
+d2=randn(1,ceil(N*(prob_chan)))*.5+11.5;
+d_target=[d1(:);d2(:)];
+
+% set the target distribution
+ip=3;
+prior{ip}.type='gaussian';
+prior{ip}.d_target=d_target;
+</screen>
+<para>
+The following figure shows the 1D histogram of a sample, consisting of 8000 realizations, generated using 
+<screen>
+sippi_plot_prior_sample(prior,1:ip,8000);
+</screen>
+</para>
+   <mediaobject>
+      <imageobject condition="web">
+	    <imagedata fileref="figures/prior_gaussian_1d.png" width="100%" scalefit="1"/>
+<!--
+        <imagedata fileref="figures/prior_gaussian_normal.png" width="33%" scalefit="1"/>
+        <imagedata fileref="figures/prior_gaussian_generalized.png" width="33%" scalefit="1"/>
+        <imagedata fileref="figures/prior_gaussian_target.png" width="33%" scalefit="1"/>
+-->
+		</imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+
+
+
+
+</sect3>
+
+
+<!-- FFTMA -->
+
+<sect3 xml:id="prior_fftma"><title>FFTMA - 3D Gaussian model</title>
+<para>
+The FFT moving average method provides an efficient approach for computing unconditional realizations of a Gaussian random field.
+</para>
+<para>
+The mean and the covariance model must be specified in the <varname>m0</varname> and <varname>Cm</varname> fields. The format for describing the covariance model follows 'gstat' notation, and is described in more details in the <link xlink:href="http://mgstat.sourceforge.net/htmldoc/Spatial.html">mGstat manual</link>.  
+</para>
+<para>
+A 2D covariance model with mean 10, and a Spherical type covariance model can be defined in a 101x101 size grid (1 unit (e.g., meters) between the cells) using
+</para>
+<screen>
+im=1;
+prior{im}.type='FFTMA';
+prior{im}.x=[0:1:100];
+prior{im}.y=[0:1:100];
+prior{im}.m0=10;
+prior{im}.Cm='1 Sph(10)';
+</screen>
+   <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_fftma_2d_gaussian.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+
+<para>
+Optionally one can translate the output of the Gaussian simulation into an arbitrarily shaped 'target' distribution, using normal score transformation. Note that this transformation will ensure a certain 1D distribution of the model parameters to be reproduced, but will alter the assumed covariance model such that the properties of covariance model are not necessarily reproduced. To ensure that both the covariance model properties and the 1D distribution are reproduced, make use of the VISIM type prior model instead because it utilizes direct sequential simulation. 
+</para>
+<screen>
+im=1;
+prior{im}.type='FFTMA';
+prior{im}.x=[0:1:100];
+prior{im}.y=[0:1:100];
+prior{im}.Cm='1 Sph(10)';
+
+% Create target distribution
+N=10000;
+prob_chan=0.5;
+d1=randn(1,ceil(N*(1-prob_chan)))*.5+8.5;
+d2=randn(1,ceil(N*(prob_chan)))*.5+11.5;
+d_target=[d1(:);d2(:)];
+prior{im}.d_target=d_target;
+prior{im}.m0=0; % to make sure no trend model is assumed.
+</screen>
+<para>
+Alternatively, the normal score transformation can be defined manually such that the tail behavior can be controlled:
+</para>
+<screen>
+N=10000;
+prob_chan=0.5;
+d1=randn(1,ceil(N*(1-prob_chan)))*.5+8.5;
+d2=randn(1,ceil(N*(prob_chan)))*.5+11.5;
+d_target=[d1(:);d2(:)];
+[d_nscore,o_nscore]=nscore(d_target,1,1,min(d_target),max(d_target),0);
+prior{im}.o_nscore=o_nscore;
+</screen>
+   <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_fftma_2d_target.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+	
+</sect3>
+
+<!-- FFTMA - with variable gaussian model parameters-->
+
+<sect3 xml:id="prior_fftma_variable_par"><title>FFTMA - 3D Gaussian model wuth variable model properties</title>
+<para>
+The FFTMA method also allows treating the parameters defining the Gaussian model, such as the mean, variance, ranges and angles of rotation as a priori model parameters (that can be inferred as part of inversion, see e.g. <link linkend="sec_ex_prior_multi_fft_ma_cov">an example</link>).
+</para>
+<para>
+First a prior type defining the Gaussian model must be defined (exactly as listed <link linkend="prior_fftma">above</link>):
+<screen>
+im=im+1; 
+prior{im}.type='FFTMA';
+prior{im}.x=[0:.1:10]; % X array 
+prior{im}.y=[0:.1:20]; % Y array 
+prior{im}.m0=10;
+prior{im}.Cm='1 Sph(10,90,.25)';
+</screen>
+</para>
+<para>
+Now, all parameter such as the mean, variance, ranges and angles of rotations, can be randomized by defining a 1D a priori model type ('uniform' or 'gaussian'), and with a specific 'name' indicating the parameter (see <link linkend="sec_ex_prior_multi_fft_ma_cov">this example</link> for a complete list of names), and by assigning the <varname>prior_master</varname> field that points the prior model id for which the parameters should randomized.
+</para>
+<para> 
+For example the range along the direction of maximum continuty can be randomized by defining a prior entry named 'range_1', and settting the <varname>prior_master</varname> to point to the prior with id 1:
+<screen>
+im=2;
+prior{im}.type='uniform';
+prior{im}.name='range_1';
+prior{im}.min=2;
+prior{im}.max=14;
+prior{im}.prior_master=1;
+I this case the range is randomized following a uniform distribution U[2,14].
+</screen>
+</para>
+<para>
+Likewise, the first angle of rotation can be randomized using for example
+<screen>
+im=3;
+prior{im}.type='gaussian';
+prior{im}.name='ang_1';
+prior{im}.m0=90;
+prior{im}.std=10;
+prior{im}.prior_master=1;
+</screen>
+A sample from such a prior type model will thus show variability also in the range and angle of rotation, as seen here 
+<mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_reals_fftma_cov.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+</mediaobject>
+
+
+</para>
+
+
+
+
+</sect3>
+
+<!-- VISIM -->
+
+<sect3 xml:id="prior_visim"><title>VISIM</title>
+<para>
+</para>
+<screen>
+im=im+1;
+prior{im}.type='VISIM';
+prior{im}.x=[0:1:100];
+prior{im}.y=[0:1:100];
+prior{im}.m0=10;
+prior{im}.Cm='1 Sph(10)';
+</screen>
+   <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_visim_2d_gaussian.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+<para>
+As with the FFTMA prior model the VISIM prior can make use of a target distribution. However, if a target distribution is set, the use of the VISIM prior model will utilize direct sequential simulation, which will ensure both histogram and covariance reproduction. 
+</para>
+<para>
+Using a target distribution together with the VISIM prior model is similar to that for the FFTMA prior model. Simply the <varname>type</varname> has to be changed from FFTMA to VISIM:
+</para>
+<screen>
+clear all;close all;
+im=1;
+prior{im}.type='VISIM';
+prior{im}.x=[0:1:40];
+prior{im}.y=[0:1:40];
+prior{im}.m0=10;
+prior{im}.Cm='1 Sph(10)';
+
+% Create target distribution
+N=10000;
+prob_chan=0.5;
+d1=randn(1,ceil(N*(1-prob_chan)))*.5+8.5;
+d2=randn(1,ceil(N*(prob_chan)))*.5+11.5;
+d_target=[d1(:);d2(:)];
+prior{im}.d_target=d_target;
+</screen>
+  <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_visim_2d_target.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+
+
+
+<!--
+<sect4 xml:id="prior_visim_2d"><title>VISIM:2D</title>
+<para></para>
+<screen>
+im=im+1;
+prior{im}.type='VISIM';
+prior{im}.x=[0:1:100];
+prior{im}.y=[0:1:100];
+prior{im}.m0=10;
+prior{im}.Cm='1 Sph(10)';
+</screen>
+</sect4>
+-->
+
+</sect3>
+
+
+
+<sect3 xml:id="prior_cholesky"><title>CHOLESKY - 3D Gaussian model</title>
+<para>
+The CHOLESKY type prior utilizes Cholesky decomposition of the covariance in order to generate realizations of a Gaussian random field. The CHOLESKY type prior needs a full description of the covariance model, which will be of size [nxyz*nxyz*nxyz],  unlike using the <link linkend="prior_fftma">FFTMA</link> type prior model that only needs a specification of an isotropic covariance models of size [1,nxyz]. Hence, the CHOLESKY type prior is much more demanding on memory, and CPU. However, the CHOLESKY type prior can be used to sample from any covariance model, also non-stationary covariance model.
+</para>
+<para>
+The CHOLESKY model is can be defined almost identically to the <link linkend="prior_fftma">FFTMA</link> type prior model. As an example: 
+</para>
+<screen>
+im=1;
+prior{im}.type='CHOLESKY';
+prior{im}.x=[0:2:100];
+prior{im}.y=[0:2:100];
+prior{im}.m0=10;
+prior{im}.Cm='1 Sph(10)';
+</screen>
+   <mediaobject>
+      <imageobject condition="web">
+        <imagedata fileref="figures/prior_cholesky_2d.png" width="100%" scalefit="1"/>
+      </imageobject>
+      <textobject><phrase></phrase></textobject>
+    </mediaobject>
+<para>
+the use of <varname>d_target</varname> to specify target distributions is also possible, using the same style as for the <link linkend="prior_fftma">FFTMA</link> type prior.
+</para>
+<para>
+Be warned that the 'cholesky' type prior model is much more memory demanding than the 'fftma' and 'visim' type prior models, as a full nxyz*nxyz covariance model needs to setup (and inverted). Thus, the 'cholesky' type prior is mostly applicable when the number of model parameters (nx*ny*nx) is small.
+</para>
+
+</sect3>
+
+
+
+
+
+
+
+
+
+
+<sect3 xml:id="prior_plurigaussian"><title>PluriGaussian - ND truncated Gaussian</title>
+<para>
+Plurigaussian simulation is a type og truncated Gaussian simulation. It works by generating a number of realizations of Gassuan models, each with a sepcific choice of covariance model. Using a transformation map, the Gaussian realizations are then converted into disrete units.
+</para>
+
+<sect4 xml:id="prior_plurigaussian_1"><title>PluriGaussian based on 1 Gaussian</title>
+<para>
+  A simple example using 1 Gaussian realization, one must specify one covariance model one plurigaussian transformation map through the two fields <varname>prior{1}.pg_prior{1}.Cm</varname>(or <varname>Cm</varname>) and <varname>prior{1}.pg_map</varname>.
+</para>
+<para>
+The covariance model is defined as for any other Gaussian based models, and can include anisotropy. In general, the variance (sill) should be 1. Unless set othwerwise, the mean is assumed to be zero.
+</para>
+<para>
+The values in the transformation map is implicitly assumed to define boundaries along a linear scale from -3 to 3. As there are 7 entries (see below) in the transformation map, each number in the transformation map corresponds to [-3,-2,-1,0,1,2,3] respectively. The figure below show what unit id's any Gaussian realized value will be transformed to.
+</para>
+<screen>
+im=im+1;
+prior{im}.name='Plurigaussian'; % [optional] specifies name to prior
+prior{im}.type='plurigaussian';                % the type of a priori model
+prior{im}.x=[0:1:100];                 % specifies the scales of the 1st (X) dimension
+prior{im}.y=[10:1:90];                 % specifies the scales of the 2nd (Y) dimension
+prior{im}.Cm='1 Gau(10)'; % or next line
+prior{im}.pg_prior{1}.Cm=' 1 Gau(10)';
+prior{im}.pg_map=[0 0  1 1 0  2 2];
+[m,prior]=sippi_prior(prior);          % generate a realization from the prior model
+sippi_plot_prior_sample(prior,im,5)
+print_mul('prior_example_2d_plurigaussian_1')
+figure;
+pg_plot(prior{im}.pg_map,prior{im}.pg_limits);
+colormap(sippi_colormap);
+print_mul('prior_example_2d_plurigaussian_1_pgmap')
+</screen>
+<mediaobject>
+    <imageobject condition="web">
+        <imagedata fileref="figures/prior_example_2d_plurigaussian_1.png" width="100%" scalefit="1"/>
+    </imageobject>
+    <textobject><phrase></phrase></textobject>
+</mediaobject>
+<mediaobject>
+    <imageobject condition="web">
+        <imagedata fileref="figures/prior_example_2d_plurigaussian_1_pgmap.png" width="30%" scalefit="1"/>
+    </imageobject>
+    <textobject><phrase>Plurigaussian transformation map for 1 Gaussian realization</phrase></textobject>
+</mediaobject>
+</sect4>
+
+<sect4 xml:id="prior_plurigaussian_2"><title>PluriGaussian based on 2 Gaussians</title>
+<para>
+Plurigaussian truncation can be based on more than one Gaussian realization, In the example below, two Gaussian realization are used, and therefore a transformation map needs to be defined. Each dimension of the transformation map corresponds to values of the Gaussian realization between -3 and 3. The transformation maps is visualized below.
+</para>
+<screen>
+im=1;
+prior{im}.name='Plurigaussian'; % [optional] specifies name to prior
+prior{im}.type='plurigaussian';                % the type of a priori model
+prior{im}.x=[0:1:100];                 % specifies the scales of the 1st (X) dimension
+prior{im}.y=[10:1:90];                 % specifies the scales of the 2nd (Y) dimension
+prior{im}.pg_prior{1}.Cm=' 1 Gau(10)';
+prior{im}.pg_prior{2}.Cm=' 1 Sph(10,35,.4)';
+prior{im}.pg_map=[0 0 0 1 1; 1 2 0 1 1; 1 1 1 3 3];
+[m,prior]=sippi_prior(prior);          % generate a realization from the prior model
+sippi_plot_prior_sample(prior,im,5)
+print_mul('prior_example_2d_plurigaussian_2')
+
+figure;
+pg_plot(prior{im}.pg_map,prior{im}.pg_limits);
+set(gca,'FontSize',16)
+colormap(sippi_colormap);
+print_mul('prior_example_2d_plurigaussian_2_pgmap') 
+</screen>
+<mediaobject>
+    <imageobject condition="web">
+        <imagedata fileref="figures/prior_example_2d_plurigaussian_2.png" width="100%" scalefit="1"/>
+    </imageobject>
+    <textobject><phrase></phrase></textobject>
+</mediaobject>
+<mediaobject>
+    <imageobject condition="web">
+        <imagedata fileref="figures/prior_example_2d_plurigaussian_2_pgmap.png" width="40%" scalefit="1"/>
+    </imageobject>
+    <textobject><phrase></phrase></textobject>
+</mediaobject>
+</sect4>
+
+
+
+</sect3>
+
+
+
+
+
+
+
+<!--
+<sect3 xml:id="prior_sisim"><title>SISIM</title>
+<para></para>
+</sect3>
+-->
+<sect3 xml:id="prior_mps"><title>MPS</title>
+<para>
+  The 'MPS' type prior make use of the <link xlink:href="https://github.com/ergosimulation/mpslib">&mps; library</link> for mulitple-point based simulation. For compilation and installation help see <link linkend="InstallSippi">Install &sippi;</link>. &mps; implements the SNESIM (using both a search tree and a list to stor conditional statistics), and the generalized ENESIM algoritm. The type of multiple-point algorithm is define in the method field.
+</para>
+<para>
+To use the MPS type prior at least the type, dimension, as well as a training image must be provided:  
+</para>
+<screen>
+ip=1; 
+prior{ip}.type='mps';
+prior{ip}.x=1:1:80;
+prior{ip}.y=1:1:80;
+</screen>
+<para>
+  A trainin imag emust be set in the 'ti' field, as 1D, 2D, or 3D matrix. If not set, the classical training image from Strebelle is used, equivalent to:
+</para>
+<screen>
+prior{ip}.ti=channels;
+</screen>
+<para>
+More examples of traning images are located in the 'mGstat/ti' folder.
+</para>
+<para>
+&mps; provides three different simulation aglrithms, which canbe chosen in the 'method' field as:
+</para>
+<screen>
+prior{ip}.method='mps_snesim_tree';
+prior{ip}.method='mps_snesim_list';
+prior{ip}.method='mps_genesim';
+</screen>
+<para>
+'mps_snesim_tree' is the simulation method selected by default if it is not specified.
+</para>
+<sect4 xml:id="prior_mps_options"><title>options for &mps;</title>
+<para>
+All options for the MPS type simulation algorithm are be available in the <varname>prior{ip}.MPS</varname> data structure.
+</para>
+<para>
+For example, to set the number of used multiple grids, set the <varname>MPS.n_multiple_grids</varname> as
+<screen>
+ip=1; 
+prior{ip}.type='mps';
+prior{ip}.method='mps_snesim';
+prior{ip}.x=0:.1:10;
+prior{ip}.y=0:.1:20;
+[m,prior]=sippi_prior(prior);
+i=0;
+for n_mul_grids=[0:1:4];
+    prior{ip}.MPS.rseed=1;
+    prior{ip}.MPS.n_multiple_grids=n_mul_grids;
+    [m,prior]=sippi_prior(prior);
+    i=i+1;subplot(1,5,i);
+    imagesc(prior{1}.x,prior{1}.y,m{1});axis image
+    title(sprintf('NMG = %d',n_mul_grids));
+end
+</screen>
+<screen>
+More details on the use of &mps; can be found in the  <link xlink:href="https://www.authorea.com/users/30338/articles/82347/">SoftwareX manuscript</link> that describes &mps;.
+</screen>
+</para>
+</sect4>
+</sect3>
+
+<sect3 xml:id="prior_snesim"><title>SNESIM</title>
+<para>
+The 'SNESIM' type prior model utilizes the SNESIM algorithm, as implemented in Fortran available at <link xlink:href="https://github.com/SCRFpublic/snesim-standalone">Stanford/SCRF</link>.
+</para>
+<para>
+By default a training image (channel structures) from Sebastian Strebelle's PhD theses is used (if no training image is specified). A simple 2D type SNESIM prior model can be defined using the following code: 
+<screen>
+ip=1; 
+prior{ip}.type='SNESIM';
+prior{ip}.x=[0:.1:10]; % X array 
+prior{ip}.y=[0:.1:20]; % Y array 
+</screen>
+and 5 realizations from this prior can be visualized using
+<screen>
+for i=1:5;
+    m=sippi_prior(prior);
+    subplot(1,5,i);
+    imagesc(prior{1}.x,prior{1}.y,m{1});axis image
+end
+</screen>
+<mediaobject>
+    <imageobject condition="web">
+        <imagedata fileref="figures/prior_reals_snesim.png" width="70%" scalefit="1"/>
+    </imageobject>
+    <textobject><phrase></phrase></textobject>
+</mediaobject>
+</para>
+<para>
+Note that the training image is always assumed to have the same units as the prior model, so in this case each pixel in the training image is assumed to be separated by a distance '0.1'.
+</para>
+<para>
+Optionally 'scaling' and 'rotation' of the training image can be set. To scale the training image by 0.7 (i.e., structures will appear 30% smaller) and rotate the training 30 degrees from north use
+</para>
+<screen>
+ip=1; 
+prior{ip}.type='SNESIM';
+prior{ip}.x=[0:.1:10]; % X array 
+prior{ip}.y=[0:.1:20]; % Y array 
+prior{ip}.scaling=.7;
+prior{ip}.rotation=30;
+</screen>
+<mediaobject>
+    <imageobject condition="web">
+        <imagedata fileref="figures/prior_reals_snesim_rotation_scale.png" width="70%" scalefit="1"/>
+    </imageobject>
+    <textobject><phrase></phrase></textobject>
+</mediaobject>
+
+<sect4 xml:id="prior_snesim_sgems_ti"><title>Custom training image</title>
+<para>
+A custom training image can be set using the <varname>ti</varname> field, which must be either a 2D or 3D matrix.
+<screen>
+% create TI from image
+EXAMPLE EXAMPLE
+
+% setup the prior
+ip=1; 
+prior{ip}.type='SNESIM';
+prior{ip}.x=[0:.1:10]; % X array 
+prior{ip}.y=[0:.1:20]; % Y array
+prior{ip}.ti=ti;
+</screen>
+Note that the training image MUST consist of integer index values starting from 0 (i.e. '0', '1', '2', ...).
+</para>
+</sect4>
+
+<sect4 xml:id="prior_snesim_sgems_options"><title>Complete customization</title>
+<para>
+If the <varname>prior</varname> structure is returned from <link linkend="sippi_prior">sippi_prior</link> using 
+<screen>
+[m,prior]=sippi_prior(prior);
+</screen>
+then an XML structure <varname>prior{1}.S.XML</varname> will be available. This allows a complete customization of all settings available in SGeMS. For example, the different realizations, using 1, 2, and 3 multiple grids can be obtained using
+<screen>
+ip=1; 
+prior{ip}.type='SNESIM';
+prior{ip}.x=[0:.1:10]; % X array 
+prior{ip}.y=[0:.1:20]; % Y array 
+[m,prior]=sippi_prior(prior);
+for i=1:5;
+    prior{ip}.S.XML.parameters.Nb_Multigrids_ADVANCED.value=i;
+	subplot(1,3,5);
+    imagesc(prior{1}.x,prior{1}.y,m{1});axis image	
+end
+</screen>
+<mediaobject>
+    <imageobject condition="web">
+        <imagedata fileref="figures/prior_reals_snesim_nmgrid.png" width="70%" scalefit="1"/>
+    </imageobject>
+    <textobject><phrase></phrase></textobject>
+</mediaobject>
+</para>
+</sect4>
+
+</sect3>
+
+<sect3 xml:id="prior_snesim_std"><title>SNESIM</title>
+<para>
+The 'SNESIM' type prior model utilizes the SNESIM algorithm, as implemented in <link linkend="SGEMS">SGeMS</link>. It can be called using the options as <link linkend="sippi_prior_snesim">sippi_prior_snesim</link>.
+</para>
+</sect3>
+
+
+</sect2>
+
+<sect2 xml:id="prior_sampling"><title>Sampling the prior</title>
+<para>
+Once the prior data structure has been defined/modified, a sample from the prior distribution can be generated using 
+<screen>
+m=sippi_prior(prior);
+</screen>
+'m' is a Matlab data structure of the same size as the 'prior' data structure. Thus, if two prior distributions have been defined in 'prior{1}' and 'prior{2}', then 'm{1}' will hold a realization of 'prior{1}', 
+and 'm{2}' will hold a realization of 'prior{2}'. 
+</para>
+<para>
+Each time 'm=sippi_prior(prior)' is called, a new independent realization of the prior will be generated.
+</para>
+
+</sect2>
+
+<sect2 xml:id="sec_seq_gibbs"><title>Sequential Gibbs sampling / Conditional Re-sampling</title>
+<para>
+All the available types of prior models allow perturbing one realization of a prior into a new realization of the prior, where the degree of perturbation can be controlled (from a new independent realization to a very small change).
+</para>
+<para>
+This means that a random walk, with an arbitrary 'step-length' can be performed for any of the a priori types available in &sippi;
+</para>
+<para>
+ For the a priori types 'FFTMA', 'VISIM', 'CHOLESKY', 'SISIM', 'SNESIM', sequential Gibbs sampling <citation>HCM12</citation> is applied. Sequential Gibbs is in essence a type of conditional re-simulation. From a current realization of a prior model, a number of model parameters are discarded and treated as unknown. The unknown model parameters are then re-simulated conditional to the known model parameters.  
+</para>
+<para>
+In order to generate a new realization 'm2' in the vicinity of the realization 'm1' use
+<screen>
+[m1,prior]=sippi_prior(prior);
+[m2,prior]=sippi_prior(prior,m1);
+</screen>
+If this process is iterated, then a random walk in the space of a priori acceptable models will be perform. Moreover, the collection of realization obtained in this way will represent a sample from prior distribution.  
+</para>
+<para>
+Note that in order to use sequential Gibbs sampling <varname>prior</varname> must be given both as an input variable, and as an (possibly update) output variable.
+</para>
+
+<!-- 
+Example of sampling the prior using Sequential Gibbs Sampling
+EXAMPLE OF USING SGS TO SAMPLE THE PRIOR
+-->
+
+<sect3 xml:id="sec_seq_gibbs_step"><title>Controlling sequential Gibbs sampling / Conditional Re-sampling</title>
+<para>
+All properties related to sequential Gibbs sampling can be set in the 'seq_gibbs' structure (which will be avaiable the first time <link linkend="sippi_prior">sippi_prior</link> is called, or if <link linkend="sippi_prior_init">sippi_prior_init</link> is called), for the individual prior models. 
+</para>
+<para>
+The step-length (i.e. the degree of perturbation) is determined by the <varname>prior{m}.seq_gibbs.step</varname> parameter.
+</para>
+
+<para>
+For the 'uniform' and 'gaussian' type a priori models a step-length closer to 0 zeros imples a 'shorter' step, while a step-length close to 1, implies a 'longer' step-length. A step length of 1, will generate a new independent realization of the prior, while a step length of 0, will return the same realization of the prior
+<screen>
+prior{m}.seq_gibbs.step=.1;
+[m2,prior]=sippi_prior(prior,m1);
+</screen>
+</para>
+
+<para>
+For the 'FFTMA', 'VISIM', 'CHOLESKY', 'SISIM', and 'SNESIM' type a priori models two types (defined in the <varname>prior{m}.seq_gibbs.type</varname> variable).
+</para>
+<para>
+The default 'type' is 2, defined as
+<screen>
+prior{m}.seq_gibbs.step=1;
+prior{m}.seq_gibbs.type=2;
+</screen>
+where the step length defines the percentage of the of model parameters (selected at random) defined in <varname>prior{im}</varname> is conditionally re-sampled. Thus, a step-length closer to 0 zeros imples a 'shorter' step, while a step-length close to 1, implies a 'longer' step-length.
+</para>
+<para>
+If <varname>prior{m}.seq_gibbs.step=1</varname>, then <varname>prior{m}.seq_gibbs.step</varname> defines the size of a square rectangle/cube which is to be conditionally re-simulated using sequential Gibbs sampling.
+</para>
+
+</sect3>
+</sect2>
+
+
+</sect1>
+
+<!-- DATA -->
+<sect1 xml:id="chapdata"><title><varname>data</varname>: Data and data uncertainties/noise </title>
+<para>
+<varname>data</varname> is a Matlab structure that defines any number of data and the associated uncertainty/noise model.
+</para>
+<para>
+<varname>data{1}</varname> defines the first data set (which must always be defined), and any number of additional data sets can be defined in 
+<varname>data{2}</varname>, 
+<varname>data{3}</varname>, ...
+</para>
+<para>
+This allows to consider for example seismic data in <varname>data{1}</varname>, and electromagnetic data in <varname>data{2}</varname>. 
+ </para>
+<para>
+For each set of data, a Gaussian noise model (both correlated and uncorrelated) can be specified. The noise model for different data types (e.g. <varname>data{1}</varname> and <varname>data{2}</varname> are independent).
+</para>
+
+<para>
+Once the noise model has been defined, the log-likelihood related to any model, <varname>m</varname>, with the corresponding <link linkend="chapforward">forward response</link>, <varname>d</varname>, can be computed using
+<screen>
+[d,forward,prior,data]=sippi_forward(m,forward,prior,data)
+logL=sippi_likelihood(data,d)
+</screen>
+where <varname>d</varname> is the output of <link linkend="sippi_forward">sippi_forward</link>.
+
+</para>
+<para>
+The specification of the noise model can be divided into a description of the <link linkend="sec_meas_noise_gauss">measurement noise</link> (mandatory) and the <link linkend="sec_model_noise_gauss">modeling error</link> (optional).
+</para>
+
+<sect2 xml:id="sec_meas_noise_gauss"><title>Gaussian measurement noise</title>
+<para>
+</para>
+<sect3 xml:id="sec_meas_noise_gauss_uncorr"><title>Uncorrelated Gaussian measurement noise</title>
+<para>
+To define a set of observed data, [0,1,2], with an associated uncorrelated uncertainty defined by a Gaussian model with mean 0 and standard deviation 2, use
+<screen>
+data{1}.d_obs=[0 1 2]';
+data{1}.d_std=[2 2 2]';
+</screen>
+which is equivalent to (as the noise model for each data is the same, and independent) 
+<screen>
+data{1}.d_obs=[0 1 2]';
+data{1}.d_std=2;
+</screen>
+One can also choose to define the uncertainty using a variance as opposed to the standard deviation
+<screen>
+data{1}.d_obs=[0 1 2]';
+data{1}.d_var=4;
+</screen>
+</para>
+</sect3>
+
+<sect3 xml:id="sec_meas_noise_gauss_corr"><title>Correlated Gaussian measurement noise</title>
+<para>
+Correlated Gaussian measurement uncertainty can be specified using the <varname>Cd</varname> field, as for example
+<screen>
+data{1}.Cd=[4 1 0 ; 1 4 1 ; 0 1 4];
+</screen>
+Note that <varname>data{1}.Cd</varname> must be of size [NDxND], where ND is the number of data in <varname>data{1}.d_obs</varname>.
+</para>
+
+</sect3>
+
+</sect2>
+
+<sect2 xml:id="sec_model_noise_gauss"><title>Gaussian modeling error</title>
+<para>
+The modeling error refers to errors caused by using for example an imperfect forward model, see <citation>HCM14</citation>.
+</para>
+<para>
+A Gaussian model of the modeling error can be specified by the mean, <varname>dt</varname>, and the covariance, <varname>Ct</varname>.
+</para>
+<para>
+For example
+<screen>
+data{1}.dt=[0 0 0];
+data{1}.Ct=[4 4 4; 4 4 4; 4 4 4];
+</screen>
+is equivalent to 
+<screen>
+data{1}.Ct=4
+</screen>
+which implies a zero mean modeling error with a covariance model where all model parameters has a covariance of 4. 
+</para>
+<para>
+<link linkend="sippi_compute_modelization_forward_error">sippi_compute_modelization_forward_error</link> can be used to estimate the modeling error related to using an approximate forward model. See the <link linkend="sec_ex_tomography">tomography example</link>, for an <link linkend="AM13_gaussian_modeling_error">example of accounting for correlated modeling errors</link>, following <citation>HCM14</citation>.
+</para>
+</sect2>
+
+</sect1>
+
+<!-- FORWARD-->
+<sect1 xml:id="chapforward"><title><varname>forward</varname>: The forward model</title>
+<para>
+The specification of the <varname>prior</varname> and <varname>data</varname> is intended to be generic, applicable to any inverse problem considered. The forward problem, on the other hand, is typically specific for each different inverse problem.
+</para>
+<para> 
+In order to make use of SIPPI to sample the posterior distribution of an inverse problem, the solution to the forward problem must be embedded in a Matlab function with the following input and output arguments:
+</para>
+<screen>
+[d,forward,prior,data]=sippi_forward(m,forward,prior,data,id)
+</screen>
+<para>
+<varname>m</varname> is a realization of the prior model, and <varname>prior</varname> and <varname>data</varname> are the Matlab structures defining the prior and the noise model (see <link linkend="chapprior">Prior</link> and <link linkend="chapdata">Data</link>)
+</para>
+<para>
+<varname>id</varname> is optional, and can be used to compute the forward response of a subset of the different types of data available (i.e. <varname>data{1}</varname>, <varname>data{2}</varname>,... )
+</para> 
+
+<para>
+The <varname>forward</varname> variable is a Matlab structure that can contain any information needed to solve the forward problem. Thus, the parameters for the <varname>forward</varname> structure is problem dependent. One option, <varname>forward.forward_function</varname> is though generic, and point to the m-file that implements the forward problem.
+</para> 
+<para>
+The output variable <varname>d</varname> is a Matlab structure of the same size of <varname>data</varname>.
+Thus, if 4 types of data have been specified, then <varname>d</varname> must also be a structures of size 4.
+<screen>
+length(data) == length(d);
+</screen> 
+Further, <varname>d{i}</varname> must refer to an array of the same size as <varname>data{i}.d_obs</varname>.
+</para> 
+<para>
+An example of an implementation of the forward problem related to a simple line fitting problem is:
+
+</para>
+<screen>
+function [d,forward,prior,data]=sippi_forward_linefit(m,forward,prior,data);
+    d{1}=forward.x*m{2}+m{1};
+</screen>
+<para>
+This implementation requires that the 'x'-locations, for which the y-values of the straight line is to be computed, is specified through <varname>forward.x</varname>. Say some y-data has been observed at locations x=[1,5,8], with the values [2,4,9], and a standard deviation of 1 specifying the uncertainty, the forward structure must be set as 
+<screen>
+forward.forward_function='sippi_forward_linefit';
+forward.x=[1,5,8];
+</screen>
+while the data structure will be
+<screen>
+data{1}.d_obs=[2 4 9]
+data{1}.d_std=1;
+</screen>
+</para>
+
+<para>
+This implementation also requires that the prior model consists of two 1D prior types, such that 
+<screen>
+m=sippi_prior(prior)
+</screen> 
+returns the intercept in <varname>m{1}</varname> and the gradient in <varname>m{2}</varname>.
+</para>
+<para>
+An example of computing the forward response using an intercept of 0, and a gradients of 2 is then 
+<screen>
+m{1}=0;
+m{2}=2;
+d=sippi_forward(m,forward)
+</screen>
+and the corresponding log-likelihood of m, can be computed using
+</para>
+<screen>
+logL=sippi_likelihood(data,d);
+</screen>
+
+<para>
+[see more details and examples related to polynomial line fitting at <link linkend="sec_ex_linefit">polynomial line fitting</link>].
+</para>
+<para>
+The <link linkend="chapExamples">Examples</link> section contains more example of implementation of different forward problems.
+</para>
+</sect1>
+
+<!-- CHECKING THE SETUP -->
+<sect1 xml:id="secTestSetup"><title>Validating <varname>prior</varname>, <varname>data</varname>, and <varname>forward</varname></title>
+<para>
+A simple way to test the validity of 
+<varname>prior</varname>,
+<varname>data</varname>, and
+<varname>forward</varname> 
+is to test if the following sequence can be evaluated without errors: 
+</para>
+<screen>
+% Generate a realization, m, of the prior model
+m=sippi_prior(prior);
+% Compute the forward response
+d=sippi_forward(m,forward,prior,data);
+% Evaluate the log-likelihood of m
+logL=sippi_likelihood(data,d);
+</screen>
+</sect1>
