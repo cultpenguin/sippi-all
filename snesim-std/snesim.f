@@ -290,7 +290,7 @@ c-----------------------------------------------------------------------
       ! Declare local variables
       REAL, DIMENSION(10) :: var
 c Ch89 handling random seed with gfortran
-      INTEGER, PARAMETER :: SEEDDIM = 12
+      INTEGER, PARAMETER :: SEEDDIM = 112
       INTEGER, DIMENSION(SEEDDIM) :: seed
       CHARACTER (LEN=30) :: datafl, outfl, dbgfl
       CHARACTER (LEN=30) :: vertpropfl

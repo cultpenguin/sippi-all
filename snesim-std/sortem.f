@@ -64,7 +64,10 @@ c
 c
 c If this segment has more than two elements  we split it
 c
- 10   if (j-i-1) 100,90,15
+c 10   if (j-i-1) 100,90,15
+ 10   IF ( (j-i-1).lt.0 ) GOTO 100
+      IF ( (j-i-1).eq.0 ) GOTO 90
+      IF ( (j-i-1).gt.0 ) GOTO 15
 c
 c p is the position of an arbitrary element in the segment we choose the
 c middle element. Under certain circumstances it may be advantageous
