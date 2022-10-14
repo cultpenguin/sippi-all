@@ -4,7 +4,7 @@ CC = gfortran
 # WINDOWS/LINUX GCC
 CFLAGS = -O3 -static
 # OSX (no static)
-CFLAGS = -O3 
+# CFLAGS = -O3 
 
 
 LDLIBS = 
