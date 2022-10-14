@@ -1,0 +1,60 @@
+[map "6333f8f8-195d-35d3-bf02-2c347fd64659"]
+	object = a705ec89838de16c46994c5113b6b74e09cd2c88
+	path = mpslib
+	stage = sync
+	type = extract module
+[map "ec29f3fb-2f70-335a-8649-5d1a38708639"]
+	object = 0ff6834db24294b1bd01ce44dd7312f58e0769d7
+	path = visim
+	stage = sync
+	type = extract module
+[map "4cf1f37d-7f56-3c44-a8c9-88bbb35791d2"]
+	object = 8da7d1f1913893608203bb2d8eaace7e200a472a
+	path = mgstat
+	stage = sync
+	type = extract module
+[map "d25c619c-6bd6-3cd2-be4e-68ecca638c87"]
+	object = c94110249250ee13173733dc0f280aee89fbf233
+	path = sippi
+	stage = sync
+	type = extract module
+[module "1668a826-cdc0-3b9d-a570-4a76d92e1959"]
+	conflict = request-pull
+	path = mgstat
+	pull = merge subtree
+	pull = squash never
+	ref = if refs/heads/main sync refs/heads/master
+	url = agnostic://gh/32385731
+[module "323de620-8616-3a00-9fa2-16749eed9865"]
+	conflict = request-pull
+	path = mpslib
+	pull = merge subtree
+	pull = squash never
+	ref = if refs/heads/main sync refs/heads/master
+	url = agnostic://gh/53580311
+[module "36767bc0-fdc9-3952-8a31-61758f336d28"]
+	conflict = request-pull
+	path = sippi
+	pull = merge subtree
+	pull = squash never
+	ref = if refs/heads/main sync refs/heads/master
+	url = agnostic://gh/32153863
+[module "9438ca31-556e-3960-b27b-1be077162677"]
+	conflict = request-pull
+	path = snesim-std
+	pull = merge subtree
+	pull = squash never
+	ref = if refs/heads/main sync refs/heads/master
+	url = agnostic://gh/38806000
+[module "091675b0-1293-3e95-bd2a-50073d8b2ab8"]
+	conflict = request-pull
+	path = visim
+	pull = merge subtree
+	pull = squash never
+	ref = if refs/heads/main sync refs/heads/master
+	url = agnostic://gh/122204652
+[map "eff407f1-ef01-3a03-b92a-904e1d8ebe96"]
+	object = cdeb56e23ce089f97b7cd48851ffce00b8be344c
+	path = snesim-std
+	stage = sync
+	type = extract module
