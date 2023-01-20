@@ -1,4 +1,4 @@
-[map "a02fde9f-9308-32fb-b945-b747d084a697"]
+[map "5baf7d77-6731-3085-b5ad-333ad377abb9"]
 	object = d129cfe80052403cf493dde25673e608d50260b8
-	path = snesim-std
+	path = sippi
 	type = expand module
