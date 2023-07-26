@@ -1,4 +1,8 @@
-[map "a21e4ae7-bfd4-3570-8700-d1e0dc3690b7"]
-	object = 165152f8f2c6a8b9b745fbef302e6ed33320cc66
+[map "db8fffa0-46c6-3ecc-a5cb-815a23b8d0b3"]
+	object = 83e8827012944b6b2eb7e71f574aa82a0aa314ac
+	path = snesim-std
+	type = expand module
+[map "87b5c215-e796-3eb8-a73d-0dc01ca4838e"]
+	object = 866c02a48e20533008b58eabe6f4449238696b82
 	path = snesim-std
 	type = expand module
