@@ -2,3 +2,7 @@
 	object = 83e8827012944b6b2eb7e71f574aa82a0aa314ac
 	path = sippi
 	type = expand module
+[map "638901a7-b2c4-3811-b07b-656a7304eb51"]
+	object = 360beec1cd2cfb0261596b49350800d06561befd
+	path = sippi
+	type = expand module
