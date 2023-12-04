@@ -18,10 +18,6 @@
 	path = mgstat
 	stage = sync
 	type = extract module
-[map "20b074bf-3ad9-371d-b8f0-3aa02ceaf0fe"]
-	object = 163e0f864f7cd74783f16758a8fa6e16fa116b17
-	path = sippi
-	type = extract module
 [module "323de620-8616-3a00-9fa2-16749eed9865"]
 	conflict = request-pull
 	path = mpslib
@@ -57,3 +53,12 @@
 	pull = squash never
 	ref = if refs/heads/main sync refs/heads/master
 	url = agnostic://gh/32153863
+[map "fe573fff-764f-3d5c-b805-39e5b867d367"]
+	object = c3139f5bbcff911efe603e50cdfb5b2572719597
+	path = sippi
+	type = extract module
+[map "ce21bf9d-d0c6-3b24-85fd-475f23099366"]
+	object = 163e0f864f7cd74783f16758a8fa6e16fa116b17
+	path = sippi
+	stage = pull-request
+	type = extract module
