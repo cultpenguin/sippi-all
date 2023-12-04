@@ -9,3 +9,7 @@
 	object = b3eb70c787538b15b286e1a0e4eb3239440de3fe
 	path = mpslib
 	type = expand module
+[map "7c9c09b1-1f0a-3a4f-8b39-ec881927f4ca"]
+	object = 7a666098aec5344d98e02f2a51a8e7381b6aa1d3
+	path = mpslib
+	type = expand module
