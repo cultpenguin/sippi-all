@@ -2,11 +2,11 @@
 	object = b3eb70c787538b15b286e1a0e4eb3239440de3fe
 	path = snesim-std
 	type = expand module
-[map "7eeea828-2388-3c08-b6d6-b365666c9701"]
-	object = 35d2c27da4b13633587e7a4657a6eae86b6c4833
-	path = snesim-std
-	type = expand module
 [map "09d6675e-62fd-3b56-8f7f-0f00b1142e7f"]
 	object = efe71ae8bcab52c2615034f7c5d007e22889926f
+	path = snesim-std
+	type = expand module
+[map "0f948047-eb97-388e-aa01-74c0ea59564f"]
+	object = 67a5512ece672ca73c46c761aa782df3485a7b9d
 	path = snesim-std
 	type = expand module

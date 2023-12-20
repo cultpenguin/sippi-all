@@ -5,11 +5,11 @@
 	object = b3eb70c787538b15b286e1a0e4eb3239440de3fe
 	path = mpslib
 	type = expand module
-[map "6468dd8f-58f4-3075-b362-ebf85ef81764"]
-	object = 35d2c27da4b13633587e7a4657a6eae86b6c4833
-	path = mpslib
-	type = expand module
 [map "de1de1c3-72eb-36aa-ae32-144d5cdecb32"]
 	object = efe71ae8bcab52c2615034f7c5d007e22889926f
+	path = mpslib
+	type = expand module
+[map "26ada744-0e10-3247-b8c2-00bd51c4c4a5"]
+	object = 67a5512ece672ca73c46c761aa782df3485a7b9d
 	path = mpslib
 	type = expand module
