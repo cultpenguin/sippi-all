@@ -5,11 +5,11 @@
 	object = b3eb70c787538b15b286e1a0e4eb3239440de3fe
 	path = visim
 	type = expand module
-[map "e6f0285f-5445-3a43-874c-61567d7a9530"]
-	object = 67a5512ece672ca73c46c761aa782df3485a7b9d
-	path = visim
-	type = expand module
 [map "52fee56a-09fa-3622-be3c-4e5506e99283"]
 	object = e9eab8af668f83152ff7b0cd1bbcd45b21137104
+	path = visim
+	type = expand module
+[map "d5856311-3837-38a3-87ce-cb763e3288a4"]
+	object = 2ce75dab8691e032e0ee6fb1833cd93111ce587f
 	path = visim
 	type = expand module
