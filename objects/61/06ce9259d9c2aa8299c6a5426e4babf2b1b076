@@ -6,7 +6,7 @@
 	object = e9eab8af668f83152ff7b0cd1bbcd45b21137104
 	path = snesim-std
 	type = expand module
-[map "5afd9e83-9ad5-3bc8-8fe9-e040c589a9d8"]
-	object = a8f2357d6c1ad6f824dc960e635c20b5ffc83c0b
+[map "baf6f057-2e66-3cfe-a6a1-fdbedeca670f"]
+	object = 43f1173b74b04f741c92b0f3e7e1ea4d6ccc510a
 	path = snesim-std
 	type = expand module
