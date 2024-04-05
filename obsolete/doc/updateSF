@@ -1,1 +1,0 @@
-scp -r sippi.pdf htmldoc cultpenguin,sippi@web.sourceforge.net:/home/project-web/sippi/htdocs/.
