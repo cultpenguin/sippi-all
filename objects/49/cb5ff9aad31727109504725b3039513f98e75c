@@ -1,7 +1,7 @@
 [map "3391c2ae-b4f8-32a6-9ae1-f1027bb2ad9f"]
 	object = 9d73f00badc9c4d2367dfeb5d3eb4d3ad514d4cb
 	type = include + expand tree
-[map "6672f60a-accc-369f-b97c-0504ae12ee90"]
-	object = deb1d6e107767022ed2efaee90100c47c13a9ecd
+[map "3e578b57-6a40-3974-bb95-b9040e74c256"]
+	object = b40135beb7cd09dcc382a7286aa8761de6815ff8
 	path = mgstat
 	type = expand module
